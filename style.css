@@ -1,0 +1,74 @@
+/*style page for syncopika.github.io */
+
+li{
+	list-style-type: none;
+	font-family: 'Roboto', 'sans-serif';
+	font-size: 28px;
+	color: #00002A  !important;
+}
+
+h2.title{
+	text-align: center;
+	font-family: 'Roboto', 'sans-serif';
+}
+
+p.title{
+	text-align: center;
+	font-family: 'Roboto', 'sans-serif';
+	font-size: 14px;
+}
+
+a{
+	color: #303030  !important;
+	text-decoration: none !important;
+}
+
+.open{
+	display: none;
+	margin-top: 5%;
+	margin-left: 2%;
+}
+
+#musicContent{
+	text-align: center;
+}
+
+#links a{
+	font-size: 20px;
+}
+
+#links li{
+	padding-left: 0;
+}
+
+#links{
+	padding-left: 0;
+}
+
+.footer{
+	height: 80px;
+}
+
+/* FOR SMALLER MEDIA */
+
+@media screen and (max-width: 960px){
+	
+	#links a{
+	font-size: 16px;
+	}
+	
+	#links li{
+		display: inline;
+		padding-right: 8px;
+	}
+	
+	#index{
+		text-align: center;
+	}
+	
+	#index li{
+		padding-right: 2%;
+		display: inline;
+	}
+	
+}
