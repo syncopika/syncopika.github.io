@@ -1,10 +1,11 @@
 /*style page for syncopika.github.io */
 
-li{
+#index li{
 	list-style-type: none;
 	font-family: 'Roboto', 'sans-serif';
-	font-size: 28px;
-	color: #00002A  !important;
+	font-size: 26px;
+	padding-top: 5px;
+	color: #00002A;
 }
 
 h2.title{
@@ -19,8 +20,13 @@ p.title{
 }
 
 a{
-	color: #303030  !important;
-	text-decoration: none !important;
+	color: #303030;
+	text-decoration: none;
+}
+
+a:hover{
+	text-decoration: none;
+	color: #7e7e7e;
 }
 
 .open{
@@ -38,7 +44,12 @@ a{
 }
 
 #links li{
+	list-style-type: none;
+	font-family: 'Roboto', 'sans-serif';
+	font-size: 22px;
 	padding-left: 0;
+	padding-top: 8px;
+	color: #00002A;
 }
 
 #links{
