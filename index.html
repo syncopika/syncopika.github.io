@@ -152,23 +152,24 @@ function showContent(id){
 	var previousTag = "<a href='#'>" + previousFlag + "</a>";
 	
 	if(previousFlag === id){
-		$('#' + id).html(id);
+		//if you click on a section link a second time
+		//in succession, hide the content and take away the underscore
+		$('#' + id).html("<a href='#'>" + id + "</a>");
 		$(newId).hide();
 		previousFlag = null;
 	}else{
-	$("div").each(function(){
-		var content = $(this).hasClass("open") || $(this).hasClass("closed");
-		if(content && $(this).attr('id') !== id){
-			$('#' + id).html(id);
-			$(this).hide();
-		}
-	});
-	
-	$('#' + previousFlag).html(previousTag);
-	$('#' + id).html(clickIdTag);
-	$('#content').append($(newId));
-	$(newId).show();
-	previousFlag = id;
+		$("div").each(function(){
+			var content = $(this).hasClass("open") || $(this).hasClass("closed");
+			if(content && $(this).attr('id') !== id){
+				$('#' + id).html(id);
+				$(this).hide();
+			}
+		});	
+		$('#' + previousFlag).html(previousTag);
+		$('#' + id).html(clickIdTag);
+		$('#content').append($(newId));
+		$(newId).show();
+		previousFlag = id;
 	}	
 }
 
