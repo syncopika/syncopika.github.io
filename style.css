@@ -2,7 +2,7 @@
 
 #index li{
 	list-style-type: none;
-	font-family: 'PT Sans', 'sans-serif';
+	font-family: 'PT Sans', sans-serif;
 	font-size: 26px;
 	padding-top: 5px;
 	color: #00002A;
@@ -10,12 +10,12 @@
 
 h2.title{
 	text-align: center;
-	font-family: 'PT Sans', 'sans-serif';
+	font-family: 'PT Sans', sans-serif;
 }
 
 p.title{
 	text-align: center;
-	font-family: 'PT Sans', 'sans-serif';
+	font-family: 'PT Sans', sans-serif;
 	font-size: 14px;
 }
 
@@ -45,7 +45,7 @@ a:hover{
 
 #links li{
 	list-style-type: none;
-	font-family: 'PT Sans', 'sans-serif';
+	font-family: 'PT Sans', sans-serif;
 	font-size: 22px;
 	padding-left: 0;
 	padding-top: 8px;
