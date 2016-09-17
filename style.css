@@ -1,5 +1,13 @@
 /*style page for syncopika.github.io */
 
+#aboutContent{
+	width: 70%;
+}
+
+#footerTag2{
+	display: none;
+}
+
 #index li{
 	list-style-type: none;
 	font-family: 'PT Sans', sans-serif;
@@ -57,12 +65,26 @@ a:hover{
 }
 
 .footer{
-	height: 80px;
+	height: 60px;
 }
 
 /* FOR SMALLER MEDIA */
 
 @media screen and (max-width: 960px){
+	
+	#aboutContent{
+		width: 100%;
+	}
+	
+	#footerTag{
+		display: none;
+	}
+	
+	#footerTag2{
+		margin-top: 15px;
+		text-align: center;
+		display: block;
+	}
 	
 	ul{
 		padding-left: 0;
