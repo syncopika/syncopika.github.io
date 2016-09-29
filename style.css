@@ -64,6 +64,10 @@ a:hover{
 	padding-left: 0;
 }
 
+#email{
+	font-family: monospace;
+}
+
 .footer{
 	height: 60px;
 }
