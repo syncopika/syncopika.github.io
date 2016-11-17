@@ -13,7 +13,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://use.fontawesome.com/58938a654b.js"></script>
 	<script src="scripts\roulette.js"></script>
-	<link rel="icon" href="favicon.ico">
+	<!-- <link rel="icon" href="favicon.ico"> -->
 </head>
 
 <body>
@@ -21,7 +21,7 @@
 <div class='container-fluid'>
 
 	<div class='row'>
-		<div id='sidebar' class='col-lg-2 col-sm-12'>
+		<div id='sidebar' class='col-lg-2 col-md-2 col-sm-12'>
 			
 			<ul>
 				<h2 class='title'>n.c.h / 熊志文</h2>
@@ -40,7 +40,7 @@
 			</ul>
 		</div>
 		
-		<div id='content' class='col-lg-6 col-sm-12'>
+		<div id='content' class='col-lg-6 col-md-6 col-sm-12'>
 		</div>
 		
 		
@@ -179,12 +179,18 @@ function changeHeight(content){
 $(window).resize(function(){
 	var viewportWidth = $(window).width();
 	//if on mobile, don't adjust sidebar height
+	//keep at 100%
 	if(viewportWidth <= 960){
 		$('#sidebar').height("100%");
 	}
+	if(viewportWidth > 960 && viewportWidth < 990){
+		$('#sidebar').height("auto");
+	}
 	//if not mobile and current content shown in my music content
-	if(viewportWidth > 960 && $('#musicContent').css('display') === "block"){
+	else if(viewportWidth > 960 && $('#musicContent').css('display') === "block"){
 		changeHeight("#musicContent");
+	}else{
+		$('#sidebar').height("100%");
 	}
 });
 	
