@@ -2,9 +2,30 @@
 
 #aboutContent{
 	width: 70%;
+	/*
 	padding: 12px;
 	border:1px solid #b7d5e9;
 	border-radius: 5px;
+	*/
+}
+
+html, body{
+	height: 100%;
+}
+.container-fluid{
+	height: 100%;
+}
+.row{
+	height: 100%;
+}
+#sidebar{
+	height: 100%;
+	color: #fff;
+	background-color: #36414f;
+}
+
+#content{
+	height: 100%;
 }
 
 #footerTag2{
@@ -31,13 +52,17 @@ p.title{
 }
 
 a{
-	color: #303030;
+	color: #000;
 	text-decoration: none;
 }
 
 a:hover{
 	text-decoration: none;
 	color: #7e7e7e;
+}
+
+#index a{
+	color: #fff;
 }
 
 .open{
@@ -48,16 +73,20 @@ a:hover{
 
 #musicContent{
 	text-align: center;
-	padding: 6px;
+	/* no more color border
+	padding: 6px;	
 	border:1px solid #9cc98b;
 	border-radius: 5px;
+	*/
 	margin-bottom: 12px;
 }
 
 #projectsContent{
-	border:1px solid #eabcc4;
+	/*
 	padding: 12px;
+	border:1px solid #eabcc4;
 	border-radius: 5px;
+	*/
 }
 
 #links a{
@@ -88,6 +117,12 @@ a:hover{
 /* FOR SMALLER MEDIA */
 
 @media screen and (max-width: 960px){
+	
+	body{
+		color: #fff;
+		background-color: #36414f; 
+		height: auto;
+	}
 	
 	#aboutContent{
 		width: 100%;

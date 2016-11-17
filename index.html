@@ -33,6 +33,7 @@
 				<li id='about' onclick='showContent(this.id)'><a href="#">about</a></li>
 				<li id='music' onclick='showContent(this.id)'><a href='#'>music</a></li>
 				<li id='projects' onclick='showContent(this.id)'><a href='#'>projects</a></li>
+				<li><a href='https://syncopika.github.io/blog'>blog</a></li>
 				<li id='contact' onclick='showContent(this.id)'><a href='#'>contact</a></li>
 				<hr>
 				<p id='footerTag'>(c) n.c.h works 2016 </p>
@@ -45,9 +46,10 @@
 		
 		<!-- initially hidden content -->
 		<div id='aboutContent' class='open'>
-			<h2> hi! thanks for visiting my page! </h2>
+			<h2> hi! thanks for visiting! </h2>
 			<br>
-			<p>I'm Nicholas. I like music composition and programming (but maybe music a little bit more ^^).</p>
+			<p>I'm Nicholas. My Chinese name is "熊志文". Interestingly, my family name is the character used for "bear", as in the animal. </p>
+			<p>I really like music composition and programming.</p>
 			<br>
 			<p>I often use 'syncopika' as my 'artist' name. It's a combination of syncopation (I really like syncopated rhythms) and 'pika' (Japanese onomatopoeia for something sparkly).</p>
 			<br>
@@ -75,6 +77,9 @@
 				</iframe>
 				</div>
 				<button id='bc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
+				
+			<br>
+			
 			<hr>
 			<h3>arrangements</h3>
 				<div id='soundcloud'>
@@ -83,14 +88,21 @@
 				</div>
 				<button id='sc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
 				<p>archive of arrangments (.wav): <b><a href='https://www.dropbox.com/sh/ac5s3aa1i9pueev/AACArNHLVBZr_xQp3ZcRfVRKa?dl=0'>here</a></b> and sheet music (score format, needs MuseScore): <b><a href='https://www.dropbox.com/sh/l39zcxbw3pns8q9/AABKSN3_DtIOiaku8CPNrd85a?dl=0'>here</a></b></p>
+			
+			<br>
+			
 			<hr>
-			<h3>game music</h3>
+			<h3>game</h3>
 				<iframe frameborder="no" width="80%" height="320" scrolling="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false" width="700px">
 				</iframe>
+			
+			<br>
+			
 			<hr>
 			<h3 style="text-decoration: underline">clients</h3>
 			<h3><a href='http://armouredboar.com/'>ArmouredBoar</a></h3>
 			<h3><a href='http://www.fantasytalesonline.com/'>Fantasy Tales Online</a></h3>
+			<!--
 			<br>
 			<h3> some kind words...</h3>
 				<p>"Brilliant communication, music was composed in a high quality fashion and fit our game perfectly.</p> 
@@ -100,7 +112,7 @@
 				<p>"syncopika did a few tracks for FI: Interview and I can definitely give my endorsement. </p>
 				<p>He/She is very nice and easy to work with. syncopika also gets things done quickly :3"</p>
 				<p><b>-Googaboga, Lemmasoft Forum user and creator of the visual novel FI:Interview</b></p>
-			
+			-->
 			<div class='footer'>
 			<p id='footerTag2'>(c) n.c.h works 2016 </p>
 			</div>
@@ -152,6 +164,30 @@
 
 <script>
 
+function changeHeight(content){
+	if(content === "#musicContent"){
+		var height = $(content).height();
+		$('#sidebar').height(height + 50);
+	}else{
+		$('#sidebar').height("100%");
+	}
+}
+
+//this changes the sidebar height depending on viewport
+//my music portfolio is the only section that goes past 100% height, so 
+//I'm specifically targeting that section
+$(window).resize(function(){
+	var viewportWidth = $(window).width();
+	//if on mobile, don't adjust sidebar height
+	if(viewportWidth <= 960){
+		$('#sidebar').height("100%");
+	}
+	//if not mobile and current content shown in my music content
+	if(viewportWidth > 960 && $('#musicContent').css('display') === "block"){
+		changeHeight("#musicContent");
+	}
+});
+	
 $('#aboutContent').hide();
 $('#musicContent').hide();
 $('#projectsContent').hide();
@@ -165,6 +201,11 @@ function showContent(id){
 	
 	var clickIdTag = "<a href='#'>" + id + "_" + "</a>";
 	var previousTag = "<a href='#'>" + previousFlag + "</a>";
+	
+	var viewportWidth = $(window).width();
+	if(!(viewportWidth <= 960)){
+		changeHeight(newId);
+	}
 	
 	if(previousFlag === id){
 		//if you click on a section link a second time
