@@ -51,6 +51,10 @@ p.title{
 	font-size: 14px;
 }
 
+ul{
+	padding-left: 4%;
+}
+
 a{
 	color: #000;
 	text-decoration: none;
