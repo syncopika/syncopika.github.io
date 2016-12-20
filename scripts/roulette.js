@@ -2,7 +2,8 @@
 //turns a mixed-up phrase into a sensible one with a neat presentation
 //recommended to use a font where all chars have a fixed width
 //fonts good for this effect: monospace 
-//TODO: change variable names so they make more sense in a general context
+//ALSO: needs jQuery, at least with this implementation
+
 //I initially made this intending to decode an email
 
 //helper function that returns new, edited string
@@ -23,13 +24,13 @@ function editString(string, charRep, index){
 }
 
 //the roulette function
-//array1 = real email, array2 = start 'email'
-//string is the html in the target location, and target is the id or class of
-//the target element
+//array1 = the string you want to end with (as an array), array2 = the string you start with (as an array) 
+//string is the html in the target location (as a string), and target is the id of the target element
+//example: roulette("user at gmail.com".split(""), $("#email").html().split(""), $("#email").html(), "email")
 function roulette(array1, array2, string, target){
 
-	var currentEmail = string;
-	var emailArray = [];
+	var currentHTML = string;
+	var newHTMLArray = [];
 	
 	for(var i = 0; i < string.length; i++){
 		
@@ -37,32 +38,32 @@ function roulette(array1, array2, string, target){
 		var startCharCode = array2[i].charCodeAt(0);
 		
 		//this is the code number we want to get to
-		var emailCharCode = array1[i].charCodeAt(0);
+		var newCharCode = array1[i].charCodeAt(0);
 		
-		while(startCharCode !== emailCharCode){
+		while(startCharCode !== newCharCode){
 			//is the start character larger than the actual email char code?
 			//then go backwards
-			if(startCharCode > emailCharCode){
+			if(startCharCode > newCharCode){
 				startCharCode--;
 			}else{
 				//the actual email char code should never equal the start email char code
 				//unless it's a space or period 
 				startCharCode++;
 			}
-			currentEmail = editString(currentEmail, String.fromCharCode(startCharCode), i);
+			currentHTML = editString(currentHTML, String.fromCharCode(startCharCode), i);
 			
 			//put all steps in array, which will be used for setTimeout later.
-			emailArray.push(currentEmail);
+			newHTMLArray.push(currentHTML);
 			//alternatively, if you don't want the cool animation,
 			//you can just display the 'decoded' email with the code below
-			//$('#email').html(currentEmail);
+			//$('#' + target).html(currentHTML);
 		}
 	}
 	
-	displayEmail(emailArray, 0, target);
+	displayNewHTML(newHTMLArray, 0, target);
 }
 
-function displayEmail(array, index, target){
+function displayNewHTML(array, index, target){
 	
 	$('#' + target).html(array[index]);
 	
@@ -71,6 +72,6 @@ function displayEmail(array, index, target){
 	}
 	
 	setTimeout(function(){
-		displayEmail(array, index + 1, target);
+		displayNewHTML(array, index + 1, target);
 	}, 30);
 }
