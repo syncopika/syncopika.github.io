@@ -8,12 +8,11 @@
 	<title> nick's homepage </title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans">
-	<!--<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>-->
 	<link rel="stylesheet" href="style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://use.fontawesome.com/58938a654b.js"></script>
 	<script src="scripts\roulette.js"></script>
-	<!-- <link rel="icon" href="favicon.ico"> -->
+
 </head>
 
 <body>
@@ -36,7 +35,7 @@
 				<li><a href='https://syncopika.github.io/blog'>blog</a></li>
 				<li id='contact' onclick='showContent(this.id)'><a href='#'>contact</a></li>
 				<hr>
-				<p id='footerTag'>(c) n.c.h works 2016 </p>
+				<p id='footerTag'>c. 2016 </p>
 			</ul>
 		</div>
 		
@@ -51,18 +50,17 @@
 			<p>I'm Nicholas. My Chinese name is "熊志文". Interestingly, my family name is the character used for "bear", as in the animal. </p>
 			<p>I really like music composition and programming.</p>
 			<br>
-			<p>I often use 'syncopika' as my 'artist' name. It's a combination of syncopation (I really like syncopated rhythms) and 'pika' (Japanese onomatopoeia for something sparkly).</p>
+			<p>I often use 'syncopika' as my 'artist' name. It's a combination of syncopation (I really like syncopated rhythms) and 'pikapika' (Japanese onomatopoeia for something sparkly).</p>
 			<br>
 			<br>
 			<p>where else am I on the internet?</p>
 			<ul id='links'>
 				<li><a href='https://github.com/syncopika'>GitHub <i class="fa fa-github" aria-hidden="true"></i></a></li>
 				<li><a href='http://soundcloud.com/syncopika'>SoundCloud <i class="fa fa-soundcloud" aria-hidden="true"></i></a></li>
-				<li><a href='http://syncopika.tumblr.com'>Tumblr <i class="fa fa-tumblr" aria-hidden="true"></i></a></li>
 				<li><a href='https://www.youtube.com/user/OrchestralPikachu'>YouTube <i class="fa fa-youtube" aria-hidden="true"></i></a></li>
 				<li><a href='http://opengameart.org/users/syncopika'>OpenGameArt</a></li>
 			</ul>
-			<p id='footerTag2'>(c) n.c.h works 2016 </p>
+			<p id='footerTag2'>c. 2016 </p>
 		</div>
 		
 		<!-- MUSIC -->
@@ -102,19 +100,9 @@
 			<h3 style="text-decoration: underline">clients</h3>
 			<h3><a href='http://armouredboar.com/'>ArmouredBoar</a></h3>
 			<h3><a href='http://www.fantasytalesonline.com/'>Fantasy Tales Online</a></h3>
-			<!--
-			<br>
-			<h3> some kind words...</h3>
-				<p>"Brilliant communication, music was composed in a high quality fashion and fit our game perfectly.</p> 
-				<p>I will certainly be requesting more music from Nicholas for our future games"</p>
-				<p><b>-Josh Barnard, ArmouredBoar (Hero Keeper-PC/Desura)</b></p>
-				<br>
-				<p>"syncopika did a few tracks for FI: Interview and I can definitely give my endorsement. </p>
-				<p>He/She is very nice and easy to work with. syncopika also gets things done quickly :3"</p>
-				<p><b>-Googaboga, Lemmasoft Forum user and creator of the visual novel FI:Interview</b></p>
-			-->
+			
 			<div class='footer'>
-			<p id='footerTag2'>(c) n.c.h works 2016 </p>
+				<p id='footerTag2'>(c) n.c.h works 2016 </p>
 			</div>
 		</div>
 		
@@ -140,7 +128,6 @@
 				<p><a href='http://syncopika.tumblr.com/chinesequizapp'>Chinese quiz app</a></p>
 				<p><a href='http://syncopika.tumblr.com/audioapp'>basic audio app</a></p>
 				<p><a href='http://syncopika.tumblr.com/asciiart'>ASCII art generator</a></p>
-			
 			<br>	
 			<h3>misc.</h3>
 				<p><a href='http://syncopika.tumblr.com/greenbearmusic'> other website idea</a></p>
@@ -187,7 +174,7 @@ $(window).resize(function(){
 	if(viewportWidth > 960 && viewportWidth < 990){
 		$('#sidebar').height("auto");
 	}
-	//if not mobile and current content shown in my music content
+	//if not mobile and current content shown is my music content
 	else if(viewportWidth > 960 && $('#musicContent').css('display') === "block"){
 		changeHeight("#musicContent");
 	}else{
