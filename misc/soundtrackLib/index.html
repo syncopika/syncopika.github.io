@@ -1,0 +1,77 @@
+<!doctype html>
+
+<html lang ="en" ng-app="myApp">
+
+<head>
+	<title> nick's anime soundtrack library </title>
+	<meta charset='UTF-8'>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="lib/angular.min.js"></script>
+	<script src="lib/angular-route.min.js"></script>
+	<script src='lib/ui-bootstrap-custom-2.4.0.min.js'></script>
+	<script src="js/controllers.js"></script>
+	<script src="js/app.js"></script>
+	
+</head>
+
+<style>
+h1, h2, li, p{
+	font-family: "ms gothic";
+}
+.btn{
+	background: #c0c0c0;
+}
+.btn:hover{
+	background: #dddccc;
+}
+
+li{
+	display: inline;
+	list-style-type: none;
+}	
+.alphabet{
+	text-align: center;
+}
+
+#title{
+	text-align: center;
+}
+#search{
+	margin-top: 1%;
+	text-align: center;
+}
+.entry{
+	border: 1px solid #000;
+	margin-top: 15px;
+}
+.right, .left{
+	padding: 1%;
+}
+#nav{
+	text-align: center;
+	font-size: 18px;
+}
+</style>
+
+<body>
+	<div class='container'>
+
+	<h2 id='title'>anime soundtrack library</h2>
+	
+	<div id='nav'>
+		<ul>
+			<li><a href='#/about'><b>about</b></a></li>
+		</ul>
+	</div>
+	
+	
+	<!-- this is the div for where stuff changes -->
+	<div ng-view>
+	</div>
+	
+	</div>
+</body>
+
+
+</html>
+
