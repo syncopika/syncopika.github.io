@@ -1,0 +1,80 @@
+<section>
+
+	<div class='alphabet'>
+			<!-- interesting note: checkbox-true only accepts constant expressions. so  value = 'a' is not valid, but "'a'" is -->
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'a'" >A</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'b'" >B</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'c'" />C</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'d'" />D</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'e'" />E</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'f'" />F</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'g'" />G</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'h'" />H</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'i'" />I</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'j'" />J</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'k'" />K</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'l'" />L</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'m'" />M</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'n'" />N</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'o'" />O</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'p'" />P</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'q'" />Q</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'r'" />R</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'s'" />S</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'t'" />T</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'u'" />U</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'v'" />V</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'w'" />W</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'x'" />X</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'y'" />Y</button>
+			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'z'" />Z</button>
+	</div>
+		
+		<div id='search'>
+		<label> search: </label>
+		<!-- ng-model='query' allows you to filter out results based on whatever you type in the search -->
+		<input ng-model="query" placeholder="search for a soundtrack" autofocus>
+		<!-- ng-model='sortBy' allows you to sort the data -->
+		
+		<!--
+		<label> by:
+			<select ng-model='sortBy'>
+				<option value='composer'>composer</option>
+				<option value='series'>series</option>
+			</select>
+		</label>
+		-->
+	</div>
+	
+	<ul>
+		<!-- filter and orderBy are built-in commands -->
+		<!-- currLetter is a variable in scope -->
+		<li ng-repeat="listing in soundtracks | filter:query | matchFirstLetter:startFilter">
+			<div class='row entry'>
+			
+			<div class='left col-md-6'>
+				<p> series: 
+					<a href="#/details/{{soundtracks.indexOf(listing)}}">
+					{{listing.series | uppercase}}
+					</a>
+				</p>
+				<p>composer(s): {{listing.composer }}</p>
+				<img ng-src="{{listing.image}}" src="nori4.png" width='270' height='270' />
+				<!--
+				alt='nori telling about the different kinds of chinese-japanese food at the school cafeteria'
+				title='nori telling about the different kinds of chinese-japanese food at the school cafeteria' width='250' height='250'
+				-->
+			</div>
+			
+			<div class='right col-md-3'>
+				<p>rating: {{listing.rating}}</p>
+				<hr>
+				<p>{{ listing.spNote }} </p>
+			</div>
+			
+			</div>
+		</li> <!-- this is the end of the loop -->
+	
+	</ul>
+
+</section>
