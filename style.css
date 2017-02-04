@@ -164,4 +164,8 @@ a:hover{
 		display: inline;
 	}
 	
+	a{
+		color: #d3d3d3;	
+	}
+	
 }
