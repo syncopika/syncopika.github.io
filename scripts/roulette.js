@@ -65,9 +65,10 @@ function roulette(array1, array2, string, target){
 
 function displayNewHTML(array, index, target){
 	
-	$('#' + target).html(array[index]);
+	var t = document.getElementById(target);
+	t.innerHTML = array[index];
 	
-	if(index === array.length){
+	if(index === array.length - 1){
 		return;
 	}
 	

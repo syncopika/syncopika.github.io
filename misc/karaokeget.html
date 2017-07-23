@@ -55,7 +55,7 @@ button:hover{
 		<br><br>
 		
 		I also highly recommend trying this application out on game music or orchestral pieces that have no vocals. Many times interesting harmonies and instrument parts that
-		aren't obvious normally become illuminated! exciting! this is the main reason I would use this tool.
+		aren't obvious normally become illuminated!
 	</p>
 		
 
@@ -84,12 +84,12 @@ button:hover{
 			
 		<div class='karaoke col-lg-4  col-sm-4'>
 			<p>apply karaoke feature (apply before playing file)</p>
-			<button class='btn' onclick='playKaraoke()'>apply karaoke!</button>
+			<button class='btn' id='onKaraoke' onclick='onKaraoke()'>apply karaoke!</button>
 		</div>
 		
 		<div class='karaoke col-lg-4 col-sm-4'>
-			<p>turn off karaoke feature</p>
-			<button class='btn' onclick='offKaraoke()'>karaoke off!</button>
+			<p>turn off karaoke feature (off by default)</p>
+			<button class='btn' id='offKaraoke' onclick='offKaraoke()'>karaoke off!</button>
 		</div>
 	</div>
 	
@@ -122,6 +122,10 @@ var karaoke = false;
 var playbackControl = document.querySelector('.playback-rate-control');
 var duration; //duration of selected track (passed to innerHTML)
 
+/* have 'karaoke off' button highlighted by default */
+var offButton = document.getElementById('offKaraoke');
+offButton.style.border = 'rgb(0,178,0) 2px solid';
+
 /*	
 	initialize the sound system
 	after importing an audio file
@@ -150,37 +154,38 @@ return function(handle){
 
 //helper function for openFile
 function handleFile(files){
-var file = files[0];
-fileURL = URL.createObjectURL(file); //this is a key component!!! it turns the selected file's location into a URL!!!
-//process only audio files
-var imageType = /audio.*/;
-if(!file.type.match(imageType)){
-	return;
-}
-
-var reader = new FileReader();
-reader.onerror = function(e){
-alert('Error code ' + e.target.error);
-}
-
-//after the selected file is read, its contents are available and this function is executed
-reader.onload = (function(file){  
-	return function(evt){
-		//attach the name of the file onto the webpage
-		audioName.innerHTML = file.name;
+	var file = files[0];
+	fileURL = URL.createObjectURL(file); //this is a key component!!! it turns the selected file's location into a URL!!!
+	//process only audio files
+	var imageType = /audio.*/;
+	
+	if(!file.type.match(imageType)){
+		return;
 	}
-})(file); //make sure file is passed to this function
 
-//read in the file as a data url (why over here though?)
-reader.readAsDataURL(file);
-//EXECUTE init() here!
-init();
+	var reader = new FileReader();
+	reader.onerror = function(e){
+		alert('Error code ' + e.target.error);
+	}
+
+	//after the selected file is read, its contents are available and this function is executed
+	reader.onload = (function(file){  
+		return function(evt){
+			//attach the name of the file onto the webpage
+			audioName.innerHTML = file.name;
+		}
+	})(file); //make sure file is passed to this function
+
+	//read in the file as a data url (why over here though?)
+	reader.readAsDataURL(file);
+	//EXECUTE init() here!
+	init();
 }
 
 /*
 	get the audio data that was imported,
 	set up the audio viewer/player, and
-	prepare audio file for editing for karaoke
+	assign the variable 'audioToKaraoke' the modified audio data 
 	
 	the importation step mainly gets the file as a url,
 	which can then be passed to an xmlhttprequest, which allows for
@@ -284,8 +289,9 @@ var stop = document.getElementById('stop');
 
 //allow playback rate to be altered 
 playbackControl.oninput = function() {
+  
   if(source !== undefined){
-  source.playbackRate.value = playbackControl.value;
+	source.playbackRate.value = playbackControl.value;
   };
 
   //change playback value on page
@@ -293,13 +299,21 @@ playbackControl.oninput = function() {
 }
 
 /*
-*  set karaoke to true to play the karaoke track 
+*  apply karaoke effect
 */
-function playKaraoke(){
+function onKaraoke(){
+	var offButton = document.getElementById('offKaraoke');
+	var onButton = document.getElementById('onKaraoke');
+	offButton.style.border = "none";
+	onButton.style.border = 'rgb(0,178,0) 2px solid';
 	karaoke = true;
 }
 
 function offKaraoke(){
+	var offButton = document.getElementById('offKaraoke');
+	var onButton = document.getElementById('onKaraoke');
+	onButton.style.border = "none";
+	offButton.style.border = 'rgb(0,178,0) 2px solid';
 	karaoke = false;
 }
 
@@ -315,7 +329,6 @@ function downloadKaraoke(){
 
 	//the audio source buffer should contain the karaoke track, since this is assuming karaoke === true.
 	//get the buffer as a Float32Array, then make it a blob so it can be downloadable as a wav.
-	
 	//var bufferData = source.buffer.getChannelData(0);
 	
 	//use the functions from recorder.js to convert the current data into sensible wav data

@@ -84,7 +84,7 @@
 			<hr>
 			<h3>arrangements</h3>
 				<div id='soundcloud'>
-					<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276332169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false">
+					<iframe id='scSample' width="80%" height="102" scrolling="no" frameborder="no" src="">
 					</iframe>
 				</div>
 				<button id='sc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
@@ -94,7 +94,7 @@
 			
 			<hr>
 			<h3>game</h3>
-				<iframe frameborder="no" width="80%" height="320" scrolling="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false" width="700px">
+				<iframe id='gameSample' frameborder="no" width="80%" height="320" scrolling="no" src="" width="700px">
 				</iframe>
 			
 			<br>
@@ -225,15 +225,35 @@ function showContent(id){
 		$(newId).show();
 		previousFlag = id;
 	}	
+	
+	// add the soundcloud sample src only after user clicks on my music to show the soundcloud iframe
+	// do the same for my game music sample
+	var soundcloudElement = document.getElementById('scSample'); // soundcloud embed iframe
+	var gameSamp = document.getElementById('gameSample'); // my game music
+	if(id === "music"){
+		// show first sample
+		soundcloudElement.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276332169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false";
+	
+		// my game music
+		gameSamp.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false";
+	}else{
+		// if id is not music, remove src and hide
+		soundcloudElement.src = ""; 
+		gameSamp.src = "";
+	}
 }
 
+// interesting thing to look at: https://stackoverflow.com/questions/26370100/soundcloud-iframe-embed-producing-indexsizeerror
+// because I'm hiding the embedded soundcloud players initially, there's an exception thrown about the canvas width being 0when my page is loaded. 
+// the fix is to add the src attribute after the iframes have been established/visible.
+
 var soundcloud = {
-1:'<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/154662596&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false"></iframe>',
-2:'<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/182721110&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>',
-3:'<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209110662&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false"></iframe>',
-4:'<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/264147169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>',
-5:'<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209159656&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>',
-6:'<iframe width="80%" height="102" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276332169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>'
+1:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/154662596&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false",
+2:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/182721110&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
+3:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209110662&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false",
+4:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/264147169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
+5:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209159656&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
+6:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276332169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"
 };
 
 var bandcamp = {
@@ -259,12 +279,13 @@ function next(id){
 			$('#bandcamp').html(bandcamp[bcCounter]);
 		}
 	}else{
+		var soundcloudElement = document.getElementById('scSample'); // soundcloud embed iframe
 		++scCounter;
 		if(scCounter <= 6){
-			$('#soundcloud').html(soundcloud[scCounter]);
+			soundcloudElement.src = soundcloud[scCounter];
 		}else if(scCounter === 7){
 			scCounter = 1;
-			$('#soundcloud').html(soundcloud[scCounter]);
+			soundcloudElement.src = soundcloud[scCounter];
 		}
 	}
 	
