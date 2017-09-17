@@ -5,14 +5,13 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset='UTF-8'>
-	<title> nick's homepage </title>
+	<title> ＼(^ω^＼) </title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans">
 	<link rel="stylesheet" href="style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://use.fontawesome.com/58938a654b.js"></script>
 	<script src="scripts\roulette.js"></script>
-
 </head>
 
 <body>
@@ -53,7 +52,7 @@
 			<p>I use 'syncopika' as my 'artist' name. </p> 
 			<p>It's a combination of syncopation (I like syncopated rhythms!) and 'pikapika' (Japanese onomatopoeia for something sparkly).</p>
 			<br>
-			<p>I also enjoy listening to anime soundtracks. <a href='misc/soundtrackLib/index.html'><b>here</b></a> is a library I'm assembling.
+			<p>I also enjoy listening to anime soundtracks. <a href='misc/soundtrackLib/index.html'><b>here</b></a> is a library I'm assembling of soundtracks I've listened to.
 			<br>
 			<br>
 			<p>where else am I on the internet?</p>
@@ -83,6 +82,7 @@
 			
 			<hr>
 			<h3>arrangements</h3>
+				<p> I love creating arrangements! You can find my most recent work at my YouTube channel. </p>
 				<div id='soundcloud'>
 					<iframe id='scSample' width="80%" height="102" scrolling="no" frameborder="no" src="">
 					</iframe>
@@ -113,7 +113,7 @@
 		<div id='projectsContent' class='open'>
 			<h2>my programming projects</h2>
 			<hr>
-			<p style='font-size: 13px'>some of these are not optimized for mobile viewing, sorry :) </p>
+			<p style='font-size: 13px'>some of these are not optimized for mobile viewing, sorry! </p>
 			<br>
 			<!--
 			<h3>data visualization</h3>
@@ -124,21 +124,20 @@
 			<h3>tools?</h3>
 				<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
 				<p><a href='https://syncopika.github.io/piano_roll_browser/'> a piano roll </a></p>
-				<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch - Chrome extension </a></p>
-				<p><a href='https://syncopika.github.io/basic-JSON-generator/'>basic JSON generator</a></p>
-				<p><a href='http://syncopika.tumblr.com/simplegraphing'>simple grapher</a></p>
-				<p><a href='misc/karaokeget.html'>karaoke-get</a></p>
+				<p><a href='https://syncopika.github.io/basic-JSON-generator/'> JSON generator </a></p>
+				<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
+				<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
 			<br>	
-			<h3>just fun</h3>
-				<p><a href='https://syncopika.github.io/visual_novel_maker/'>visual novel maker</a></p>
-				<p><a href='https://syncopika.github.io/chinese_quiz/'>Chinese character quiz</a></p> <!--(older ver. <a href='http://syncopika.tumblr.com/chinesequizapp'>here</a>)</p> -->
-				<p><a href='https://boring-chat.herokuapp.com/'>a chat application</a> (<a href='https://github.com/syncopika/boringChat'>source</a>) </p>
-				<!-- <p><a href='http://syncopika.tumblr.com/audioapp'>basic audio app</a></p> -->
-				<!-- <p><a href='http://syncopika.tumblr.com/asciiart'>ASCII art generator</a></p> -->
-			<br>	
+			<h3>fun</h3>
+				<p><a href='https://syncopika.github.io/visual_novel_maker/'> visual novel maker </a></p>
+				<p><a href='https://syncopika.github.io/chinese_quiz/'> Chinese character quiz </a></p>
+				<p><a href='https://boring-chat.herokuapp.com/'> a chat application </a> (<a href='https://github.com/syncopika/boringChat'>source</a>) </p>
+			<br>
+			<!--
 			<h3>misc.</h3>
 				<p><a href='http://syncopika.tumblr.com/greenbearmusic'> other website idea</a></p>
 				<p><a href='http://syncopika.tumblr.com/aquarium'>aquarium (click on the shark!)</a></p>
+			-->
 			<p id='footerTag2'>(c) n.c.h works 2016,2017 </p>
 		</div>
 		
@@ -147,8 +146,8 @@
 			<h3><a href='https://github.com/syncopika'> <i class="fa fa-github" aria-hidden="true"></i></a></h3>
 			<br>
 			<p>you can also contact me at my email below! thanks!</p>
-			<h2 id='email'>abcdefghijk1 lm nopqr,stu</h2>
-			<button class='btn-primary' onclick='roulette("superhornet6 at gmail.com".split(""), $("#email").html().split(""), $("#email").html(), "email")'>decode</button>
+			<h2 id='email'>abcdef1 lm opqr,stuxzy</h2>
+			<button id='getEmail' class='btn-primary'>decode</button>
 		<div>
 		
 	</div>
@@ -195,7 +194,6 @@ $('#projectsContent').hide();
 $('#contactContent').hide();
 
 var previousFlag = null;
-
 function showContent(id){
 
 	var newId = "#" + id + "Content";
@@ -293,6 +291,15 @@ function next(id){
 	}
 	
 }
+
+
+/*
+	bind button in contact section to roulette function
+*/
+var contact = document.getElementById('getEmail');
+contact.addEventListener('click', function(){
+	roulette("nhung93 at outlook.com".split(""), $("#email").html().split(""), $("#email").html(), "email" );
+});
 
 </script>
 

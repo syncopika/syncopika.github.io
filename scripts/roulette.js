@@ -24,6 +24,7 @@ function editString(string, charRep, index){
 }
 
 //the roulette function
+//caveat: the html of the target element (i.e. the element that has the placeholder html) has to be the same length of characters (and have spaces in the same places) as the replacement html.
 //array1 = the string you want to end with (as an array), array2 = the string you start with (as an array) 
 //string is the html in the target location (as a string), and target is the id of the target element
 //example: roulette("user at gmail.com".split(""), $("#email").html().split(""), $("#email").html(), "email")
