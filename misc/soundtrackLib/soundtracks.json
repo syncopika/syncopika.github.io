@@ -8,14 +8,6 @@
 		"spNote": "Note that 'Hidamari Sketch x365' and 'Hidamari Sketch Hoshimittsu' each have their own soundtrack, both of which are as excellent as this one!"
 	},
 	{
-		"composer": "Misawa Yasuhiro (三澤 康広)", 
-		"series": "Yuru Yuri (ゆるゆり)",
-		"rating": "4 stars",
-		"notes": "Mr. Misawa's music is often particularly distinctive (his style becomes clear I think when listening to his other works, such as from 'Minami-ke' and 'Kotoura-San'), and well-suited for background music. despite being bgm, his work for 'Yuru Yuri' contains some very nice melodies, and many of the pieces have enough depth from a real string ensemble and woodwind instruments, as well as flavor from his compositional style, to be enjoyed without much context.",
-		"image": "http://medium.media.vgm.io/albums/01/28510/28510-1332665552.jpg",
-		"spNote": ""
-	},
-	{
 		"composer": "Franz Maxwell I.", 
 		"series": "Denpa Onna To Seishun Otoko (電波女と青春男)",
 		"rating": "4 stars",
@@ -101,5 +93,13 @@
 		"notes":"This soundtrack is really special. Besides being one of the first soundtracks (other than John T. Williams' work) that I really paid attention to, this one has one really amazing theme which shows up quite a few times. \n\nGiven the setting of the movie (tropical), there's some nice steel drum/typical tropical flavor, as well as the usual symphonic orchestral work that can be heard in the anime.\n\nNot sure if all the instruments were real, but I think a little bit of synthetic sounds is what gives the music from Pokémon its charm. But it's the quality of the compositions that count, and this one has it.",
 		"image":"http://medium.media.vgm.io/albums/11/19111/19111-1273138238.png",
 		"spNote":"The full title of this soundtrack is: \"劇場版ポケットモンスターAG ポケモンレンジャーと蒼海の王子マナフィ ミュージックコレクション\""
+	},
+	{
+		"composer": "Misawa Yasuhiro (三澤 康広)", 
+		"series": "Yuru Yuri (ゆるゆり)",
+		"rating": "4 stars",
+		"notes": "Mr. Misawa's music is often particularly distinctive (his style becomes clear I think when listening to his other works, such as from 'Minami-ke' and 'Kotoura-San'), and well-suited for background music. despite being bgm, his work for 'Yuru Yuri' contains some very nice melodies, and many of the pieces have enough depth from a real string ensemble and woodwind instruments, as well as flavor from his compositional style, to be enjoyed without much context.",
+		"image": "http://medium.media.vgm.io/albums/01/28510/28510-1332665552.jpg",
+		"spNote": "not going to lie, the album cover feels a bit weird. let that not detract from the quality of music, however!"
 	}
 ]
