@@ -27,7 +27,7 @@
 		"composer": "Kosaki Satoru (神前 暁)", 
 		"series": "Bakemonogatari (化物語)",
 		"rating": "3 and a half stars",
-		"notes": "a few pretty good pieces, and also a few pretty boring tracks that are generally not stand-alone worthy. one notable track is the piano arrangement of 'staple stable'. wow. after watching 11 episodes and hearing it in context- I was very moved. By the way, Mr. Kosaki also did all the opening songs (5 of them if I recall correctly) - all which are catchy and well composed.",
+		"notes": "a few pretty good pieces, and also a few pretty boring tracks that are generally not stand-alone worthy. one notable track is the piano arrangement of 'staple stable'. wow. after watching 11 episodes and hearing it in context- I was very moved. By the way, Mr. Kosaki also did all the opening songs (5 of them if I recall correctly, to correspond with each main girl) - all which are catchy and well composed.",
 		"image": "http://medium.media.vgm.io/albums/29/28892/28892-1324464284.jpg",
 		"spNote": "The soundtrack was divided up originally into separate albums and bundled with certain DVD volumes. A full album, along with the character songs, was released in 2011."
 	},
@@ -51,7 +51,7 @@
 		"composer":"Kosaki Satoru (神前 暁)",
 		"series":"Lucky Star (らき☆すた)",
 		"rating":"4 stars",
-		"notes":"very nice soundtrack. there's lots of happy, upbeat music, some more serious piano/string pieces, and some regular bgm stuff. a couple of recurrent melodies are present, such as Konata's theme. my favorite track is probably 'Ran Ran Ran dayo' (especially because of the trumpet part ^^). I think it sounds a bit like some of the Beatles' music, which is not surprising since if I recall correctly Mr. Kosaki is a Beatles fan.",
+		"notes":"very nice soundtrack. there's lots of happy, upbeat music, some more serious piano/string pieces, and some regular bgm stuff. a couple of recurrent melodies are present, such as Konata's theme. my favorite track is probably 'Ran Ran Ran dayo' (especially because of the trumpet part ^^). I think it sounds a bit like some of the Beatles' music in terms of bass and rhythmic style (i.e. 'Penny Lane'), which is not surprising since if I recall correctly Mr. Kosaki is a Beatles fan.",
 		"spNote": "awww man! there is actually no 'Lucky Star' soundtrack album. The tracks were bundled with various volumes of the DVD release. :<"
 	},
 	{
@@ -95,11 +95,27 @@
 		"spNote":"The full title of this soundtrack is: \"劇場版ポケットモンスターAG ポケモンレンジャーと蒼海の王子マナフィ ミュージックコレクション\""
 	},
 	{
+		"composer":"ko-ko-ya (コーコーヤ)",
+		"series":"Ikoku Meiro no Croisée (異国迷路のクロワーゼ)",
+		"rating":"5 stars",
+		"notes":"Fantastic! A very mellow, soothing soundtrack with a lot of violin/clarinet/guitar and piano flavor. This one is interesting because the ko-ko-ya is actually a trio, consisting of a clarinet, violin, and guitar, and all three musicians had a hand in composing the background music. Due to the nature of the anime, there's a bit of a French cafe-style with some pieces and a touch of accordion. All in all, these pieces are great for standalone listening.",
+		"image":"https://medium-media.vgm.io/albums/28/26482/26482-1314208263.jpg",
+		"spNote":""
+	},
+	{
+		"composer":"kotringo (コトリンゴ)",
+		"series":"Koufuku Graffiti (幸腹グラフィティ)",
+		"rating":"4 stars",
+		"notes":"Great soundtrack with memorable, recurring motifs. kotringo's style reminds me a bit of Masumi Ito's style, with one way being the incorporation of their voices in their music. A wide variety of instruments are used, including a solo euphonium, which gives the soundtrack as a whole lots of flavor and makes it good for standalone listening. On unfortunate thing is that some instruments had to be synthesized it seems, like for the low brass in a piece whose name escapes me.",
+		"image":"https://medium-media.vgm.io/albums/57/50475/50475-1424692257.jpg",
+		"spNote":"\"Edible melodies ～幸腹グラフィティ オリジナルサウンドトラック～\" is the full title of this soundtrack."
+	},
+	{
 		"composer": "Misawa Yasuhiro (三澤 康広)", 
 		"series": "Yuru Yuri (ゆるゆり)",
 		"rating": "4 stars",
 		"notes": "Mr. Misawa's music is often particularly distinctive (his style becomes clear I think when listening to his other works, such as from 'Minami-ke' and 'Kotoura-San'), and well-suited for background music. despite being bgm, his work for 'Yuru Yuri' contains some very nice melodies, and many of the pieces have enough depth from a real string ensemble and woodwind instruments, as well as flavor from his compositional style, to be enjoyed without much context.",
 		"image": "http://medium.media.vgm.io/albums/01/28510/28510-1332665552.jpg",
-		"spNote": "not going to lie, the album cover feels a bit weird. let that not detract from the quality of music, however!"
+		"spNote": "bit of a weird album cover? let that not detract from the quality of music, however!"
 	}
 ]
