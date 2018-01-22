@@ -30,6 +30,14 @@ function editString(string, charRep, index){
 //example: roulette("user at gmail.com".split(""), $("#email").html().split(""), $("#email").html(), "email")
 function roulette(array1, array2, string, target){
 
+	// check lengths of array1 and array2 
+	if(array1.length !== array2.length){
+		return;
+	}else if(array1.join("") === string){
+		// email has already been decoded
+		return;
+	}
+
 	var currentHTML = string;
 	var newHTMLArray = [];
 	
