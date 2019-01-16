@@ -28,6 +28,7 @@
 			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'x'" />X</button>
 			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'y'" />Y</button>
 			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'z'" />Z</button>
+			<button type='button' class="btn" ng-model="sortOrder" uib-btn-checkbox btn-checkbox-true="'asc'" />order</button>
 	</div>
 		
 		<div id='search'>
@@ -49,7 +50,7 @@
 	<ul>
 		<!-- filter and orderBy are built-in commands -->
 		<!-- currLetter is a variable in scope -->
-		<li ng-repeat="listing in soundtracks | filter:query | matchFirstLetter:startFilter">
+		<li ng-repeat="listing in soundtracks | filter:query | matchFirstLetter:startFilter | sortAscOrDesc:sortOrder">
 			<div class='row entry'>
 			
 			<div class='left col-md-6'>

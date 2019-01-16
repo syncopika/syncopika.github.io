@@ -7,6 +7,10 @@ appControllers.controller('MyController', ['$scope', '$http', function($scope, $
 	});
 	
 	$scope.startFilter = false;
+	
+	// set to false initially because if not set, soundtracks will be undefined breifly but the sort function will attempt to use soundtracks and throw an error
+	$scope.sortOrder = false; 
+	
 	/*
 	var alphabet = [];
 	for(var i = 97; i < 123; i++){
@@ -26,9 +30,11 @@ appControllers.controller('DetailsController', ['$scope', '$routeParams', '$http
 	
 }]);
 
+// filter data that have titles that start with the selected letter 
 appControllers.filter('matchFirstLetter', function(){
 	return function(soundtracks, startFilter){
 		if(startFilter === false){
+			// it will be false when you deselect a button since it can only be either true or false when clicked. 
 			return soundtracks;
 		}
 		var filtered = [];
@@ -40,3 +46,28 @@ appControllers.filter('matchFirstLetter', function(){
 		return filtered;
 	}
 });
+
+// sort the soundtracks based on the first character of their series' name 
+appControllers.filter('sortAscOrDesc', function(){
+	return function(soundtracks, sortType){
+		
+		if(soundtracks === undefined){
+			return;
+		}
+		
+		// this alters the original data!
+		if(sortType === false){
+			// sort ascending (a - z)
+			soundtracks.sort(function(a, b){
+				return a.series.charCodeAt(0) - b.series.charCodeAt(0);
+			});
+		}else{
+			// sort descending (z - a)
+			soundtracks.sort(function(a, b){
+				return b.series.charCodeAt(0) - a.series.charCodeAt(0);
+			});
+		}
+		return soundtracks;
+	}
+});
+
