@@ -1,31 +1,114 @@
-var appControllers = angular.module('appControllers', []);
+// use a service to share soundtrack data between controllers 
+// https://stackoverflow.com/questions/22584342/how-to-share-the-scope-variable-of-one-controller-with-another-in-angularjs
+var appControllers = angular.module('appControllers', []).service('Shared', function(){return {}});
 
-appControllers.controller('MyController', ['$scope', '$http', function($scope, $http){
+appControllers.controller('MyController', ['$scope', '$http', 'Shared', function($scope, $http, Shared){
 	
 	$http.get('soundtracks.json').then(function(response){
 		$scope.soundtracks = response.data;
+		$scope.shared = Shared;
+		$scope.shared.soundtrackData = $scope.soundtracks;
 	});
 	
 	$scope.startFilter = false;
 	
 	// set to false initially because if not set, soundtracks will be undefined breifly but the sort function will attempt to use soundtracks and throw an error
+	// this specifies if the sort should be in descending or ascending order
 	$scope.sortOrder = false; 
 	
-	/*
-	var alphabet = [];
-	for(var i = 97; i < 123; i++){
-		alphabet.push(String.fromCharCode(i));
+	// sort the soundtracks based on the first character of their series' name 
+	$scope.sortAscOrDesc = function(){	
+	
+		if($scope.soundtracks === undefined){
+			return;
+		}
+		
+		// this alters the original data!
+		if($scope.sortType === false){
+			// sort ascending (a - z)
+			$scope.soundtracks.sort(function(a, b){
+				return a.series.charCodeAt(0) - b.series.charCodeAt(0);
+			});
+			$scope.sortType = true;
+		}else{
+			// sort descending (z - a)
+			$scope.soundtracks.sort(function(a, b){
+				return b.series.charCodeAt(0) - a.series.charCodeAt(0);
+			});
+			$scope.sortType = false;
+		}
 	}
-	$scope.alphabet = alphabet;
-	console.log(alphabet);
-	*/
+	
+	// find index of a particular album listing in the soundtracks array 
+	$scope.findIndex = function(listing){
+		for(var i = 0; i < $scope.soundtracks.length; i++){
+			if($scope.soundtracks[i].series === listing.series){
+				return i;
+			}
+		}
+		return 0;
+	}
+	
+	// get a csv file of the soundtrack json data 
+	$scope.getCSV = function(){
+		// help? https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
+		// https://stackoverflow.com/questions/17103398/convert-javascript-variable-value-to-csv-file
+
+		var csvLines = "";
+		
+		// get the fields for the csv 
+		for(var field in $scope.soundtracks[0]){
+			if(field === "$$hashKey"){
+				continue;
+			}
+			csvLines += field + ",";
+		}
+		
+		//replace last comma with newline 
+		csvLines = csvLines.replace(/,$/, "\n");
+		
+		// add each row of data 
+		for(var i = 0; i < $scope.soundtracks.length; i++){
+			var currRow = $scope.soundtracks[i];
+			var currLine = "";
+			for(var field in currRow){
+				if(field === "$$hashKey"){
+					continue;
+				}
+				var val = "\"" + currRow[field] + "\""; // the value might contain commas, so enclose in quotes
+				val = val.replace(/\\n/g, "");
+				currLine += val + ",";
+			}
+			
+			// then replace the trailing comma with a new line
+			currLine = currLine.replace(/,$/g, "\n");
+			
+			csvLines += currLine;
+		}
+		
+		csvLines = [csvLines];
+		var dataBlob = new Blob(csvLines, {type: 'text/csv'});
+		var url = URL.createObjectURL(dataBlob);
+		
+		// make a link and activate it 
+		var link = document.createElement('a');
+		link.download = "soundtracks.csv";
+		link.href = url;
+		link.click();
+	}
+	
 }]);
 
-appControllers.controller('DetailsController', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
+appControllers.controller('DetailsController', ['$scope', '$routeParams', '$http', 'Shared', function($scope, $routeParams, $http, Shared){
 	
+	// use the data already retrieved by MyController!
+	$scope.shared = Shared;
+	$scope.soundtracks = $scope.shared.soundtrackData;
+	
+	/*
 	$http.get('soundtracks.json').then(function(response){
 		$scope.soundtracks = response.data;
-	});
+	});*/
 	$scope.whichItem = $routeParams.itemId;
 	
 }]);
@@ -47,27 +130,5 @@ appControllers.filter('matchFirstLetter', function(){
 	}
 });
 
-// sort the soundtracks based on the first character of their series' name 
-appControllers.filter('sortAscOrDesc', function(){
-	return function(soundtracks, sortType){
-		
-		if(soundtracks === undefined){
-			return;
-		}
-		
-		// this alters the original data!
-		if(sortType === false){
-			// sort ascending (a - z)
-			soundtracks.sort(function(a, b){
-				return a.series.charCodeAt(0) - b.series.charCodeAt(0);
-			});
-		}else{
-			// sort descending (z - a)
-			soundtracks.sort(function(a, b){
-				return b.series.charCodeAt(0) - a.series.charCodeAt(0);
-			});
-		}
-		return soundtracks;
-	}
-});
+
 

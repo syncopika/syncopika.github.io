@@ -28,39 +28,31 @@
 			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'x'" />X</button>
 			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'y'" />Y</button>
 			<button type='button' class="btn" ng-model="startFilter" uib-btn-checkbox btn-checkbox-true="'z'" />Z</button>
-			<button type='button' class="btn" ng-model="sortOrder" uib-btn-checkbox btn-checkbox-true="'asc'" />order</button>
+			<button type='button' class="btn" ng-model="sortOrder" ng-click='sortAscOrDesc()' />order</button>
 	</div>
 		
 		<div id='search'>
 		<label> search: </label>
 		<!-- ng-model='query' allows you to filter out results based on whatever you type in the search -->
 		<input ng-model="query" placeholder="search for a soundtrack" autofocus>
-		<!-- ng-model='sortBy' allows you to sort the data -->
+		<span><button type='button' class="btn" style="padding: 2px; margin-top: 0; vertical-align: top;" ng-click="getCSV()"> download .csv </button></span>
 		
-		<!--
-		<label> by:
-			<select ng-model='sortBy'>
-				<option value='composer'>composer</option>
-				<option value='series'>series</option>
-			</select>
-		</label>
-		-->
 	</div>
 	
 	<ul>
 		<!-- filter and orderBy are built-in commands -->
 		<!-- currLetter is a variable in scope -->
-		<li ng-repeat="listing in soundtracks | filter:query | matchFirstLetter:startFilter | sortAscOrDesc:sortOrder">
+		<li ng-repeat="listing in soundtracks | filter:query | matchFirstLetter:startFilter">
 			<div class='row entry'>
 			
 			<div class='left col-md-6'>
 				<p> series: 
-					<a href="#/details/{{soundtracks.indexOf(listing)}}">
+					<a href="#/details/{{findIndex(listing)}}">
 					{{listing.series | uppercase}}
 					</a>
 				</p>
 				<p>composer(s): {{listing.composer }}</p>
-				<img ng-src="{{listing.image}}" src="nori4.png" width='270' height='270' />
+				<img ng-src="{{listing.image}}" src="nori.png" width='270' height='270' />
 				<!--
 				alt='nori telling about the different kinds of chinese-japanese food at the school cafeteria'
 				title='nori telling about the different kinds of chinese-japanese food at the school cafeteria' width='250' height='250'
