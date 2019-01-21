@@ -8,6 +8,9 @@ appControllers.controller('MyController', ['$scope', '$http', 'Shared', function
 		$scope.soundtracks = response.data;
 		$scope.shared = Shared;
 		$scope.shared.soundtrackData = $scope.soundtracks;
+		
+		// add to sessionStorage 
+		sessionStorage.setItem('soundtrackData', JSON.stringify($scope.soundtracks));
 	});
 	
 	$scope.startFilter = false;
@@ -109,13 +112,23 @@ appControllers.controller('MyController', ['$scope', '$http', 'Shared', function
 appControllers.controller('DetailsController', ['$scope', '$routeParams', '$http', 'Shared', function($scope, $routeParams, $http, Shared){
 	
 	// use the data already retrieved by MyController!
-	$scope.shared = Shared;
-	$scope.soundtracks = $scope.shared.soundtrackData;
+	//$scope.shared = Shared;
+	//$scope.soundtracks = $scope.shared.soundtrackData;
 	
+	// but when you refresh, the data gets lost!
+	// https://stackoverflow.com/questions/22408790/angularjs-passing-data-between-pages
+	// console.log($scope.soundtracks)
+	
+	// so I'll just rely on sessionStorage to keep the same data around even when refreshing 
+	$scope.soundtracks = JSON.parse(sessionStorage.getItem('soundtrackData'));
+
 	/*
-	$http.get('soundtracks.json').then(function(response){
-		$scope.soundtracks = response.data;
-	});*/
+	if($scope.soundtracks === undefined){
+		$http.get('soundtracks.json').then(function(response){
+			$scope.soundtracks = response.data;
+		});
+	}*/
+	
 	$scope.whichItem = $routeParams.itemId;
 	
 }]);

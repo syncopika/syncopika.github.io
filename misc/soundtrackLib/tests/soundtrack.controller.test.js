@@ -1,3 +1,6 @@
+//	help for karma unit testing !
+//	http://www.bradoncode.com/blog/2015/05/19/karma-angularjs-testing/
+
 var fakeData = [{"series": "Hidamari Sketch (ひだまりスケッチ)"}, {"series": "Denpa Onna To Seishun Otoko (電波女と青春男)"}, {"series": "Bakemonogatari (化物語)"}];
 
 describe('soundtrackLibrary', function(){
