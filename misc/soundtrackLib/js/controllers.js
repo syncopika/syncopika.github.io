@@ -14,7 +14,7 @@ appControllers.controller('MyController', ['$scope', '$http', 'Shared', function
 	
 	// set to false initially because if not set, soundtracks will be undefined breifly but the sort function will attempt to use soundtracks and throw an error
 	// this specifies if the sort should be in descending or ascending order
-	$scope.sortOrder = false; 
+	$scope.sortType = false; 
 	
 	// sort the soundtracks based on the first character of their series' name 
 	$scope.sortAscOrDesc = function(){	
@@ -75,9 +75,16 @@ appControllers.controller('MyController', ['$scope', '$http', 'Shared', function
 				if(field === "$$hashKey"){
 					continue;
 				}
-				var val = "\"" + currRow[field] + "\""; // the value might contain commas, so enclose in quotes
-				val = val.replace(/\\n/g, "");
-				currLine += val + ",";
+				if(currRow[field] === ""){
+					// there might not be an image or special note 
+					currLine += "\"\",";
+				}else{
+					var val = currRow[field];
+					val = val.replace(/\"/g, "'"); // replace any double quotes with single quotes
+					val = "\"" + val + "\""; // the value might contain commas, so enclose in quotes
+					val = val.replace(/\\n/g, "");
+					currLine += val + ",";
+				}
 			}
 			
 			// then replace the trailing comma with a new line
