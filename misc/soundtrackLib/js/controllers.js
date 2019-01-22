@@ -40,6 +40,8 @@ appControllers.controller('MyController', ['$scope', '$http', 'Shared', function
 			});
 			$scope.sortType = false;
 		}
+		
+		sessionStorage.setItem('soundtrackData', JSON.stringify($scope.soundtracks));
 	}
 	
 	// find index of a particular album listing in the soundtracks array 
