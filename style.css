@@ -20,6 +20,10 @@ html, body{
 	height: 100%;
 }
 
+.bold{
+	font-weight: bold;
+}
+
 h2.title{
 	text-align: center;
 	font-family: 'PT Sans', sans-serif;
