@@ -23,7 +23,8 @@ body{
 }
 #ascii{
 	display:block;
-	font-size: 8px;
+	text-align: center;
+	/*font-size: 8px;*/
 }
 #buttons{
 	text-align: center;
@@ -32,6 +33,11 @@ p{
 	font-family: monospace;
 	text-align:center;
 	color: #fff;
+}
+pre{
+	font-size: 3px;
+	color: #fff;
+	background-color: #000;
 }
 </style>
 
@@ -107,7 +113,7 @@ function getAscii(){
 	var div = document.getElementById("ascii");
 	var data = context.getImageData(0, 0, canvas.width, canvas.height).data;
 	counter = 0;
-	var line = "<p>";
+	var line = "<pre>";
 	for(var i = 0; i <= data.length - 4; i+=4){
 		var r = data[i];
 		var g = data[i+1];
@@ -118,9 +124,9 @@ function getAscii(){
 		
 		if(counter === canvas.width){
 			counter = 0;
-			line += "</p>";
-			$('#ascii').append(line);
-			line = "<p>";
+			line += "\n";
+			//$('#ascii').append(line);
+			//line = "<pre>";
 		}
 		
 		//evaluate the grey
@@ -154,6 +160,8 @@ function getAscii(){
 		
 		counter++;
 	}
+	line += "</pre>";
+	$('#ascii').append(line);
 }
 
 function clearPic(){
@@ -162,8 +170,8 @@ function clearPic(){
 }
 
 function highlight(){
-	$('p').css('background-color', 'steelblue');
-	$('p').css('color', '#FFF');
+	$('pre').css('background-color', 'steelblue');
+	$('pre').css('color', '#FFF');
 }
 </script>
 
