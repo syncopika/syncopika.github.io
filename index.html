@@ -49,7 +49,7 @@
 			<p>I'm <span class="bold">Nicholas</span>. 熊志文 is my Chinese name. </p>
 			<p><span class="bold">I really enjoy music composition/arrangement and programming!</span> I'm particularly interested in developing applications for artistic endeavors.</p>
 			<br>
-			<p> I've been using 'syncopika' as my username in various places. It's a combination of syncopation (I like syncopated rhythms) and 'pikapika' (Japanese onomatopoeia for something sparkly). Not the best name, but easy to find and kinda unique, I think. :D</p>
+			<p> I've been using 'syncopika' as my username in various places. It's a combination of <span class='bold'>synco</span>pation (I like syncopated rhythms) and '<span class='bold'>pika</span>pika' (Japanese onomatopoeia for something sparkly). Not the best name, but easy to find and kinda unique, I think. :D</p>
 			<br>
 			<p>I also enjoy listening to anime soundtracks. <a href='misc/soundtrackLib/index.html'><b>here</b></a> is a library I'm putting together of soundtracks I've listened to. </p>
 			<br>
@@ -70,16 +70,6 @@
 		<div id='musicContent' class='open'>
 			<h2>music works</h2>
 			<p>more original work @ my <a href='http://greenbearmusic.bandcamp.com' style='color: #000FFF'>bandcamp</a></p>
-			<hr>
-			<h3>original</h3>
-				<div id='bandcamp'>
-					<iframe style="border: 0; width: 80%; height: 282px;" src="https://bandcamp.com/EmbeddedPlayer/album=764407444/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/" seamless>
-					<a href="http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-10">BGM Fun Vol.10 by n.c.h</a>
-				</iframe>
-				</div>
-				<button id='bc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
-				
-			<br>
 			
 			<hr>
 			<h3>arrangements</h3>
@@ -89,15 +79,23 @@
 					</iframe>
 				</div>
 				<button id='sc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
-				<p>archive of arrangments (.wav): <b><a href='https://www.dropbox.com/sh/ac5s3aa1i9pueev/AACArNHLVBZr_xQp3ZcRfVRKa?dl=0'>here</a></b> and sheet music (score format, needs MuseScore): <b><a href='https://www.dropbox.com/sh/l39zcxbw3pns8q9/AABKSN3_DtIOiaku8CPNrd85a?dl=0'>here</a></b></p>
-			
+				<p>archive of some arrangments (.wav): <b><a href='https://www.dropbox.com/sh/ac5s3aa1i9pueev/AACArNHLVBZr_xQp3ZcRfVRKa?dl=0'>here</a></b> and sheet music (score format, needs MuseScore): <b><a href='https://www.dropbox.com/sh/l39zcxbw3pns8q9/AABKSN3_DtIOiaku8CPNrd85a?dl=0'>here</a></b></p>
 			<br>
 			
 			<hr>
 			<h3>game</h3>
 				<iframe id='gameSample' frameborder="no" width="80%" height="320" scrolling="no" src="" width="700px">
 				</iframe>
+			<br>
 			
+			<hr>
+			<h3>random, original stuff</h3>
+				<div id='bandcamp'>
+					<iframe style="border: 0; width: 80%; height: 282px;" src="https://bandcamp.com/EmbeddedPlayer/album=764407444/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/" seamless>
+					<a href="http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-10">BGM Fun Vol.10 by n.c.h</a>
+				</iframe>
+				</div>
+				<button id='bc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
 			<br>
 			
 			<hr>
@@ -106,6 +104,7 @@
 				<h2><a href='http://armouredboar.com/'>ArmouredBoar</a></h2>
 				<h2><a href='http://www.fantasytalesonline.com/'>Fantasy Tales Online</a></h2>
 				<h2><a href='http://sparmmo.com/'>Spar MMO</a></h2>
+				<h2><a href='https://wolff95.weebly.com/wolffware.html'>WolffWare</a></h2>
 			</div>
 			
 			<div class='footer'>
@@ -129,8 +128,8 @@
 				<h4 id='browserTools'><b> for browser: </b></h4>
 				<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a> (Chrome recommended)</p>
 				<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
-				<p><a href='https://syncopika.github.io/basic-JSON-generator/'> JSON generator </a></p>
 				<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
+				<p><a href='https://syncopika.github.io/basic-JSON-generator/'> JSON generator </a></p>
 				<p><a href='http://syncopika.tumblr.com/picturecompare'> picture comparer </a> (<a href='https://github.com/syncopika/jsProjects/tree/master/picture_comparer'>source</a>)</p>
 				<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
 				<br>
@@ -262,7 +261,7 @@ function showContent(id){
 
 var soundcloud = {
 1:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276332169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
-2:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/334385267&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
+2:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/481490157&color=0066cc&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false",
 3:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209110662&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false",
 4:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/264147169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
 5:"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209159656&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
