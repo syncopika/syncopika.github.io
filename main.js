@@ -174,13 +174,21 @@ const Projects = {
 }
 
 const Contact = {
+	mounted: function(){
+		//console.log(this.$refs["emailButton"]);
+		let contact = this.$refs["emailButton"];
+		contact.addEventListener('click', function(){
+			// this function comes from roulette.js
+			roulette("nhung93 at outlook.com".split(""), $("#email").html().split(""), $("#email").html(), "email" );
+		});
+	},
 	template:
 		`<div id='contactContent'>
 			<h3><a href='https://github.com/syncopika'> <i class="fa fa-github" aria-hidden="true"></i></a></h3>
 			<br>
 			<p>you can also contact me at my email below! thanks!</p>
 			<h2 id='email'>abcdef1 lm opqr,stuxzy</h2>
-			<button id='getEmail' class='btn-primary'>decode</button>
+			<button ref="emailButton" id='getEmail' class='btn-primary'>decode</button>
 		</div>`
 }
 
