@@ -1,171 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
 
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta charset='UTF-8'>
-	<title> :D </title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans">
-	<link rel="stylesheet" href="style.css">
+	<script src='vue.js'></script>
+	<script src='vue-router.js'></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://use.fontawesome.com/58938a654b.js"></script>
 	<script src="scripts/roulette.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans">
+	<link rel="stylesheet" href="style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset='UTF-8'>
+	<title>
+		hey there
+	</title>
 </head>
 
 <body>
-
-<div class='container-fluid'>
-
-	<div class='row'>
-		<div id='sidebar' class='col-lg-2 col-md-2 col-sm-12'>
-			
-			<ul>
-				<h2 class='title'>n.c.h / 熊志文</h2>
-				<p class = 'title'>welcome!</p>
-			</ul>
-			
-			<ul id='index'>
-				<hr>
-				<li id='about' onclick='showContent(this.id)'><a href="#">about</a></li>
-				<li id='music' onclick='showContent(this.id)'><a href='#'>music</a></li>
-				<li id='projects' onclick='showContent(this.id)'><a href='#'>projects</a></li>
-				<li><a href='https://syncopika.github.io/blog'>blog</a></li>
-				<li id='contact' onclick='showContent(this.id)'><a href='#'>contact</a></li>
-				<hr>
-				<p id='footerTag'>c. 2016 </p>
-			</ul>
-		</div>
-		
-		<div id='content' class='col-lg-6 col-md-6 col-sm-12'>
-		</div>
-		
-		
-		<!-- initially hidden content -->
-		<div id='aboutContent' class='open'>
-			<h3> hi! welcome to my page. </h3>
-			<br>
-			<p>I'm <span class="bold">Nicholas</span>. 熊志文 is my Chinese name. </p>
-			<p><span class="bold">I really enjoy music composition/arrangement and programming!</span> I'm particularly interested in developing applications for artistic endeavors.</p>
-			<br>
-			<p> I've been using 'syncopika' as my username in various places. It's a combination of <span class='bold'>synco</span>pation (I like syncopated rhythms) and '<span class='bold'>pika</span>pika' (Japanese onomatopoeia for something sparkly). Not the best name, but easy to find and kinda unique, I think. :D</p>
-			<br>
-			<p>I also enjoy listening to anime soundtracks. <a href='misc/soundtrackLib/index.html'><b>here</b></a> is a library I'm putting together of soundtracks I've listened to. </p>
-			<br>
-			<br>
-			<p> other places I'm at: </p>
-			<ul id='links'>
-				<li><a href='https://github.com/syncopika'>GitHub <i class="fa fa-github" aria-hidden="true"></i></a></li>
-				<li><a href='http://soundcloud.com/syncopika'>SoundCloud <i class="fa fa-soundcloud" aria-hidden="true"></i></a></li>
-				<li><a href='https://www.youtube.com/user/OrchestralPikachu'>YouTube <i class="fa fa-youtube" aria-hidden="true"></i></a></li>
-				<li><a href='http://opengameart.org/users/syncopika'>OpenGameArt</a></li>
-			</ul>
-			<br>
-			<p><span class="bold"> thanks for visiting! </span></p>
-			<p id='footerTag2'>c. 2016 </p>
-		</div>
-		
-		<!-- MUSIC -->
-		<div id='musicContent' class='open'>
-			<h2>music works</h2>
-			<p>more original work @ my <a href='http://greenbearmusic.bandcamp.com' style='color: #000FFF'>bandcamp</a></p>
-			
-			<hr>
-			<h3>arrangements</h3>
-				<p> I love creating arrangements! You can find my most recent work at my YouTube channel. </p>
-				<div id='soundcloud'>
-					<iframe id='scSample' width="80%" height="102" scrolling="no" frameborder="no" src="">
-					</iframe>
-				</div>
-				<button id='sc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
-				<p>archive of some arrangments (.wav): <b><a href='https://www.dropbox.com/sh/ac5s3aa1i9pueev/AACArNHLVBZr_xQp3ZcRfVRKa?dl=0'>here</a></b> and sheet music (score format, needs MuseScore): <b><a href='https://www.dropbox.com/sh/l39zcxbw3pns8q9/AABKSN3_DtIOiaku8CPNrd85a?dl=0'>here</a></b></p>
-			<br>
-			
-			<hr>
-			<h3>game</h3>
-				<iframe id='gameSample' frameborder="no" width="80%" height="320" scrolling="no" src="" width="700px">
-				</iframe>
-			<br>
-			
-			<hr>
-			<h3>random, original stuff</h3>
-				<div id='bandcamp'>
-					<iframe style="border: 0; width: 80%; height: 282px;" src="https://bandcamp.com/EmbeddedPlayer/album=764407444/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/" seamless>
-					<a href="http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-10">BGM Fun Vol.10 by n.c.h</a>
-				</iframe>
-				</div>
-				<button id='bc' type='button' class='btn btn-primary btn-sm' onclick='next(this.id)'>next</button>
-			<br>
-			
-			<hr>
-			<div id="clients">
-				<h3>clients</h3>
-				<h2><a href='http://armouredboar.com/'>ArmouredBoar</a></h2>
-				<h2><a href='http://www.fantasytalesonline.com/'>Fantasy Tales Online</a></h2>
-				<h2><a href='http://sparmmo.com/'>Spar MMO</a></h2>
-				<h2><a href='https://wolff95.weebly.com/wolffware.html'>WolffWare</a></h2>
+	<div id='app' class='container-fluid'>
+		<div class='row'>
+			<div id='sidebar' class='col-lg-2 col-md-2 col-sm-12'>
+				
+				<ul>
+					<h2 class='title'><router-link to="/" id="homelink">n.c.h / 熊志文</router-link></h2>
+					<p class='title'>welcome!</p>
+				</ul>
+				
+				<ul id='index'>
+					<hr>
+					<li id='about'><router-link to="/about">about</router-link></li>
+					<li id='music'><router-link to="/music">music</router-link></li>
+					<li id='projects'><router-link to="/projects">projects</router-link></li>
+					<!-- <li><a href='https://syncopika.github.io/blog'>blog</a></li> -->
+					<li id='contact'><router-link to="/contact">contact</router-link></li>
+					<hr>
+					<p id='footerTag'>c. 2016 </p>
+				</ul>
 			</div>
 			
-			<div class='footer'>
-				<p id='footerTag2'>(c) n.c.h works 2016-2019 </p>
+			<div id='content' class='col-lg-6 col-md-6 col-sm-12'>
+				<router-view></router-view>
 			</div>
+			
 		</div>
-		
-		<!-- PROJECTS -->
-		<div id='projectsContent' class='open'>
-			<h2>my programming projects</h2>
-			<hr>
-			<p style='font-size: 13px'>some of the web applications are not optimized for mobile viewing, sorry! </p>
-			<br>
-			<!-- nothing really cool...
-			<h3>data visualization</h3>
-				<p><a href='http://syncopika.tumblr.com/audiovisual'>audio visualizations</a></p>
-				<p><a href='http://syncopika.tumblr.com/datavisualdemo'>sample YouTube data visualizations</a></p>
-			<br>
-			-->
-			<h3>tools</h3>
-				<h4 id='browserTools'><b> for browser: </b></h4>
-				<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a> (Chrome recommended)</p>
-				<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
-				<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
-				<p><a href='https://syncopika.github.io/basic-JSON-generator/'> JSON generator </a></p>
-				<p><a href='http://syncopika.tumblr.com/picturecompare'> picture comparer </a> (<a href='https://github.com/syncopika/jsProjects/tree/master/picture_comparer'>source</a>)</p>
-				<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
-				<br>
-				<h4 id='desktopTools'><b>for desktop: </b></h4>
-				<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'>gifCatch for Windows</a></p>
-				<p><a href='https://github.com/syncopika/cute_animator'> cute animator </a></p>
-				<p><a href='https://github.com/syncopika/winsock-server-client'>basic chat server/client</a></p>
-			<br>	
-			<h3>fun</h3>
-				<p><a href='https://github.com/syncopika/visual_novel_maker'> visual novel maker </a> (<a href='https://syncopika.github.io/visual_novel_maker/'>demo</a>)</p>
-				<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>) </p>
-				<p><a href='https://syncopika.github.io/chinese_quiz/'> Chinese Quiz (普通話) </a></p>
-				<p><a href='misc/asciiArt.html'> ASCII art </a></p>
-			<br>
-			<!--
-			<h3>misc.</h3>
-				<p><a href='http://syncopika.tumblr.com/greenbearmusic'> other website idea</a></p>
-				<p><a href='http://syncopika.tumblr.com/aquarium'>aquarium (click on the shark!)</a></p>
-			-->
-			<p id='footerTag2'>(c) n.c.h works 2016-2019 </p>
-		</div>
-		
-		<!-- CONTACT -->
-		<div id='contactContent' class='open'>
-			<h3><a href='https://github.com/syncopika'> <i class="fa fa-github" aria-hidden="true"></i></a></h3>
-			<br>
-			<p>you can also contact me at my email below! thanks!</p>
-			<h2 id='email'>abcdef1 lm opqr,stuxzy</h2>
-			<button id='getEmail' class='btn-primary'>decode</button>
-		<div>
-		
 	</div>
-
-</div><!--  end container -->
-
+	<script src='main.js'></script>
 </body>
+
+
+
 
 <script>
 
@@ -198,7 +83,8 @@ $(window).resize(function(){
 		$('#sidebar').height("100%");
 	}
 });
-	
+
+/*	
 $('#aboutContent').hide();
 $('#musicContent').hide();
 $('#projectsContent').hide();
@@ -308,10 +194,12 @@ function next(id){
 	bind button in contact section to roulette function
 */
 var contact = document.getElementById('getEmail');
-contact.addEventListener('click', function(){
-	roulette("nhung93 at outlook.com".split(""), $("#email").html().split(""), $("#email").html(), "email" );
-});
+//contact.addEventListener('click', function(){
+//	roulette("nhung93 at outlook.com".split(""), $("#email").html().split(""), $("#email").html(), "email" );
+//});
 
 </script>
+
+
 
 </html>
