@@ -1,7 +1,7 @@
 const Home = {
 	template: `
 		<div id='home'>
-			<h4> hi! feel free to look around. :) </h4>
+			<h4> hello! feel free to look around. :) </h4>
 		</div>
 	`
 }
@@ -43,31 +43,31 @@ const Music = {
 
 		var bandcamp = [
 			{
-				"style": "border: 0; width: 700px; height: 282px;",
+				"style": "border: 0; width: 80%; height: 282px;",
 				"src": "https://bandcamp.com/EmbeddedPlayer/album=2349212220/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/", 
 				"href": "http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-6",
 				"text": "BGM Fun Vol.6 by n.c.h"
 			},
 			{
-				"style": "border: 0; width: 700px; height: 282px;",
+				"style": "border: 0; width: 80%; height: 282px;",
 				"src": "https://bandcamp.com/EmbeddedPlayer/album=932190421/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/", 
 				"href": "http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-7",
 				"text": "BGM Fun Vol.7 by n.c.h"
 			},
 			{
-				"style": "border: 0; width: 700px; height: 282px;",
+				"style": "border: 0; width: 80%; height: 282px;",
 				"src": "https://bandcamp.com/EmbeddedPlayer/album=1715420384/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/", 
 				"href": "http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-2",
 				"text": "BGM Fun Vol.2 by n.c.h"
 			},
 			{
-				"style": "border: 0; width: 700px; height: 282px;",
+				"style": "border: 0; width: 80%; height: 282px;",
 				"src": "https://bandcamp.com/EmbeddedPlayer/album=3271172078/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/", 
 				"href": "http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-9",
 				"text": "BGM Fun Vol.9 by n.c.h"
 			},
 			{
-				"style": "border: 0; width: 700px; height: 282px;",
+				"style": "border: 0; width: 80%; height: 282px;",
 				"src": "https://bandcamp.com/EmbeddedPlayer/album=764407444/size=large/bgcol=ffffff/linkcol=0687f5/artwork=small/transparent=true/", 
 				"href": "http://greenbearmusic.bandcamp.com/album/bgm-fun-vol-10",
 				"text": "BGM Fun Vol.10 by n.c.h"
@@ -146,9 +146,9 @@ const Projects = {
 			<h4 id='browserTools'><b> for browser: </b></h4>
 			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a> (Chrome recommended)</p>
 			<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
+			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
 			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
 			<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
-			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
 			<br>
 			
 			<h4 id='desktopTools'><b>for desktop: </b></h4>
@@ -192,6 +192,52 @@ const Contact = {
 		</div>`
 }
 
+const Blog = {
+	data: function(){
+		return {'posts': [],
+				'currIndex': 0,
+				'sliceSize': 5 // show 5 blog posts at a time.
+				};
+	},
+	
+	beforeMount: function(){
+		// retrieve the list of blog entries and return them as a list
+		let list = [];
+		let listOfEntries = fetch('blog_entries/entry_list.txt', {'method': 'GET'});
+		listOfEntries.then((res) => res.text()).then((text) => {
+			let entryList = text.split('\n');
+			// get the json files 
+			let promiseList = [];
+			for(let i = 0; i < entryList.length; i++){
+				promiseList.push(new Promise((resolve, err) => {
+					resolve(fetch('blog_entries/'+entryList[i], {'method': 'GET'}).then((res)=>res.json()));
+				}));
+			}
+			Promise.all(promiseList).then((res) => {
+				console.log(res);
+				res.reverse(); // assuming in ascending order currently
+				this.posts = res;
+			});
+		});
+		
+	},
+	template:
+		`<div>
+			<br>
+			<p> just experimenting a bit here... </p>
+			<div v-for="(entry, index) in posts.slice(currIndex)">
+				<h3> Entry #{{posts.length - index }}, {{posts[index].date}} </h3>
+				<hr>
+				<span v-html=posts[index].content></span>
+				<hr>
+				<p> Tags: {{posts[index].tags.join(",")}} </p>
+				<br>
+			</div>
+		</div>`
+	
+}
+
+
 const NotFound = {
 	template: 
 	`<div>
@@ -208,6 +254,7 @@ const router = new VueRouter({
 		{path: '/about', component: About},
 		{path: '/music', component: Music},
 		{path: '/projects', component: Projects},
+		{path: '/blog', component: Blog},
 		{path: '/contact', component: Contact},
 		{path: '/not_found', component: NotFound}
 	]
