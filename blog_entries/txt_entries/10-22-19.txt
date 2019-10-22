@@ -1,0 +1,22 @@
+--date
+10-22-2019
+
+--tags
+stuff, improvements
+
+--content
+
+--p
+trying out a new feature: code blocks! :)
+
+--p
+this is a code sample in Python 3.
+
+--code
+def say_hello():
+    print("hello there!")
+
+say_hello()
+
+--p 
+that's all for today!

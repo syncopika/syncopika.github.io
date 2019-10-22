@@ -184,9 +184,8 @@ const Contact = {
 	},
 	template:
 		`<div id='contactContent'>
-			<h3><a href='https://github.com/syncopika'> <i class="fa fa-github" aria-hidden="true"></i></a></h3>
 			<br>
-			<p>you can also contact me at my email below! thanks!</p>
+			<p>you can contact me at my email below! thanks!</p>
 			<h2 id='email'>abcdef1 lm opqr,stuxzy</h2>
 			<button ref="emailButton" id='getEmail' class='btn-primary'>decode</button>
 		</div>`
