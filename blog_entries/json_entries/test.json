@@ -1,0 +1,5 @@
+{
+	"content": "<h3> hey hey hey this is a test whooo. </h3> <br><p>These blog entries are fetched from the blog_entries folder as json files and rendered here with the help of Vue. neat.</p>",
+	"date": "10/19/2019",
+	"tags": ["first"]
+}

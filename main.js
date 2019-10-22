@@ -210,11 +210,11 @@ const Blog = {
 			let promiseList = [];
 			for(let i = 0; i < entryList.length; i++){
 				promiseList.push(new Promise((resolve, err) => {
-					resolve(fetch('blog_entries/'+entryList[i], {'method': 'GET'}).then((res)=>res.json()));
+					resolve(fetch('blog_entries/json_entries/'+entryList[i], {'method': 'GET'}).then((res)=>res.json()));
 				}));
 			}
 			Promise.all(promiseList).then((res) => {
-				console.log(res);
+				//console.log(res);
 				res.reverse(); // assuming in ascending order currently
 				this.posts = res;
 			});
