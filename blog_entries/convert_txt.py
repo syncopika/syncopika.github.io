@@ -31,6 +31,7 @@ flags = {
 	"--h3": create_html_element("<h3>", "</h3>"),
 	"--p": create_html_element("<p>", "</p>"),
 	"--code": create_html_element("<pre><code>", "</code></pre>"),
+	"--endcode": None,
 	"--image": create_img_element
 }
 
@@ -54,7 +55,7 @@ for entry in txt_entries:
 			last_flag = None
 			code_block = ""
 			for line in lines:
-				if line.strip() in metadata_flags:
+				if line.strip() in metadata_flags and last_flag is None: # last_flag might be "--code"
 					if line.strip() == "--content":
 						json_doc["content"] = ""
 					
@@ -66,16 +67,22 @@ for entry in txt_entries:
 					if last_metadata_flag == "--tags":
 						# needs to be a list 
 						metadata = list(map(lambda x: x.strip(), line.split(',')))
+					elif last_metadata_flag == "--date":
+						metadata = line.replace("-","/") # if date has dashes, use slashes instead
 					else:
 						metadata = line
 					json_doc[metadata_flags[last_metadata_flag]] = metadata 
 					last_metadata_flag = None
 				elif line.strip() in flags:
-					if code_block:
+					if code_block and "--endcode" in line:
 						data = flags[last_flag](code_block)
 						json_doc["content"] += data
 						code_block = ""
-					last_flag = line.strip() 
+						last_flag = None
+					elif last_flag != "--code":
+						last_flag = line.strip()
+					else:
+						code_block += line
 				elif last_flag:
 					if last_flag == "--code":
 						code_block += line
@@ -96,16 +103,15 @@ for entry in txt_entries:
 			new_json_entry.write(json.dumps(json_doc, indent=4))
 			new_json_entry.close()
 			
-
 			# update list of all entries also 
 			# also this loop is not currently working. might need to strip first to compare
 			# i.e. map over readlines and strip each element
 			entry_list = None
-			with open("entry_list.txt", "r") as f:
+			with open("entry_list.txt", "r", encoding="utf-8") as f:
 				entry_list = f.readlines()
 			
 			if new_entry_name not in [x.strip() for x in entry_list]:
-				with open("entry_list.txt", "a") as f:
+				with open("entry_list.txt", "a", encoding="utf-8") as f:
 					f.write("\n")
 					f.write(new_entry_name)
 				

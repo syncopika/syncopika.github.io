@@ -1,0 +1,37 @@
+--date
+11/9/2019
+
+--tags
+stuff
+
+--content
+
+--h3
+about this blog
+
+--p
+Each blog post starts off as a .txt file with a basic format shown below.
+
+--code
+--date 
+11/9/2019
+
+--tags
+something
+
+--content
+
+--h2
+a header
+
+--p
+something goes here
+
+--endcode
+
+--p
+So I have some basic tags representing metadata (such as date, tags) and a content flag to signal the start of the content of the post.
+--p
+Then for the content I have flags like --p, which converts the following line below it into a corresponding HTML element, which in this case is a paragraph element.
+--p
+I made a really rudimentary parser in Python to convert the .txt file into JSON, which gets consumed by Vue and presented in HTML since I converted my text into strings containing HTML elements.

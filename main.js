@@ -1,7 +1,7 @@
 const Home = {
 	template: `
 		<div id='home'>
-			<h4> hello! feel free to look around. :) </h4>
+			<h4> hello! </h4>
 		</div>
 	`
 }
@@ -32,16 +32,24 @@ const About = {
 
 const Music = {
 	data: function(){
-		var soundcloud = [
-			"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276332169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
-			"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/481490157&color=0066cc&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false",
-			"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209110662&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false",
-			"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/264147169&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
-			"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/209159656&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false",
-			"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/335892402&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"
+		
+		let getSoundCloudLink = function(trackId){
+			return "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/" + trackId + "&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false";
+		};
+		
+		// track ids 
+		let soundcloud = [
+			276332169,
+			481490157,
+			209110662,
+			255402027,
+			264147169,
+			209159656,
+			335892402,
+			337453719
 		];
 
-		var bandcamp = [
+		let bandcamp = [
 			{
 				"style": "border: 0; width: 80%; height: 282px;",
 				"src": "https://bandcamp.com/EmbeddedPlayer/album=2349212220/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/", 
@@ -74,9 +82,10 @@ const Music = {
 			}
 		];
 		
-		var gameMusicSample = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false";
+		let gameMusicSample = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false";
 		
 		return ({
+			'getSoundCloudLink': getSoundCloudLink,
 			'soundcloudSamples': soundcloud,
 			'bandcampSamples': bandcamp,
 			"gameMusicSample": gameMusicSample,
@@ -93,7 +102,7 @@ const Music = {
 			<h3>arrangements</h3>
 				<p> I love creating arrangements! You can find my most recent work at my YouTube channel. </p>
 				<div id='soundcloud'>
-					<iframe id="gameSample" width="80%" height="102" scrolling="no" frameborder="no" v-bind:src="soundcloudSamples[soundcloudIndex]">
+					<iframe id="gameSample" width="80%" height="102" scrolling="no" frameborder="no" v-bind:src="getSoundCloudLink(soundcloudSamples[soundcloudIndex])">
 					</iframe>
 				</div>
 				<button id='sc' type='button' class='btn btn-primary btn-sm' v-on:click="soundcloudIndex = (soundcloudIndex+1)%soundcloudSamples.length">next</button>
