@@ -204,8 +204,23 @@ const Blog = {
 	data: function(){
 		return {'posts': [],
 				'currIndex': 0,
-				'sliceSize': 5 // show 5 blog posts at a time.
+				'sliceSize': 3 // show 3 blog posts at a time.
 				};
+	},
+	
+	methods: {
+		prevPage(){
+			this.currIndex -= this.sliceSize;
+			if(this.currIndex <= 0){
+				this.currIndex = 0;
+			}
+		},
+		nextPage(){
+			this.currIndex += this.sliceSize;
+			if(this.currIndex >= this.posts.length){
+				this.currIndex -= this.sliceSize;
+			}
+		}
 	},
 	
 	beforeMount: function(){
@@ -233,13 +248,25 @@ const Blog = {
 		`<div>
 			<br>
 			<p> just experimenting a bit here... </p>
-			<div v-for="(entry, index) in posts.slice(currIndex)">
-				<h3> Entry #{{posts.length - index }}, {{posts[index].date}} </h3>
+			<div v-for="(entry, index) in posts.slice(currIndex, currIndex + sliceSize)">
+				
+				<h3 v-if="posts[index+currIndex].title"> 
+					Entry #{{posts.length - (index + currIndex) }} - {{posts[index+currIndex].title}}, {{posts[index + currIndex].date}} 
+				</h3>
+				<h3 v-else> 
+					Entry #{{posts.length - (index + currIndex)}}, {{posts[index + currIndex].date}} 
+				</h3>
+				
+				
 				<hr>
-				<span v-html=posts[index].content></span>
+				<span v-html="posts[index + currIndex].content"></span>
 				<hr>
-				<p> Tags: {{posts[index].tags.join(",")}} </p>
+				<p> Tags: {{posts[index + currIndex].tags.join(",")}} </p>
 				<br>
+			</div>
+			<div>
+				<button @click="prevPage">newer</button>
+				<button @click="nextPage">older</button>
 			</div>
 		</div>`
 	

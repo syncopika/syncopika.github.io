@@ -1,0 +1,8 @@
+{
+    "title": "some new updates\n",
+    "date": "11/16/19\n",
+    "tags": [
+        "stuff"
+    ],
+    "content": "<p>added title metadata (why didn't I think of that the first time?)\n</p><p>also sorta have pagination set up! It's currently 3 blog posts per page and you can go from newest to oldest (no numbered pages right now).\n</p><p>neat! :D</p>"
+}

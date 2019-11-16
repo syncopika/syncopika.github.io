@@ -1,8 +1,0 @@
-{
-    "date": "10/22/2019\n",
-    "tags": [
-        "stuff",
-        "improvements"
-    ],
-    "content": "\n<p>trying out a new feature: code blocks! :)\n</p><p>this is a code sample in Python 3.\n</p><pre><code>def say_hello():\n    print(\"hello there!\")\n\nsay_hello()\n</code></pre><p>that's all for today!</p>"
-}
