@@ -154,16 +154,17 @@ const Projects = {
 			
 			<h4 id='browserTools'><b> for browser: </b></h4>
 			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a> (Chrome recommended)</p>
-			<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
-			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
-			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
 			<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
+			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
+			<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
+			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
 			<br>
 			
 			<h4 id='desktopTools'><b>for desktop: </b></h4>
-			<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'>gifCatch for Windows</a></p>
+			<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'>gifCatch</a></p>
 			<p><a href='https://github.com/syncopika/cute_animator'> cute animator </a></p>
-			<p><a href='https://github.com/syncopika/winsock-server-client'>basic chat server/client</a></p>
+			<p><a href='https://github.com/syncopika/winsock-server-client'>chat server/client</a></p>
+			<p><a href='https://github.com/syncopika/winsock-udp-screencast'>screencast</a></p>
 			<br>	
 
 			<h4><b> random, misc stuff </b></h4>
