@@ -1,8 +1,19 @@
 import os
 import json
+from PIL import Image
 
 def create_img_element(src, alt="", class_name=""):
-	return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\">"
+	src = src.strip()
+	# change image dimensions as needed (take 10 percent for now and round for now if over 1000)
+	with Image.open(f"../{src}") as img:
+		width, height = img.size
+		#print(f"{src} - height:{height}, width:{width}");
+		if height > 900 or width > 900:
+			newHeight = int(height * .16)
+			newWidth = int(width * .16)
+			return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\" height={newHeight}px width={newWidth}px>"
+		else:
+			return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\">"
 	
 def create_html_element(open_tags="", close_tags=""):
 	def create_el(data):
@@ -11,9 +22,6 @@ def create_html_element(open_tags="", close_tags=""):
 	
 def create_element(func, data, open_tags="", close_tags=""):
 	return func(data, open_tags, close_tags)
-	
-def convert_txt_entry(textfile, destination):
-	pass
 
 def get_filenames(directory):
 	lst = os.listdir(directory)
@@ -33,7 +41,11 @@ flags = {
 	"--p": create_html_element("<p>", "</p>"),
 	"--code": create_html_element("<pre><code>", "</code></pre>"),
 	"--endcode": None,
-	"--image": create_img_element
+	"--image": create_img_element,
+}
+
+style = {
+	"--br": "<br />"
 }
 
 
@@ -47,7 +59,6 @@ json_entries = set(get_filenames("json_entries"))
 # compare the two. for every txt entry not in json entries, convert it
 # note that when this script runs it basically recreates every blog entry in json! :|
 for entry in txt_entries:
-	#if entry not in json_entries:
 	# create new json obj for this blog entry
 	json_doc = {}
 	with open(f"txt_entries/{entry}.txt", 'r') as file:
@@ -56,7 +67,13 @@ for entry in txt_entries:
 		last_flag = None
 		code_block = ""
 		for line in lines:
-			if line.strip() in metadata_flags and last_flag is None: # last_flag might be "--code"
+			if line.strip() == "" and last_flag != "--code":
+				last_flag = None
+				
+			elif line.strip() in style:
+				json_doc["content"] += style[line.strip()]
+				
+			elif line.strip() in metadata_flags and last_flag is None: # last_flag might be "--code"
 				if line.strip() == "--content":
 					json_doc["content"] = ""
 					last_metadata_flag = None
@@ -91,15 +108,15 @@ for entry in txt_entries:
 				if last_flag == "--code":
 					code_block += line
 				else:
+					#print(f"last flag: {last_flag}, line: {line}")
 					data = flags[last_flag](line)
 					json_doc["content"] += data
-					last_flag = None
 					
 		if code_block:
 			data = flags[last_flag](code_block)
 			json_doc["content"] += data		
 
-		print(f"processing: {json_doc['date']}")
+		print(f"processed: {json_doc['date']}")
 		
 		# need some unique identifier for entry!
 		new_entry_name = f"{entry}.json"

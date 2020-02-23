@@ -1,0 +1,106 @@
+--date 
+2/22/20
+
+--tags
+life, travel
+
+--content
+
+-h3
+solo trip to Taiwan
+
+--p
+I went to Taiwan from Jan 24 - Feb 3! It was pretty fun overall and I did most of the things I planned to do. :)
+I spent the first 4 days in Taipei, 2 days in Chiayi and then the rest in Taipei again. It was also Chinese New Year so it was pretty busy and saw many businesses burn incense, light firecrackers and make food offerings, presumably to maximize their fortune for the new year.
+
+--p
+I took Cathay Pacific (economy) from IAD to HKG, and then HKG to TPE. Overall the flight was not bad and on time. Going to HKG was almost 16 hours but at least a couple hours shorter on the return flight.
+
+--p
+I got to practice whatever Mandarin I knew (which is not a lot), learned some new words (the word of this trip was 口罩(kou3 zhao4) thanks to the coronavirus), and struggled a ton with the language barrier :/.
+Taiwan was a lot colder than I expected it to be; it was unfortunately mostly not shorts-wearing weather. It was my first time in Taiwan during the winter!
+
+--p
+I also got to see some new places I hadn't been to yet like Shifen, Houtong Cat Village, Wulai and Alishan in Chiayi. And of course tried lots of new food and saw quite a few cats :D.
+
+--p
+Here are some pictures! (you can right-click on any of them and open in a new tab for a better view)
+
+--h3 
+Houtong Cat Village
+--image
+blog_entries/images/taiwan trip 2020/houtong1.jpg
+blog_entries/images/taiwan trip 2020/houtong2.jpg
+blog_entries/images/taiwan trip 2020/cat1.jpg
+blog_entries/images/taiwan trip 2020/cat2.jpg
+blog_entries/images/taiwan trip 2020/cat3.jpg
+blog_entries/images/taiwan trip 2020/cat4.jpg
+
+--p
+Above are photos taken from Houtong Cat Village! There's a visitor center on one side of the train station that gives some info on the history of the town (if I recall correctly it used to be a coal mining town).
+The actual village is on the other side of the station. There were, of course, many cats wandering about despite it being rainy. There are also cafes with cats as well.
+
+--br
+--br
+
+--h3 
+Alishan
+--image
+blog_entries/images/taiwan trip 2020/alishan1.jpg
+blog_entries/images/taiwan trip 2020/alishan2.jpg
+blog_entries/images/taiwan trip 2020/alishan3.jpg
+blog_entries/images/taiwan trip 2020/alishan4.jpg
+blog_entries/images/taiwan trip 2020/alishan5.jpg
+blog_entries/images/taiwan trip 2020/alishan6.jpg
+blog_entries/images/taiwan trip 2020/alishan7.jpg
+
+--p
+Above are photos from Alishan in Chiayi. Chiayi is quite a bit south of Taipei but easily reached in about an hour and a half via the high speed rail.
+It takes about 2 hours by bus to reach Alishan from Chiayi. On the way you can see lots of tea plantations! Alishan is a really big area with lots of trails and some very huge, ancient trees. If coming by bus admission is 150 NT.
+I got a fried chicken leg 便當 (bian4 dang1) for lunch, which was a bit cold (since the side dishes I selected were sitting out for a bit) but tasty.
+It can get cold up there in Alishan compared to ground level (it was probably in the 40s (Fahrenheit)).
+
+--br
+--br
+
+--h3 
+Wulai
+--image
+blog_entries/images/taiwan trip 2020/wulai1.jpg
+blog_entries/images/taiwan trip 2020/wulai2.jpg
+blog_entries/images/taiwan trip 2020/wulai3.jpg
+blog_entries/images/taiwan trip 2020/wulai4.jpg
+blog_entries/images/taiwan trip 2020/wulai5.jpg
+
+--p
+Above are photos from Wulai. Wulai is very accessible from Taipei - you can take the Green line on the MRT to Xindian station and from there you can just take a bus all the way to Wulai! Super convenient.
+There's a little train to take you up to the Wulai waterfall. Too bad it was so rainy when I went! The food I had for lunch, which featured indigenous Taiwanese (Atayal) cuisine, was very good.
+
+--br
+--br
+
+--h3 
+Xiangshan
+--image
+blog_entries/images/taiwan trip 2020/elephantmountain1.jpg
+blog_entries/images/taiwan trip 2020/elephantmountain2.jpg
+blog_entries/images/taiwan trip 2020/elephantmountain3.jpg
+
+--p
+Above are photos from Elephant Mountain in Taipei! Elephant Mountain is reachable from the Xiangshan MRT station (last stop on the Red line). I thought the climb here was a bit intense as the stairs were numerous and very steep. 
+The climb took me maybe at least 20 minutes(?) but the view was worth it!
+
+--br
+--br
+
+--h3 
+Keelung
+--image
+blog_entries/images/taiwan trip 2020/keelung1.jpg
+blog_entries/images/taiwan trip 2020/keelung2.jpg
+blog_entries/images/taiwan trip 2020/keelung3.jpg
+
+--p
+Above are photos from Keelung. It takes about 45 min. by local train to get there from Taipei. I visited this really nice park / old fort (Gongzi Liao Fort) that's right behind National Taiwan Ocean University. The views there are super nice!
+I was also lucky the weather that day was perfect.
+
