@@ -11,7 +11,7 @@ const About = {
 	template:
 		`<div id='aboutContent'>
 			<br>
-			<p>I'm <span class="bold">Nicholas</span>. 熊志文 is my Chinese name. </p>
+			<p>Thank you for visiting! I'm Nicholas. 熊志文 is my Chinese name. </p>
 			<br>
 			<p>I really enjoy music composition/arrangement and programming! I'm particularly interested in developing applications for artistic endeavors. <br>I also play the trumpet. </p>
 			<br>
@@ -25,7 +25,6 @@ const About = {
 				<li><a href='http://opengameart.org/users/syncopika'>OpenGameArt</a></li>
 			</ul>
 			<br>
-			<p><span class="bold"> thanks for visiting! </span></p>
 			<p id='footerTag2'>c. 2016 </p>
 		</div>`
 }
@@ -82,7 +81,9 @@ const Music = {
 			}
 		];
 		
-		let gameMusicSample = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false";
+		let gameMusicSample = [
+		"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false",
+		"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/961667977&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false"]
 		
 		return ({
 			'getSoundCloudLink': getSoundCloudLink,
@@ -111,7 +112,7 @@ const Music = {
 			
 			<hr>
 			<h3>game</h3>
-				<iframe id='gameSample' frameborder="no" width="80%" height="320" scrolling="no" v-bind:src="gameMusicSample">
+				<iframe v-for="(playlist, index) in gameMusicSample" class='gameSample' frameborder="no" width="80%" height="320" scrolling="no" v-bind:src="playlist">
 				</iframe>
 			<br>
 			
@@ -143,19 +144,13 @@ const Projects = {
 		`<div id='projectsContent'>
 			<h2>some of my programming stuff</h2>
 			<hr>
-			<p style='font-size: 13px'>some of the web applications are not optimized for mobile viewing, sorry! </p>
+			<p style='font-size: 13px'>some of my web applications are not optimized for mobile viewing! </p>
 			<br>
-			<!-- nothing really cool... maybe will improve on these someday 
-			<h3>data visualization</h3>
-				<p><a href='http://syncopika.tumblr.com/audiovisual'>audio visualizations</a></p>
-				<p><a href='http://syncopika.tumblr.com/datavisualdemo'>sample YouTube data visualizations</a></p>
-			<br>
-			-->
 			
 			<h4 id='browserTools'><b> for browser: </b></h4>
-			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll (Chrome <i>highly</i> recommended)</a></p>
-			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
+			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll (Chrome <i>highly</i> recommended atm)</a></p>
 			<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
+			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
 			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
 			<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
 			<br>
@@ -171,14 +166,9 @@ const Projects = {
 			<p><a href='https://syncopika.github.io/chinese_quiz/'> Chinese Quiz (普通話) </a></p>
 			<p><a href='https://github.com/syncopika/visual_novel_maker'> visual novel maker </a> (<a href='https://syncopika.github.io/visual_novel_maker/'>demo</a>)</p>
 			<p><a href='misc/soundtrackLib/index.html'>anime soundtracks lib</a></p>
-			<p><a href='misc/asciiArt.html'> ASCII art </a></p>
+			<p><a href='misc/asciiArt.html'> ASCII art generator </a></p>
 			<br>
 			
-			<!--
-			<h3>misc.</h3>
-				<p><a href='http://syncopika.tumblr.com/greenbearmusic'> other website idea</a></p>
-				<p><a href='http://syncopika.tumblr.com/aquarium'>aquarium (click on the shark!)</a></p>
-			-->
 			<p id='footerTag2'>(c) n.c.h works 2016-2019 </p>
 		</div>`
 }
