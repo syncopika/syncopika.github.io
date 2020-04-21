@@ -13,7 +13,7 @@ const About = {
 			<br>
 			<p>Thank you for visiting! I'm Nicholas. 熊志文 is my Chinese name. </p>
 			<br>
-			<p>I really enjoy music composition/arrangement and programming! I'm particularly interested in developing applications for artistic endeavors. <br>I also play the trumpet. </p>
+			<p>I really enjoy music composition/arrangement and programming! I'm particularly interested in developing applications for artistic endeavors. <br><br>I'm also an avid trumpet player. Currently I play on a stock Bach 5C and a silver Yamaha 4335. </p>
 			<br>
 			<p> I've been using 'syncopika' as my username in various places. It's a combination of <span class='bold'>synco</span>pation (I like syncopated rhythms) and '<span class='bold'>pika</span>pika' (Japanese onomatopoeia for something sparkly). Not the best name, but easy to find and kinda unique, I think. :D</p>
 			<br>
