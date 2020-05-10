@@ -148,7 +148,7 @@ const Projects = {
 			<br>
 			
 			<h4 id='browserTools'><b> for browser: </b></h4>
-			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll (Chrome <i>highly</i> recommended atm)</a></p>
+			<p><a href='https://syncopika.github.io/piano_roll_browser/'> a piano roll (Chrome <i>highly</i> recommended atm)</a></p>
 			<p><a href='https://syncopika.github.io/funSketch/'> funSketch</a></p>
 			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
 			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>

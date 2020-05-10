@@ -4,16 +4,17 @@ from PIL import Image
 
 def create_img_element(src, alt="", class_name=""):
 	src = src.strip()
-	# change image dimensions as needed (take 10 percent for now and round for now if over 1000)
+
 	with Image.open(f"../{src}") as img:
 		width, height = img.size
-		#print(f"{src} - height:{height}, width:{width}");
+		#print(f"{src} - height:{height}, width:{width}")
+		"""
 		if height > 900 or width > 900:
-			newHeight = int(height * .16)
-			newWidth = int(width * .16)
+			newHeight = int(height * .5)
+			newWidth = int(width * .5)
 			return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\" height={newHeight}px width={newWidth}px>"
-		else:
-			return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\">"
+		"""
+		return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\">"
 	
 def create_html_element(open_tags="", close_tags=""):
 	def create_el(data):
@@ -61,7 +62,7 @@ json_entries = set(get_filenames("json_entries"))
 for entry in txt_entries:
 	# create new json obj for this blog entry
 	json_doc = {}
-	with open(f"txt_entries/{entry}.txt", 'r') as file:
+	with open(f"txt_entries/{entry}.txt", 'r', encoding='utf-8') as file:
 		lines = file.readlines()
 		last_metadata_flag = None
 		last_flag = None
@@ -86,9 +87,9 @@ for entry in txt_entries:
 					# needs to be a list 
 					metadata = list(map(lambda x: x.strip(), line.split(',')))
 				elif last_metadata_flag == "--date":
-					metadata = line.replace("-","/") # if date has dashes, use slashes instead
+					metadata = line.replace("-","/").strip() # if date has dashes, use slashes instead
 				else:
-					metadata = line
+					metadata = line.strip()
 					
 				json_doc[metadata_flags[last_metadata_flag]] = metadata 
 				last_metadata_flag = None
