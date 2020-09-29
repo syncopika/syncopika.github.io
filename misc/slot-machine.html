@@ -1,0 +1,263 @@
+<!doctype html>
+
+<!--
+
+helpful:
+https://tympanus.net/codrops/2015/04/08/motion-blur-effect-svg/
+https://stackoverflow.com/questions/32306089/css-smooth-bounce-animation
+
+-->
+
+<html>
+
+<head>
+	<title> slot machine </title>
+	<style>
+		body {
+			font-family: monospace;
+			text-align: center;
+		}
+		
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+	
+		#theMachine {
+			display: flex;
+			justify-content: center;
+		}
+		
+		#todo {
+			width: 300px;
+			margin: 0 auto;
+		}
+		
+		#filters {
+			visibility: none;
+		}
+		
+		.slot {
+			width: 300px;
+			height: 400px; 
+			border: 1px solid #000;
+			margin-right: 2%;
+		}
+		
+		.animate {
+			animation-duration: 200ms;
+			animation-iteration-count: 2;
+		}
+		
+		.bounce {
+			animation-name: bounce;
+		}
+		
+		@keyframes bounce {
+			0%, 100% {
+				transform: translateY(0);
+			}
+			50% {
+				transform: translateY(-8px);
+			}
+		}
+		
+	</style>
+</head>
+
+<body>
+
+	<h3> slot machine </h3>
+
+	<div id='theMachine'>
+
+		<div id='slot1' class='slot'>
+		</div>
+		
+		<div id='slot2' class='slot'>
+		</div>
+
+		<div id='slot3' class='slot'>
+		</div>
+
+	</div>
+
+	<br />
+
+	<button id='lever'> go! </button>
+
+	<br />
+	
+	<div id='todo'>
+		<h3> todo list: </h3>
+		<ul>
+			<li> jackpot event </li>
+			<li> link to the vtubers + show names </li>
+		</ul>
+	</div>
+
+	<div id='filters'>
+		<!--  each slot might need their own blur? -->
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="filters">
+			<defs>
+				<filter id="blur1" class="blur">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="0,0" />
+				</filter>
+			</defs>
+		</svg>
+
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="filters">
+			<defs>
+				<filter id="blur2" class="blur">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="0,0" />
+				</filter>
+			</defs>
+		</svg>
+
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="filters">
+			<defs>
+				<filter id="blur3" class="blur">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="0,0" />
+				</filter>
+			</defs>
+		</svg>
+	</div>
+
+
+</body>
+
+
+<script>
+
+const reel = [
+	'slot-machine-options/gawr2.png',
+	'slot-machine-options/kano.png',
+	'slot-machine-options/kiara.png',
+	'slot-machine-options/okayu3.png',
+	'slot-machine-options/nonono.png',
+	'slot-machine-options/watame2.png',
+	'slot-machine-options/pikamee2.png',
+	'slot-machine-options/monoe.jpg'
+];
+
+reelStatus = [false, false, false];
+
+
+function addImage(url, slotId){
+	let slot = document.getElementById(slotId);
+	slot.style.backgroundImage = "url('" + url + "')";
+	slot.style.backgroundRepeat = 'no-repeat';
+	slot.style.backgroundSize = 'cover';
+}
+
+
+function timeCurve(duration){
+	// create some time function that does certain stuff at certain points in time?
+	// i.e. if i wanted it to start fast then gradually slow down.
+}
+
+function getRandomInRange(min, max){
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+	return Math.round(Math.random() * (max - min) + min);
+}
+
+function setUpReels(){
+	let slots = Array.from(document.getElementsByClassName("slot"));
+	let index = 1;
+	
+	slots.forEach((slot) => {
+		let randIndex = getRandomInRange(0, reel.length-1);
+		let imageUrl = reel[randIndex];
+		addImage(imageUrl, slot.id);
+		slot.setAttribute("currentIndex", randIndex);
+		slot.style.filter = "url('#blur" + index++ + "')";
+	});
+}
+
+function playReel(slotId, filter, duration=3000, imageIndex=0){
+	// over a span of x seconds, gradually decrease the blur and frequency of image swaps?
+	// or keep it consistent and then after something like 3 sec, stop. maybe have some little
+	// animation that moves the image up and down slightly after stopping to imitate the physics
+	// of the reel braking
+	let slot = document.getElementById(slotId);
+	let now = Date.now(); // milliseconds
+	let endTime = now + duration; // stop after 3 sec
+	let interval =  getRandomInRange(55, 65);
+	filter.setAttribute("stdDeviation", "0,10");
+	
+	let run = setInterval(() => {
+		
+		let currTime = Date.now();
+		
+		if(currTime >= endTime){
+			clearInterval(run);
+			imageIndex = imageIndex % reel.length; // prevent index from getting too large?
+			filter.setAttribute("stdDeviation", "0,0");
+			
+			slot.classList.add('bounce');
+			slot.classList.add('animate');
+			
+			setTimeout(() => {
+				slot.classList.remove('animate');
+				slot.classList.remove('bounce');
+				reelStatus[parseInt(slotId[slotId.length-1])-1] = false;
+			}, 1000);
+		}
+		
+		let currImage = reel[imageIndex % reel.length];
+		addImage(currImage, slotId);
+		imageIndex++;
+		
+	}, interval);
+	
+}
+
+document.getElementById('lever').addEventListener('click', (evt) => {
+
+	let r1 = reelStatus[0];
+	let r2 = reelStatus[1];
+	let r3 = reelStatus[2];
+	let allFalse = !r1 && !r2 && !r3;
+	if(!allFalse){
+		// the slot machine must still be going so don't allow any further action
+		console.log("sorry, you'll have to wait. the slot machine is still going...");		
+		return;
+	}else{
+		reelStatus = [false, false, false];
+	}
+	
+	reelStatus = [true, true, true];
+
+	// reel 1
+	playReel(
+		'slot1',
+		document.getElementsByTagName("feGaussianBlur")[0],
+		2000, 
+		parseInt(document.getElementById('slot1').getAttribute('currentIndex'))
+	);
+	
+	// reel 2
+	playReel(
+		'slot2',
+		document.getElementsByTagName("feGaussianBlur")[1],
+		3000, 
+		parseInt(document.getElementById('slot2').getAttribute('currentIndex'))
+	);
+	
+	// reel 3
+	playReel(
+		'slot3',
+		document.getElementsByTagName("feGaussianBlur")[2],
+		4000, 
+		parseInt(document.getElementById('slot3').getAttribute('currentIndex'))
+	);
+	
+});
+
+setUpReels();
+
+</script>
+
+
+</html>

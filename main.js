@@ -13,7 +13,7 @@ const About = {
 			<br>
 			<p>Thank you for visiting! I'm Nicholas. 熊志文 is my Chinese name. </p>
 			<br>
-			<p>I really enjoy music composition/arrangement and programming! I'm particularly interested in developing applications for artistic endeavors. <br><br>I'm also an avid trumpet player and enjoy playing various genres of music (but especially orchestral stuff and also pretty much anything written for brass ensembles). Currently I play on a stock Bach 5C and a silver Yamaha 4335. </p>
+			<p>I really enjoy music composition/arrangement and programming! I'm particularly interested in developing applications for artistic endeavors. <br><br>I'm also an avid trumpet player and enjoy playing various genres of music (but especially orchestral stuff and brass literature). Currently I play on a stock Bach 5C and a silver Yamaha 4335. </p>
 			<br>
 			<p> I've been using 'syncopika' as my username in various places. It's a combination of <span class='bold'>synco</span>pation (I like syncopated rhythms) and '<span class='bold'>pika</span>pika' (Japanese onomatopoeia for something sparkly). Not the best name, but easy to find and kinda unique, I think. :D</p>
 			<br>
@@ -143,13 +143,12 @@ const Projects = {
 	template:
 		`<div id='projectsContent'>
 			<h2>some of my programs</h2>
-			<p> a.k.a stuff to do stuff faster (and sometimes better, hopefully) </p>
 			<hr>
 			<p style='font-size: 13px'>note: some of my web applications are not optimized for mobile viewing! </p>
 			<br>
 			
 			<h4 id='browserTools'><b> for browser: </b></h4>
-			<p><a href='https://syncopika.github.io/piano_roll_browser/'> a piano roll </a></p>
+			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a></p>
 			<p><a href='https://syncopika.github.io/funSketch/'> funSketch </a></p>
 			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
 			<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
@@ -164,11 +163,11 @@ const Projects = {
 			<br>	
 
 			<h4><b> misc stuff </b></h4>
-			<p><a href='https://github.com/syncopika/threejs-projects'> 3d projects with three.js </a></p>
-			<p><a href='https://syncopika.github.io/chinese_quiz/'> Chinese Quiz (普通話) </a></p>
+			<p><a href='https://syncopika.github.io/threejs-projects/'> 3d projects with three.js </a></p>
+			<p><a href='https://syncopika.github.io/chinese_quiz/'> chinese quiz (普通話) </a></p>
 			<p><a href='https://github.com/syncopika/visual_novel_maker'> visual novel maker </a> (<a href='https://syncopika.github.io/visual_novel_maker/'>demo</a>)</p>
-			<p><a href='misc/soundtrackLib/index.html'>anime soundtracks library</a></p>
 			<p><a href='misc/asciiArt.html'> ASCII art generator </a></p>
+			<p><a href='misc/slot-machine.html'>vtuber slot machine</a></p>
 			<br>
 			
 			<p id='footerTag2'>(c) n.c.h works 2016-2020 </p>
