@@ -166,8 +166,8 @@ const Projects = {
 			<p><a href='https://syncopika.github.io/threejs-projects/'> 3d projects with three.js </a></p>
 			<p><a href='https://syncopika.github.io/chinese_quiz/'> chinese quiz (普通話) </a></p>
 			<p><a href='https://github.com/syncopika/visual_novel_maker'> visual novel maker </a> (<a href='https://syncopika.github.io/visual_novel_maker/'>demo</a>)</p>
-			<p><a href='misc/asciiArt.html'> ASCII art generator </a></p>
 			<p><a href='misc/slot-machine.html'>vtuber slot machine</a></p>
+			<p><a href='misc/asciiArt.html'> ASCII art generator </a></p>
 			<br>
 			
 			<p id='footerTag2'>(c) n.c.h works 2016-2020 </p>

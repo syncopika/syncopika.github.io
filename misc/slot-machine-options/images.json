@@ -1,0 +1,50 @@
+{
+	"images":
+	{
+		"slot-machine-options/gawr2.png": {
+			"name": "Gawr Gura",
+			"affiliation": "hololive-EN",
+			"channel": "https://www.youtube.com/channel/UCoSrY_IQQVpmIRZ9Xf-y93g/featured"
+		},
+		"slot-machine-options/kano.png": {
+			"name": "Kano (鹿乃)",
+			"affiliation": "Hanayori Girls' Dorm",
+			"channel": "https://www.youtube.com/channel/UCfuz6xYbYFGsWWBi3SpJI1w"
+		},
+		"slot-machine-options/kiara.png": {
+			"name": "Takanashi Kiara",
+			"affiliation": "hololive-EN",
+			"channel": "https://www.youtube.com/channel/UCHsx4Hqa-1ORjQTh9TYDhww"
+		},
+		"slot-machine-options/monoe.jpg": {
+			"name": "Jitomi Monoe (磁富モノエ)",
+			"affiliation": "VOMS",
+			"channel": "https://www.youtube.com/c/%E7%A3%81%E5%AF%8C%E3%83%A2%E3%83%8E%E3%82%A8Jitomi_Monoe"
+		},
+		"slot-machine-options/nonono.png": {
+			"name": "Nonomiya Nonono (野々宮ののの) - retired",
+			"affiliation": "Hanayori Girls' Dorm",
+			"channel": "https://www.youtube.com/channel/UCiexEBp7-D46FXUtQ-BpgWg"
+		},
+		"slot-machine-options/okayu3.png": {
+			"name": "Nekomata Okayu (猫又おかゆ)",
+			"affiliation": "hololive",
+			"channel": "https://www.youtube.com/channel/UCvaTdHTWBGv3MKj3KVqJVCw"
+		},
+		"slot-machine-options/pikamee2.png": {
+			"name": "Amano Pikamee (天野ピカミィ)",
+			"affiliation": "VOMS",
+			"channel": "https://www.youtube.com/channel/UCajhBT4nMrg3DLS-bLL2RCg"
+		},
+		"slot-machine-options/watame2.png": {
+			"name": "Tsunomaki Watame (角巻わため)",
+			"affiliation": "hololive",
+			"channel": "https://www.youtube.com/channel/UCqm3BQLlJfvkTsX_hvm0UmA"
+		},
+		"slot-machine-options/lulu.gif": {
+			"name": "Suzuhara Lulu (鈴原るる)",
+			"affiliation": "Nijisanji",
+			"channel": "https://www.youtube.com/channel/UC_a1ZYZ8ZTXpjg9xUY9sj8w"
+		}
+	}
+}
