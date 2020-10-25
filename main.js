@@ -142,35 +142,30 @@ const Music = {
 const Projects = {
 	template:
 		`<div id='projectsContent'>
-			<h2>some of my programs</h2>
+			<h2>some programs I've made</h2>
 			<hr>
-			<p style='font-size: 13px'>note: some of my web applications are not optimized for mobile viewing! </p>
+			<p style='font-size: 13px'>please note: some of my web applications are not optimized for mobile viewing! </p>
 			<br>
 			
-			<h4 id='browserTools'><b> for browser: </b></h4>
+			<h4><b> audio </b></h4>
 			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a></p>
-			<p><a href='https://syncopika.github.io/funSketch/'> funSketch </a></p>
-			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a> (<a href=' https://boring-chat.herokuapp.com/'>demo</a>)</p>
-			<p><a href='https://github.com/syncopika/gifCatch_extension'> gifCatch (Chrome extension) </a></p>
 			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
 			<br>
 			
-			<h4 id='desktopTools'><b>for desktop: </b></h4>
+			<h4><b> visual </b></h4>
 			<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'>gifCatch</a></p>
-			<p><a href='https://github.com/syncopika/winsock-server-client'>chat server/client</a></p>
-			<p><a href='https://github.com/syncopika/winsock-udp-screencast'>udp screencaster</a></p>
-			<p><a href='https://github.com/syncopika/cute_animator'> cute animator </a></p>
-			<br>	
-
-			<h4><b> misc stuff </b></h4>
-			<p><a href='https://syncopika.github.io/threejs-projects/'> 3d projects with three.js </a></p>
-			<p><a href='https://syncopika.github.io/chinese_quiz/'> chinese quiz (普通話) </a></p>
-			<p><a href='https://github.com/syncopika/visual_novel_maker'> visual novel maker </a> (<a href='https://syncopika.github.io/visual_novel_maker/'>demo</a>)</p>
-			<p><a href='misc/slot-machine.html'>vtuber slot machine</a></p>
-			<p><a href='misc/asciiArt.html'> ASCII art generator </a></p>
+			<p><a href='https://syncopika.github.io/funSketch/'> funSketch </a></p>
+			<p><a href='https://github.com/syncopika/boringChat'> boringChat </a></p>
+			<p><a href='https://syncopika.github.io/threejs-projects/'> 3d projects </a></p>
 			<br>
 			
-			<p id='footerTag2'>(c) n.c.h works 2016-2020 </p>
+			<h4><b> misc </b></h4>
+			<p><a href='https://syncopika.github.io/chinese_quiz/'> chinese quiz (普通話) </a></p>
+			<p><a href='misc/asciiArt.html'> ASCII art generator </a></p>			
+			
+			<br>
+			
+			<p id='footerTag2'>c.2016 nch</p>
 		</div>`
 }
 
