@@ -27,7 +27,7 @@ I also got to see some new places I hadn't been to yet like Shifen, Houtong Cat 
 Here are some pictures!
 
 --h3 
-Houtong Cat Village
+Houtong Cat Village (侯硐)
 --image
 blog_entries/images/taiwan trip 2020/houtong1.png
 blog_entries/images/taiwan trip 2020/houtong2.png
@@ -44,7 +44,7 @@ The actual village is on the other side of the station. There were, of course, m
 --br
 
 --h3 
-Alishan
+Alishan (阿里山)
 --image
 blog_entries/images/taiwan trip 2020/alishan1.png
 blog_entries/images/taiwan trip 2020/alishan2.png
@@ -64,7 +64,7 @@ It can get cold up there in Alishan compared to ground level (it was probably in
 --br
 
 --h3 
-Wulai
+Wulai (烏來)
 --image
 blog_entries/images/taiwan trip 2020/wulai1.png
 blog_entries/images/taiwan trip 2020/wulai2.png
@@ -80,7 +80,7 @@ There's a little train to take you up to the Wulai waterfall. Too bad it was so 
 --br
 
 --h3 
-Xiangshan
+Xiangshan (象山)
 --image
 blog_entries/images/taiwan trip 2020/elephantmountain1.png
 blog_entries/images/taiwan trip 2020/elephantmountain2.png
@@ -94,7 +94,7 @@ The climb took me maybe at least 20 minutes(?) but the view was worth it!
 --br
 
 --h3 
-Keelung
+Keelung (基隆)
 --image
 blog_entries/images/taiwan trip 2020/keelung1.png
 blog_entries/images/taiwan trip 2020/keelung2.png
