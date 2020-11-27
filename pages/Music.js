@@ -86,7 +86,7 @@ const Music = {
 			<br>
 			
 			<hr>
-			<h3>original stuff</h3>
+			<h3>random</h3>
 				<div id='bandcamp'>
 				<iframe v-bind:style="bandcampSamples[bandcampIndex].style" v-bind:src="bandcampSamples[bandcampIndex].src" seamless><a v-bind:href="bandcampSamples[bandcampIndex].href"></a>{{bandcampSamples[bandcampIndex].text}}</iframe>
 				</div>

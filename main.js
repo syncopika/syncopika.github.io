@@ -1,14 +1,13 @@
 import { Home } from './pages/Home.js';
 import { About } from './pages/About.js';
 import { Music } from './pages/Music.js';
-import { Projects } from './pages/Projects.js';
+import { Software } from './pages/Software.js';
 import { Novelties } from './pages/Novelties.js';
 import { Blog } from './pages/Blog.js';
 import { NotFound } from './pages/NotFound.js';
 
 const Contact = {
 	mounted: function(){
-		//console.log(this.$refs["emailButton"]);
 		let contact = this.$refs["emailButton"];
 		contact.addEventListener('click', function(){
 			// this function comes from roulette.js
@@ -30,7 +29,7 @@ const router = new VueRouter({
 		{path: '/', component: Home},
 		{path: '/about', component: About},
 		{path: '/music', component: Music},
-		{path: '/projects', component: Projects},
+		{path: '/software', component: Software},
 		{path: '/novelties', component: Novelties},
 		{path: '/blog', component: Blog},
 		{path: '/contact', component: Contact},

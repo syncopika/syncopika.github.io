@@ -1,7 +1,7 @@
 const Novelties = {
 	template: 
 		`<div id='novelties'>
-			<h2>fun novelty programs</h2>
+			<h2>fun little programs</h2>
 			<hr>
 			<p><a href='misc/karaokeget.html'> karaoke-get </a></p>
 			<p><a href='https://syncopika.github.io/chinese_quiz/'> chinese quiz (普通話) </a></p>

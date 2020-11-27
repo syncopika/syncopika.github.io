@@ -114,21 +114,9 @@ a:focus{
 
 #musicContent{
 	text-align: center;
-	/* no more color border
-	padding: 6px;	
-	border:1px solid #9cc98b;
-	border-radius: 5px;
-	*/
 	margin-bottom: 12px;
 }
 
-#projectsContent{
-	/*
-	padding: 12px;
-	border:1px solid #eabcc4;
-	border-radius: 5px;
-	*/
-}
 
 #links a{
 	font-size: 20px;

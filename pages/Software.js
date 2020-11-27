@@ -1,14 +1,15 @@
-const Projects = {
+const Software = {
 	template:
-		`<div id='projectsContent'>
+		`<div id='softwareContent'>
 			<h2>programming</h2>
 			<hr>
 			<p> mostly web apps atm </p>
-			<p style='font-size: 13px'>note: some of my web apps are not optimized for mobile viewing </p>
+			<p style='font-size: 13px'>note: most of my web apps are not designed/optimized for mobile </p>
 			<br>
 			
 			<h4><b> audio 🎵 </b></h4>
 			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a></p>
+			<p><a href='https://syncopika.github.io/soundmaker/'> soundmaker </a></p>
 			<br>
 			
 			<h4><b> visual 🎨 </b></h4>
@@ -22,5 +23,5 @@ const Projects = {
 }
 
 export {
-	Projects
+	Software
 }
