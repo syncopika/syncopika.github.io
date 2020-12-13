@@ -35,7 +35,7 @@ p{
 	color: #fff;
 }
 pre{
-	font-size: 3px;
+	font-size: 12px;
 	color: #fff;
 	background-color: #000;
 }
@@ -71,6 +71,7 @@ var canvas = document.getElementById('theCanvas');
 var context = canvas.getContext('2d');
 var height;
 var width;
+var addBackticks = true;
 
 function handleFiles(){
 	var fileGet = document.getElementById('getFile');
@@ -87,18 +88,19 @@ function getFile(e){
 	
 		img.onload = function(){
 		
-			height = img.naturalHeight;
-			width = img.naturalWidth;
+			height = img.height; //img.naturalHeight;
+			width = img.width; //img.naturalWidth;
 			
-			if(height > 200){
+			
+			if(height > 50){
 				canvas.height = height/2;
 			}
 			
-			if(width > 200){
+			if(width > 50){
 				canvas.width = width/2;
 			}
 			
-			context.drawImage(img, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
+			context.drawImage(img, 0, 0, canvas.width, canvas.height);
 			document.querySelector('#getFile').value = null;
 		}
 	
@@ -114,19 +116,30 @@ function getAscii(){
 	var data = context.getImageData(0, 0, canvas.width, canvas.height).data;
 	counter = 0;
 	var line = "<pre>";
-	for(var i = 0; i <= data.length - 4; i+=4){
+	
+	if(addBackticks){
+		line += "`";
+	}
+	
+	for(var i = 0; i <= data.length-4; i+=4){
 		var r = data[i];
 		var g = data[i+1];
 		var b = data[i+2];
 		
-		var grayScale = Math.floor ( (r+g+b) / 3 );
-		//r,g,b = Math.floor(grayScale);
+		var grayScale = Math.floor((r+g+b)/3);
 		
 		if(counter === canvas.width){
+			
 			counter = 0;
+			
+			if(addBackticks){
+				line += "`";
+			}
 			line += "\n";
-			//$('#ascii').append(line);
-			//line = "<pre>";
+			
+			if(addBackticks){
+				line += "`";
+			}
 		}
 		
 		//evaluate the grey
@@ -145,17 +158,19 @@ function getAscii(){
 		}else if(black){
 			line += "**";
 		}else if(white){
-			line += "++";
+			line += "  ";
 		}else if(darkerGrey){
 			line += "##";
 		}else if(darkGrey){
-			line += "__";
+			line += "++";
 		}else if(lightGrey){
 			line += "^^";
 		}else if(mdLightGrey){
-			line += "//";
+			line += "--";
 		}else if(superLightGrey){
-			line += "$$";
+			line += "..";
+		}else{
+			line += "::";
 		}
 		
 		counter++;

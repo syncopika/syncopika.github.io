@@ -35,13 +35,80 @@ const Blog = {
 				}));
 			}
 			Promise.all(promiseList).then((res) => {
-				//console.log(res);
 				res.reverse(); // assuming in ascending order currently
 				this.posts = res;
 			});
 		});
-		
 	},
+	
+	updated: function(){
+		// set image size and let all images be clickable to be enlarged
+		let images = document.getElementsByTagName("img");
+		Array.from(images).forEach((img) => {
+			img.setAttribute('width', "20%");
+			img.setAttribute('height', "20%");
+			img.style.marginRight = "3px";
+			img.style.marginTop = "3px";
+			img.style.border = "1px solid #000";
+			
+			img.addEventListener('mouseover', (evt) => {
+				evt.target.style.border = "1px solid #e0ffff";
+			});
+			
+			img.addEventListener('mouseout', (evt) => {
+				evt.target.style.border = "1px solid #000";
+			});
+			
+			img.addEventListener('click', (evt) => {
+				// taken from: https://github.com/syncopika/trip-planner/blob/master/src/components/Destination.vue#L258
+				let enlargedImage = new Image();
+				enlargedImage.src = evt.target.src;
+
+				let imageDiv = document.createElement('div');
+				imageDiv.style.opacity = "0.98";
+				imageDiv.style.backgroundColor = "#383838";
+				imageDiv.style.position = "fixed";
+				imageDiv.style.zIndex = "10";
+				imageDiv.style.width = "100%";
+				imageDiv.style.height = "100%";
+				imageDiv.style.top = "0";
+				imageDiv.style.left = "0";
+				imageDiv.style.textAlign = "center";
+
+				if (document.body.clientHeight < enlargedImage.height ||
+					document.body.clientWidth < enlargedImage.width) {
+					// reduce size of enlarged image if larger than the page
+					enlargedImage.style.height = "70%";
+					enlargedImage.style.width = "70%";
+				}
+
+				if (document.body.clientHeight > enlargedImage.height) {
+					// if image height is smaller than the page height,
+					// make sure the background is as tall as the page
+					imageDiv.style.height = document.body.clientHeight + "px";
+				}
+
+				enlargedImage.style.marginTop = "3%";
+				enlargedImage.addEventListener("dblclick", () => {
+					imageDiv?.parentNode?.removeChild(imageDiv);
+				});
+				imageDiv.appendChild(enlargedImage);
+
+				let cancel = document.createElement('h3');
+				cancel.textContent = "close";
+				cancel.style.color = "#fff";
+				cancel.style.marginTop = "1%";
+				cancel.style.fontFamily = "monospace";
+				cancel.addEventListener("click", () => {
+					imageDiv?.parentNode?.removeChild(imageDiv);
+				});
+				imageDiv.appendChild(cancel);
+
+				document.body.appendChild(imageDiv);				
+			});
+		});
+	},
+	
 	template:
 		`<div>
 			<br>
@@ -66,7 +133,6 @@ const Blog = {
 				<button @click="nextPage">older</button>
 			</div>
 		</div>`
-	
 }
 
 export {
