@@ -90,7 +90,9 @@ const Blog = {
 
 				enlargedImage.style.marginTop = "3%";
 				enlargedImage.addEventListener("dblclick", () => {
-					imageDiv?.parentNode?.removeChild(imageDiv);
+					if(imageDiv && imageDiv.parentNode){
+						imageDiv.parentNode.removeChild(imageDiv);
+					}
 				});
 				imageDiv.appendChild(enlargedImage);
 
@@ -100,7 +102,9 @@ const Blog = {
 				cancel.style.marginTop = "1%";
 				cancel.style.fontFamily = "monospace";
 				cancel.addEventListener("click", () => {
-					imageDiv?.parentNode?.removeChild(imageDiv);
+					if(imageDiv && imageDiv.parentNode){
+						imageDiv.parentNode.removeChild(imageDiv);
+					}
 				});
 				imageDiv.appendChild(cancel);
 
