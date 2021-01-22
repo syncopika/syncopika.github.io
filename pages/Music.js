@@ -96,11 +96,11 @@ const Music = {
 			<hr>
 			<div id="clients">
 				<h3>clients</h3>
-				<h2><a href='http://armouredboar.com/'>ArmouredBoar</a></h2>
+				<h2><a href='https://armouredboar.itch.io/'>ArmouredBoar</a></h2>
 				<h2><a href='http://www.fantasytalesonline.com/'>Fantasy Tales Online</a></h2>
-				<h2><a href='http://sparmmo.com/'>Spar MMO</a></h2>
 				<h2><a href='https://wolff95.weebly.com/wolffware.html'>WolffWare</a></h2>
 			</div>
+			<br>
 		</div>`
 }
 
