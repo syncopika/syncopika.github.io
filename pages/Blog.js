@@ -74,18 +74,24 @@ const Blog = {
 				imageDiv.style.top = "0";
 				imageDiv.style.left = "0";
 				imageDiv.style.textAlign = "center";
+				
+				if(window.innerHeight < 900 && window.innerWidth < 900){
+					// assuming user is on mobile
+					enlargedImage.style.height = "50%";
+					enlargedImage.style.width = "70%";		
+				}else{
+					if (document.body.clientHeight < enlargedImage.height ||
+						document.body.clientWidth < enlargedImage.width) {
+						// reduce size of enlarged image if larger than the page
+						enlargedImage.style.height = "70%";
+						enlargedImage.style.width = "70%";
+					}
 
-				if (document.body.clientHeight < enlargedImage.height ||
-					document.body.clientWidth < enlargedImage.width) {
-					// reduce size of enlarged image if larger than the page
-					enlargedImage.style.height = "70%";
-					enlargedImage.style.width = "70%";
-				}
-
-				if (document.body.clientHeight > enlargedImage.height) {
-					// if image height is smaller than the page height,
-					// make sure the background is as tall as the page
-					imageDiv.style.height = document.body.clientHeight + "px";
+					if (document.body.clientHeight > enlargedImage.height) {
+						// if image height is smaller than the page height,
+						// make sure the background is as tall as the page
+						imageDiv.style.height = document.body.clientHeight + "px";
+					}
 				}
 
 				enlargedImage.style.marginTop = "3%";

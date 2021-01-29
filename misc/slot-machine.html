@@ -212,7 +212,7 @@ function setUpReels(){
 		addImage(imageUrl, slot.id);
 		addInfo(index, imageUrl);
 		slot.setAttribute("currentIndex", randIndex);
-		slot.style.filter = "url('#blur" + index++ + "')";
+		slot.style.filter = "url('#blur" + (index++) + "')";
 	});
 }
 

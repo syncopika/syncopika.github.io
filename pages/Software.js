@@ -3,7 +3,7 @@ const Software = {
 		`<div id='softwareContent'>
 			<h2>programming</h2>
 			<hr>
-			<p style='font-size: 13px'>note: most of my web apps are not designed/optimized for mobile </p>
+			<p style='font-size: 13px'>please note: most of my web apps are not designed/optimized for mobile </p>
 			<br>
 			
 			<h4><b> audio projects 🎵 </b></h4>
@@ -12,12 +12,12 @@ const Software = {
 			<br>
 			
 			<h4><b> visual projects 🎨 </b></h4>
-			<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'>gifCatch</a></p>
 			<p><a href='https://syncopika.github.io/funSketch/'> funSketch </a></p>
 			<p><a href='https://syncopika.github.io/threejs-projects/'> 3d stuff </a></p>
+			<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'> gifCatch </a></p>
 			<br>
 			
-			<h4>→ <a href='#/novelties'><b>novelties 🍬</b></a></h4>
+			<h4><b>novelties 🍬</b><a href='#/novelties'> → </a></h4>
 		</div>`
 }
 
