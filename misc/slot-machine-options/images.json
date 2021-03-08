@@ -8,7 +8,7 @@
 		},
 		"slot-machine-options/kano.png": {
 			"name": "Kano (鹿乃)",
-			"affiliation": "Hanayori Girls' Dorm",
+			"affiliation": "Hanayori Girls' Dorm (disbanded)",
 			"channel": "https://www.youtube.com/channel/UCfuz6xYbYFGsWWBi3SpJI1w"
 		},
 		"slot-machine-options/kiara.png": {
@@ -17,13 +17,13 @@
 			"channel": "https://www.youtube.com/channel/UCHsx4Hqa-1ORjQTh9TYDhww"
 		},
 		"slot-machine-options/monoe.jpg": {
-			"name": "Jitomi Monoe (磁富モノエ)",
+			"name": "Jitomi Monoe (磁富モノエ) - retired",
 			"affiliation": "VOMS",
-			"channel": "https://www.youtube.com/c/%E7%A3%81%E5%AF%8C%E3%83%A2%E3%83%8E%E3%82%A8Jitomi_Monoe"
+			"channel": "https://www.youtube.com/channel/UCaFhsCKSSS821N-EcWmPkUQ"
 		},
 		"slot-machine-options/nonono.png": {
 			"name": "Nonomiya Nonono (野々宮ののの) - retired",
-			"affiliation": "Hanayori Girls' Dorm",
+			"affiliation": "Hanayori Girls' Dorm (disbanded)",
 			"channel": "https://www.youtube.com/channel/UCiexEBp7-D46FXUtQ-BpgWg"
 		},
 		"slot-machine-options/okayu3.png": {
@@ -45,6 +45,11 @@
 			"name": "Suzuhara Lulu (鈴原るる)",
 			"affiliation": "Nijisanji",
 			"channel": "https://www.youtube.com/channel/UC_a1ZYZ8ZTXpjg9xUY9sj8w"
+		},
+		"slot-machine-options/tomoshika.png": {
+			"name": "Hikasa Tomoshika (緋笠トモシカ)",
+			"affiliation": "VOMS",
+			"channel": "https://www.youtube.com/channel/UC3vzVK_N_SUVKqbX69L_X4g"
 		}
 	}
 }

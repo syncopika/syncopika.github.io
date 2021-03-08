@@ -9,6 +9,7 @@ const Software = {
 			<h4><b> audio projects 🎵 </b></h4>
 			<p><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a></p>
 			<p><a href='https://syncopika.github.io/soundmaker/'> soundmaker </a></p>
+			<p><a href='https://syncopika.github.io/music-score-viewer/'> music score viewer </a></p>
 			<br>
 			
 			<h4><b> visual projects 🎨 </b></h4>
