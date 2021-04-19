@@ -142,6 +142,7 @@ const Blog = {
 				<button @click="prevPage">newer</button>
 				<button @click="nextPage">older</button>
 			</div>
+			<br>
 		</div>`
 }
 

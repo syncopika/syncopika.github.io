@@ -3,6 +3,7 @@
 <html>
 
 <head>
+	<meta charset='utf-8'>
 	<title> random text-related things </title>
 </head>
 
@@ -18,11 +19,21 @@
 <body>
 	<h2 id='header'> fun text stuff! </h2>
 	<hr />
+	
+	<!-- TODO
+	<br />
+	<label>chain operations (from top to down)?</label>
+	<input id='yesChainOp' type='radio' name='chainOps' value='yes' /><label for='yesChainOp'>yes</label> 
+	<input id='noChainOp' type='radio' name='chainOps' value='no' checked /><label for='noChainOp'>no</label>
+	-->
+	
+	<br />
 	<div id='randomCasing'>
 		<h3> apply random casing to a string of text! </h3>
+		<p> example: <b>what are you doing</b> &rarr; <b>wHAT ARe you DoINg</b> </p>
 		<label for='randomCasingInput'> text: </label>
-		<input id='randomCasingInput' type='text' />
-		<button id='applyRandomCasing'>apply</button>
+		<input id='randomCasingInput' class='inputBox' type='text' />
+		<button id='applyRandomCasing' class='applyOp'>apply</button>
 		
 		<br />
 		<p>output: <span id='randomCasingOutput'></span></p>
@@ -31,14 +42,16 @@
 	<br />
 	
 	<div id='spacer'>
-		<h3> apply random or specific spacing between characters in a string of text! </h3>
+		<h3> apply random or exact spacing between characters in a string of text! </h3>
+		<p> example: <b>what are you doing</b> &rarr; <b>w&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;r&nbsp;&nbsp;e&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;&nbsp; &nbsp;&nbsp;d&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;g&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;</b></p>
 		<label for='randomSpacingInput'> text: </label>
-		<input id='randomSpacingInput' type='text' />
-		<button id='applyRandomSpacing'>apply</button>
+		<input id='randomSpacingInput' class='inputBox'  type='text' />
+		<button id='applyRandomSpacing' class='applyOp'>apply</button>
 		
 		<div>
 			<br />
-			<label>randomize:</label> 
+			
+			<label>randomize:</label>
 			<input id='yesRandom' type='radio' name='randomizeSpace' value='yes' /><label for='yesRandom'>yes</label> 
 			<input id='noRandom' type='radio' name='randomizeSpace' value='no' checked /><label for='noRandom'>no</label>
 			
@@ -55,6 +68,12 @@
 		
 		<p>output: <span id='randomSpacingOutput'></span></p>
 	</div>
+	
+	<!-- other fun operations TODO 
+	- be able to chain operations
+	- "l33tspeak" converter -> convert strings to l33tspeak
+	
+	-->
 
 </body>
 
@@ -66,6 +85,15 @@ function toggleSpacingOptions(evt){
 	document.getElementById('minSpace').disabled = isDisabled;
 	document.getElementById('maxSpace').disabled = isDisabled;
 }
+
+// TODO: every next operation should use the output of the previous step as input
+function chainOperations(initialStr){
+	if(document.getElementById('yesChainOp').checked){
+		const allInputs = document.querySelectorAll('.inputBox');
+		const allButtons = document.querySelectorAll('.applyOp');
+	}
+}
+
 
 function applyRandomCasing(str){
 	let newStr = "";
@@ -99,8 +127,7 @@ function applySpacer(str, random, min, max, spaceValue){
 	for(let i = 0; i < str.length; i++){
 		let spaceLength = spaceValue;
 		if(random){
-			spaceLength = Math.floor(Math.random() * (max - min) + min);
-			console.log(spaceLength);
+			spaceLength = Math.floor(Math.random() * (max - min + 1) + min);
 		}
 		newStr += str[i] + getSpaceOfNLength(spaceLength);
 	}
