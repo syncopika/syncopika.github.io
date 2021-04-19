@@ -1,0 +1,160 @@
+<!doctype html>
+
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<title> random text-related things </title>
+</head>
+
+<style>
+	body{
+		font-family: Georgia, serif;
+	}
+	#header{
+		text-align: center;
+	}
+</style>
+
+<body>
+	<h2 id='header'> fun text stuff! </h2>
+	<hr />
+	
+	<!-- TODO
+	<br />
+	<label>chain operations (from top to down)?</label>
+	<input id='yesChainOp' type='radio' name='chainOps' value='yes' /><label for='yesChainOp'>yes</label> 
+	<input id='noChainOp' type='radio' name='chainOps' value='no' checked /><label for='noChainOp'>no</label>
+	-->
+	
+	<br />
+	<div id='randomCasing'>
+		<h3> apply random casing to a string of text! </h3>
+		<p> example: <b>what are you doing</b> &rarr; <b>wHAT ARe you DoINg</b> </p>
+		<label for='randomCasingInput'> text: </label>
+		<input id='randomCasingInput' class='inputBox' type='text' />
+		<button id='applyRandomCasing' class='applyOp'>apply</button>
+		
+		<br />
+		<p>output: <span id='randomCasingOutput'></span></p>
+	</div>
+	
+	<br />
+	
+	<div id='spacer'>
+		<h3> apply random or exact spacing between characters in a string of text! </h3>
+		<p> example: <b>what are you doing</b> &rarr; <b>w&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;r&nbsp;&nbsp;e&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;&nbsp; &nbsp;&nbsp;d&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;g&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;</b></p>
+		<label for='randomSpacingInput'> text: </label>
+		<input id='randomSpacingInput' class='inputBox'  type='text' />
+		<button id='applyRandomSpacing' class='applyOp'>apply</button>
+		
+		<div>
+			<br />
+			
+			<label>randomize:</label>
+			<input id='yesRandom' type='radio' name='randomizeSpace' value='yes' /><label for='yesRandom'>yes</label> 
+			<input id='noRandom' type='radio' name='randomizeSpace' value='no' checked /><label for='noRandom'>no</label>
+			
+			<div id='spacingOptions'>
+				<br />
+				<label for='minSpace'>min space size:</label> <input id='minSpace' type='number' min="0" max="8" disabled/>
+				<br />
+				<label for='maxSpace'>max space size (up to 8):</label> <input id='maxSpace' type='number' min="0" max="8" disabled/>
+				<br />
+			</div>
+			<label for='spaceSize'>space size:</label> <input id='spaceSize' type='number' min="0" max="8" />
+			<br />
+		</div>
+		
+		<p>output: <span id='randomSpacingOutput'></span></p>
+	</div>
+	
+	<!-- other fun operations TODO 
+	- be able to chain operations
+	- "l33tspeak" converter -> convert strings to l33tspeak
+	
+	-->
+
+</body>
+
+
+<script>
+
+function toggleSpacingOptions(evt){
+	const isDisabled = evt.target.value !== "yes";
+	document.getElementById('minSpace').disabled = isDisabled;
+	document.getElementById('maxSpace').disabled = isDisabled;
+}
+
+// TODO: every next operation should use the output of the previous step as input
+function chainOperations(initialStr){
+	if(document.getElementById('yesChainOp').checked){
+		const allInputs = document.querySelectorAll('.inputBox');
+		const allButtons = document.querySelectorAll('.applyOp');
+	}
+}
+
+
+function applyRandomCasing(str){
+	let newStr = "";
+	for(let i = 0; i < str.length; i++){
+		if(str[i] === " "){
+			newStr += "&nbsp;";
+			continue;
+		}
+		
+		let choice = Math.random();
+		if(choice >= 0.5){
+			newStr += str[i].toUpperCase();
+		}else{
+			newStr += str[i].toLowerCase();
+		}
+	}
+	document.getElementById('randomCasingOutput').innerHTML = newStr;
+}
+
+function getSpaceOfNLength(n){
+	//https://stackoverflow.com/questions/43476923/spaces-not-rendering-in-span-tags
+	let space = "";
+	for(let i = 0; i < n; i++){
+		space += "&nbsp;";
+	}
+	return space;
+}
+
+function applySpacer(str, random, min, max, spaceValue){
+	let newStr = "";
+	for(let i = 0; i < str.length; i++){
+		let spaceLength = spaceValue;
+		if(random){
+			spaceLength = Math.floor(Math.random() * (max - min + 1) + min);
+		}
+		newStr += str[i] + getSpaceOfNLength(spaceLength);
+	}
+	document.getElementById('randomSpacingOutput').innerHTML = newStr;
+}
+
+document.getElementById('yesRandom').addEventListener('input', (evt) => {
+	toggleSpacingOptions(evt);
+});
+
+document.getElementById('noRandom').addEventListener('input', (evt) => {
+	toggleSpacingOptions(evt);
+});
+
+document.getElementById('applyRandomCasing').addEventListener('click', (evt) => {
+	applyRandomCasing(document.getElementById('randomCasingInput').value);
+});
+
+document.getElementById('applyRandomSpacing').addEventListener('click', (evt) => {
+	const random = document.getElementById('yesRandom').checked;
+	const min = parseInt(document.getElementById('minSpace').value) || 0;
+	const max = parseInt(document.getElementById('maxSpace').value) || 0;
+	const defaultVal = parseInt(document.getElementById('spaceSize').value) || 0;
+	const str = document.getElementById('randomSpacingInput').value;
+	applySpacer(str, random, min, max, defaultVal);
+});
+
+</script>
+
+</html>

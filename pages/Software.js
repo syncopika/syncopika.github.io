@@ -19,6 +19,7 @@ const Software = {
 			<br>
 			
 			<h4><b>novelties 🍬</b><a href='#/novelties'> → </a></h4>
+			<br>
 		</div>`
 }
 
