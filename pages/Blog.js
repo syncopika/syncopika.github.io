@@ -18,6 +18,10 @@ const Blog = {
 			if(this.currIndex >= this.posts.length){
 				this.currIndex -= this.sliceSize;
 			}
+		},
+		sortByTag(evt){
+			// show only posts that have this tag
+			console.log(evt.target.textContent);
 		}
 	},
 	
@@ -131,11 +135,15 @@ const Blog = {
 					Entry #{{posts.length - (index + currIndex)}}, {{posts[index + currIndex].date}} 
 				</h3>
 				
-				
 				<hr>
 				<span v-html="posts[index + currIndex].content"></span>
 				<hr>
-				<p> Tags: {{posts[index + currIndex].tags.join(",")}} </p>
+				<p> 
+					Tags:
+					<template v-for="tag in posts[index + currIndex].tags">
+						<span class='tag' @click="sortByTag">{{tag}}</span>
+					</template>
+				</p>
 				<br>
 			</div>
 			<div>

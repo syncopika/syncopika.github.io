@@ -28,6 +28,16 @@ html, body{
 	font-weight: bold;
 }
 
+.tag{
+	color: #7e7e7e;
+	margin-left: 1%;
+	cursor: pointer;
+}
+
+.tag:hover{
+	text-decoration: underline;
+}
+
 h2.title{
 	text-align: center;
 	font-family: 'PT Sans', sans-serif;
