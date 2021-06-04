@@ -1,9 +1,12 @@
 const Blog = {
 	data: function(){
-		return {'posts': [],
-				'currIndex': 0,
-				'sliceSize': 3 // show 3 blog posts at a time.
-			   };
+		return {
+			'posts': [],
+			'currIndex': 0,
+			'currTag': '',
+			'currPosts': [], // the currently shown posts (so that we can filter on all the posts)
+			'sliceSize': 3   // show 3 blog posts at a time.
+		};
 	},
 	
 	methods: {
@@ -21,7 +24,13 @@ const Blog = {
 		},
 		sortByTag(evt){
 			// show only posts that have this tag
-			console.log(evt.target.textContent);
+			const tag = evt.target.textContent;
+			this.currPosts = this.posts.filter((post) => post.tags.includes(tag));
+			this.currTag = tag;
+		},
+		clearTagSearch(){
+			this.currTag = '';
+			this.currPosts = this.posts;
 		}
 	},
 	
@@ -41,6 +50,7 @@ const Blog = {
 			Promise.all(promiseList).then((res) => {
 				res.reverse(); // assuming in ascending order currently
 				this.posts = res;
+				this.currPosts = res; // show all posts by default
 			});
 		});
 	},
@@ -125,22 +135,22 @@ const Blog = {
 	
 	template:
 		`<div>
+			<p v-if="currTag"> <br /> showing posts with the <b>{{currTag}}</b> tag <span id='clearTagSearch' @click='clearTagSearch'>clear?</span> </p>
 			<br>
-			<div v-for="(entry, index) in posts.slice(currIndex, currIndex + sliceSize)">
-				
-				<h3 v-if="posts[index+currIndex].title"> 
-					Entry #{{posts.length - (index + currIndex) }} - {{posts[index+currIndex].title}}, {{posts[index + currIndex].date}} 
+			<div v-for="(entry, index) in currPosts.slice(currIndex, currIndex + sliceSize)">
+				<h3 v-if="currPosts[index+currIndex].title"> 
+					Entry #{{currPosts.length - (index + currIndex) }} - {{currPosts[index+currIndex].title}}, {{currPosts[index + currIndex].date}} 
 				</h3>
 				<h3 v-else> 
-					Entry #{{posts.length - (index + currIndex)}}, {{posts[index + currIndex].date}} 
+					Entry #{{currPosts.length - (index + currIndex)}}, {{currPosts[index + currIndex].date}} 
 				</h3>
 				
 				<hr>
-				<span v-html="posts[index + currIndex].content"></span>
+				<span v-html="currPosts[index + currIndex].content"></span>
 				<hr>
 				<p> 
 					Tags:
-					<template v-for="tag in posts[index + currIndex].tags">
+					<template v-for="tag in currPosts[index + currIndex].tags">
 						<span class='tag' @click="sortByTag">{{tag}}</span>
 					</template>
 				</p>

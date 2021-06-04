@@ -13,9 +13,11 @@
 html, body{
 	height: 100%;
 }
+
 .container-fluid{
 	height: 100%;
 }
+
 .row{
 	height: 100%;
 }
@@ -100,6 +102,13 @@ a:focus{
 }
 
 #browserTools, #desktopTools, #clients h3{
+	text-decoration: underline;
+}
+
+#clearTagSearch{
+	margin-left: 3px;
+	color: #7e7e7e;
+	cursor: pointer;
 	text-decoration: underline;
 }
 
