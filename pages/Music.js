@@ -70,7 +70,7 @@ const Music = {
 			
 			<hr>
 			<h3>arrangements</h3>
-				<p> I love creating arrangements! You can find my most recent work at my YouTube channel. </p>
+				<p> I love creating arrangements! You can find my most recent work at my <a href='https://www.youtube.com/user/OrchestralPikachu' style='text-decoration: underline'>YouTube channel</a>. </p>
 				<div id='soundcloud'>
 					<iframe id="gameSample" width="80%" height="102" scrolling="no" frameborder="no" v-bind:src="getSoundCloudLink(soundcloudSamples[soundcloudIndex])">
 					</iframe>
@@ -97,7 +97,7 @@ const Music = {
 			<div id="clients">
 				<h3>clients</h3>
 				<h2><a href='https://armouredboar.itch.io/'>ArmouredBoar</a></h2>
-				<h2><a href='http://www.fantasytalesonline.com/'>Fantasy Tales Online</a></h2>
+				<h2><a href='https://store.steampowered.com/app/442710/Fantasy_Tales_Online/'>Fantasy Tales Online</a></h2>
 				<h2><a href='https://wolff95.weebly.com/wolffware.html'>WolffWare</a></h2>
 			</div>
 			<br>

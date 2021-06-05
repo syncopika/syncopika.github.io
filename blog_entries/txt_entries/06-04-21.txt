@@ -1,0 +1,59 @@
+--date 
+6/4/21
+
+--title
+trip to Lake Tahoe
+
+--tags
+life, travel
+
+--content
+
+--p
+I went to Lake Tahoe for a few days at the end of May for a cousin's wedding. The weather was perfect the whole time! :O. Not very fun traveling with COVID-19 still being a thing but the trip was relatively painless. Got to see some nice cars and aircraft to boot :D.
+
+--p
+Here are some pictures!
+
+--p 
+a Porsche 911 Targa and a Maserati GranTurismo convertible next to it
+--image
+blog_entries/images/lake tahoe 2021/targa.png
+
+--br
+--br
+
+--p 
+a Rolls-Royce Ghost and Bentley Flying Spur
+--image
+blog_entries/images/lake tahoe 2021/rolls.png
+blog_entries/images/lake tahoe 2021/bentley.png
+
+--br
+--br
+
+--p 
+various lake pictures
+--image
+blog_entries/images/lake tahoe 2021/lake1.png
+blog_entries/images/lake tahoe 2021/lake2.png
+blog_entries/images/lake tahoe 2021/lake3.png
+blog_entries/images/lake tahoe 2021/lake4.png
+
+--br
+--br
+
+--p 
+the pine trees (and pinecones) at Lake Tahoe are much bigger than what you'd see in Maryland lol
+--image
+blog_entries/images/lake tahoe 2021/tree.png
+blog_entries/images/lake tahoe 2021/pinecone.png
+
+--br
+--br
+
+--p 
+a touch-and-go by an Air Force KC-10 tanker at Reno-Tahoe airport! super lucky to see it!
+--image
+blog_entries/images/lake tahoe 2021/kc10.png
+

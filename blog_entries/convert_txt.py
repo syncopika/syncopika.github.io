@@ -125,9 +125,7 @@ for entry in txt_entries:
 		new_json_entry.write(json.dumps(json_doc, indent=4))
 		new_json_entry.close()
 		
-		# update list of all entries also 
-		# also this loop is not currently working. might need to strip first to compare
-		# i.e. map over readlines and strip each element
+		# update list of all entries also
 		entry_list = None
 		with open("entry_list.txt", "r", encoding="utf-8") as f:
 			entry_list = f.readlines()
