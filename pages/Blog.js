@@ -59,6 +59,7 @@ const Blog = {
 		// set image size and let all images be clickable to be enlarged
 		let images = document.getElementsByTagName("img");
 		Array.from(images).forEach((img) => {
+			
 			img.setAttribute('width', "20%");
 			img.setAttribute('height', "20%");
 			img.style.marginRight = "3px";
@@ -76,10 +77,32 @@ const Blog = {
 			img.addEventListener('click', (evt) => {
 				// taken from: https://github.com/syncopika/trip-planner/blob/master/src/components/Destination.vue#L258
 				let enlargedImage = new Image();
+
+				enlargedImage.onload = function(){
+					const originalHeight = enlargedImage.height;
+					const originalWidth = enlargedImage.width;
+					
+					const viewportHeight = window.innerHeight;
+					const viewportWidth = window.innerWidth;
+					const scaleFactor = 0.8;
+					
+					if(originalHeight > originalWidth){
+						// set image to take the viewport height and adjust width to about the original dimension ratio
+						enlargedImage.height = viewportHeight*scaleFactor;
+						enlargedImage.width = Math.min(viewportHeight*scaleFactor*originalWidth / originalHeight, viewportWidth*0.98);
+					}else{
+						// take the viewport width, adjust height accordingly
+						enlargedImage.width = viewportWidth*scaleFactor;
+						enlargedImage.height = viewportWidth*scaleFactor*originalHeight / originalWidth;
+					}
+					
+					document.body.style.overflowY = "hidden"; // hide the body Y scrollbar so the user won't see 2 scrollbars
+				};
+				
 				enlargedImage.src = evt.target.src;
 
 				let imageDiv = document.createElement('div');
-				imageDiv.style.opacity = "0.98";
+				imageDiv.style.opacity = "0.99";
 				imageDiv.style.backgroundColor = "#383838";
 				imageDiv.style.position = "fixed";
 				imageDiv.style.zIndex = "10";
@@ -88,45 +111,35 @@ const Blog = {
 				imageDiv.style.top = "0";
 				imageDiv.style.left = "0";
 				imageDiv.style.textAlign = "center";
-				
-				if(window.innerHeight < 900 && window.innerWidth < 900){
-					// assuming user is on mobile
-					enlargedImage.style.height = "50%";
-					enlargedImage.style.width = "70%";		
-				}else{
-					if (document.body.clientHeight < enlargedImage.height ||
-						document.body.clientWidth < enlargedImage.width) {
-						// reduce size of enlarged image if larger than the page
-						enlargedImage.style.height = "70%";
-						enlargedImage.style.width = "70%";
-					}
+				imageDiv.style.paddingTop = "2%";
+				imageDiv.style.paddingBottom = "1%";
 
-					if (document.body.clientHeight > enlargedImage.height) {
-						// if image height is smaller than the page height,
-						// make sure the background is as tall as the page
-						imageDiv.style.height = document.body.clientHeight + "px";
-					}
-				}
-
-				enlargedImage.style.marginTop = "3%";
-				enlargedImage.addEventListener("dblclick", () => {
+				enlargedImage.addEventListener("dblclick", (evt) => {
 					if(imageDiv && imageDiv.parentNode){
 						imageDiv.parentNode.removeChild(imageDiv);
 					}
+					document.body.style.overflowY = "scroll"; // revert back to normal
 				});
-				imageDiv.appendChild(enlargedImage);
+				
+				const enlargedImgContainer = document.createElement('div');
+				enlargedImgContainer.appendChild(enlargedImage);
+				enlargedImgContainer.style.height = "100%";
+				enlargedImgContainer.style.overflowY = "scroll";
+				imageDiv.appendChild(enlargedImgContainer);
 
 				let cancel = document.createElement('h3');
 				cancel.textContent = "close";
 				cancel.style.color = "#fff";
 				cancel.style.marginTop = "1%";
 				cancel.style.fontFamily = "monospace";
+				cancel.style.cursor = "pointer";
 				cancel.addEventListener("click", () => {
 					if(imageDiv && imageDiv.parentNode){
 						imageDiv.parentNode.removeChild(imageDiv);
 					}
+					document.body.style.overflowY = "scroll"; // back to normal
 				});
-				imageDiv.appendChild(cancel);
+				enlargedImgContainer.appendChild(cancel);
 
 				document.body.appendChild(imageDiv);				
 			});

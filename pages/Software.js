@@ -13,8 +13,8 @@ const Software = {
 			<br>
 			
 			<h4><b> visual projects 🎨 </b></h4>
-			<p><a href='https://syncopika.github.io/funSketch/'> funSketch </a></p>
 			<p><a href='https://syncopika.github.io/threejs-projects/'> 3d stuff </a></p>
+			<p><a href='https://syncopika.github.io/funSketch/'> funSketch </a></p>
 			<p><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'> gifCatch </a></p>
 			<br>
 			
