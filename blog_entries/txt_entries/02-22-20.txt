@@ -29,12 +29,12 @@ Here are some pictures!
 --h3 
 Houtong Cat Village (侯硐)
 --image
-blog_entries/images/taiwan trip 2020/houtong1.png
-blog_entries/images/taiwan trip 2020/houtong2.png
-blog_entries/images/taiwan trip 2020/cat1.png
-blog_entries/images/taiwan trip 2020/cat2.png
-blog_entries/images/taiwan trip 2020/cat3.png
-blog_entries/images/taiwan trip 2020/cat4.png
+blog_entries/images/taiwan trip 2020/houtong1.webp
+blog_entries/images/taiwan trip 2020/houtong2.webp
+blog_entries/images/taiwan trip 2020/cat1.webp
+blog_entries/images/taiwan trip 2020/cat2.webp
+blog_entries/images/taiwan trip 2020/cat3.webp
+blog_entries/images/taiwan trip 2020/cat4.webp
 
 --p
 Above are photos taken from Houtong Cat Village! There's a visitor center on one side of the train station that gives some info on the history of the town (if I recall correctly it used to be a coal mining town).
@@ -46,13 +46,13 @@ The actual village is on the other side of the station. There were, of course, m
 --h3 
 Alishan (阿里山)
 --image
-blog_entries/images/taiwan trip 2020/alishan1.png
-blog_entries/images/taiwan trip 2020/alishan2.png
-blog_entries/images/taiwan trip 2020/alishan3.png
-blog_entries/images/taiwan trip 2020/alishan4.png
-blog_entries/images/taiwan trip 2020/alishan5.png
-blog_entries/images/taiwan trip 2020/alishan6.png
-blog_entries/images/taiwan trip 2020/alishan7.png
+blog_entries/images/taiwan trip 2020/alishan1.webp
+blog_entries/images/taiwan trip 2020/alishan2.webp
+blog_entries/images/taiwan trip 2020/alishan3.webp
+blog_entries/images/taiwan trip 2020/alishan4.webp
+blog_entries/images/taiwan trip 2020/alishan5.webp
+blog_entries/images/taiwan trip 2020/alishan6.webp
+blog_entries/images/taiwan trip 2020/alishan7.webp
 
 --p
 Above are photos from Alishan in Chiayi. Chiayi is quite a bit south of Taipei but easily reached in about an hour and a half via the high speed rail.
@@ -66,11 +66,11 @@ It can get cold up there in Alishan compared to ground level (it was probably in
 --h3 
 Wulai (烏來)
 --image
-blog_entries/images/taiwan trip 2020/wulai1.png
-blog_entries/images/taiwan trip 2020/wulai2.png
-blog_entries/images/taiwan trip 2020/wulai3.png
-blog_entries/images/taiwan trip 2020/wulai4.png
-blog_entries/images/taiwan trip 2020/wulai5.png
+blog_entries/images/taiwan trip 2020/wulai1.webp
+blog_entries/images/taiwan trip 2020/wulai2.webp
+blog_entries/images/taiwan trip 2020/wulai3.webp
+blog_entries/images/taiwan trip 2020/wulai4.webp
+blog_entries/images/taiwan trip 2020/wulai5.webp
 
 --p
 Above are photos from Wulai. Wulai is very accessible from Taipei - you can take the Green line on the MRT to Xindian station and from there you can just take a bus all the way to Wulai! Super convenient.
@@ -82,9 +82,9 @@ There's a little train to take you up to the Wulai waterfall. Too bad it was so 
 --h3 
 Xiangshan (象山)
 --image
-blog_entries/images/taiwan trip 2020/elephantmountain1.png
-blog_entries/images/taiwan trip 2020/elephantmountain2.png
-blog_entries/images/taiwan trip 2020/elephantmountain3.png
+blog_entries/images/taiwan trip 2020/elephantmountain1.webp
+blog_entries/images/taiwan trip 2020/elephantmountain2.webp
+blog_entries/images/taiwan trip 2020/elephantmountain3.webp
 
 --p
 Above are photos from Elephant Mountain in Taipei! Elephant Mountain is reachable from the Xiangshan MRT station (last stop on the Red line). I thought the climb here was a bit intense as the stairs were numerous and very steep. 
@@ -96,9 +96,9 @@ The climb took me maybe at least 20 minutes(?) but the view was worth it!
 --h3 
 Keelung (基隆)
 --image
-blog_entries/images/taiwan trip 2020/keelung1.png
-blog_entries/images/taiwan trip 2020/keelung2.png
-blog_entries/images/taiwan trip 2020/keelung3.png
+blog_entries/images/taiwan trip 2020/keelung1.webp
+blog_entries/images/taiwan trip 2020/keelung2.webp
+blog_entries/images/taiwan trip 2020/keelung3.webp
 
 --p
 Above are photos from Keelung. It takes about 45 min. by local train to get there from Taipei. I visited this really nice park / old fort (Gongzi Liao Fort) that's right behind National Taiwan Ocean University. The views there are super nice!

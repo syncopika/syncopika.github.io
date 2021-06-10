@@ -27,6 +27,7 @@ const Blog = {
 			const tag = evt.target.textContent;
 			this.currPosts = this.posts.filter((post) => post.tags.includes(tag));
 			this.currTag = tag;
+			this.currIndex = 0;
 		},
 		clearTagSearch(){
 			this.currTag = '';

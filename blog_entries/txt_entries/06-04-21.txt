@@ -18,7 +18,7 @@ Here are some pictures!
 --p 
 a Porsche 911 Targa and a Maserati GranTurismo convertible next to it
 --image
-blog_entries/images/lake tahoe 2021/targa.png
+blog_entries/images/lake tahoe 2021/targa.webp
 
 --br
 --br
@@ -26,8 +26,8 @@ blog_entries/images/lake tahoe 2021/targa.png
 --p 
 a Rolls-Royce Ghost and Bentley Flying Spur
 --image
-blog_entries/images/lake tahoe 2021/rolls.png
-blog_entries/images/lake tahoe 2021/bentley.png
+blog_entries/images/lake tahoe 2021/rolls.webp
+blog_entries/images/lake tahoe 2021/bentley.webp
 
 --br
 --br
@@ -35,10 +35,10 @@ blog_entries/images/lake tahoe 2021/bentley.png
 --p 
 various lake pictures
 --image
-blog_entries/images/lake tahoe 2021/lake1.png
-blog_entries/images/lake tahoe 2021/lake2.png
-blog_entries/images/lake tahoe 2021/lake3.png
-blog_entries/images/lake tahoe 2021/lake4.png
+blog_entries/images/lake tahoe 2021/lake1.webp
+blog_entries/images/lake tahoe 2021/lake2.webp
+blog_entries/images/lake tahoe 2021/lake3.webp
+blog_entries/images/lake tahoe 2021/lake4.webp
 
 --br
 --br
@@ -46,8 +46,8 @@ blog_entries/images/lake tahoe 2021/lake4.png
 --p 
 the pine trees (and pinecones) at Lake Tahoe are much bigger than what you'd see in Maryland lol
 --image
-blog_entries/images/lake tahoe 2021/tree.png
-blog_entries/images/lake tahoe 2021/pinecone.png
+blog_entries/images/lake tahoe 2021/tree.webp
+blog_entries/images/lake tahoe 2021/pinecone.webp
 
 --br
 --br
@@ -55,5 +55,5 @@ blog_entries/images/lake tahoe 2021/pinecone.png
 --p 
 a touch-and-go by an Air Force KC-10 tanker at Reno-Tahoe airport! super lucky to see it!
 --image
-blog_entries/images/lake tahoe 2021/kc10.png
+blog_entries/images/lake tahoe 2021/kc10.webp
 
