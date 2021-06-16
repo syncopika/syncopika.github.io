@@ -66,7 +66,7 @@ const Music = {
 	template:
 		`<div id='musicContent'>
 			<h2>music works</h2>
-			<p>more original work @ my <a href='http://greenbearmusic.bandcamp.com' style='color: #000FFF'>bandcamp</a></p>
+			<p>I use LMMS and free soundfonts. more original work @ my <a href='http://greenbearmusic.bandcamp.com' style='color: #000FFF'>bandcamp</a></p>
 			
 			<hr>
 			<h3>arrangements</h3>
