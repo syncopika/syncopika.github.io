@@ -7,13 +7,13 @@ const Software = {
 			<p style='font-size: 13px'>please note: most of my web apps are not designed/optimized for mobile </p>
 			<br>
 			
-			<h4><b><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll </a></b></h4>
-			<p> This project lets you compose music in the browser! It's made of mostly vanilla JS, html and css and leverages the Web Audio API and a bit of jQuery. </p>
+			<h4><b><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll browser </a></b></h4>
+			<p> This project is definitely one of my favorites and one of the most interesting. It lets you compose music in the browser! It's made of mostly vanilla JS, HTML and CSS and leverages the Web Audio API and a bit of jQuery. </p>
 			<p> I also created an incomplete companion application called <a href='https://syncopika.github.io/soundmaker/'><b> soundmaker </b></a> to create custom instruments that you could import into the piano roll.</p>
 			<br>
 			
 			<h4><b><a href='https://syncopika.github.io/funSketch/'> funSketch </a></b></h4>
-			<p> This is a web application for drawing and animating! There are different kinds of image filters and brushes to use, as well as onion-skin and layering. I relied on React for this project.</p>
+			<p> This is a web application for drawing and animating. There are different kinds of image filters and brushes to use, as well as onion-skin and layering. I relied on React for this project.</p>
 			<br>
 			
 			<h4><b><a href='https://github.com/syncopika/gifCatch_desktop-Windows-'> gifCatch </a></b></h4>
@@ -26,7 +26,7 @@ const Software = {
 			<br>
 			
 			<h4><b><a href='https://syncopika.github.io/threejs-projects/'> threejs projects </a></b></h4>
-			<p> This is a collection of small 3d projects I've created using three.js and models I created in Blender. For each project I try to implement an idea that could be useful on its own as well as tackle some new kind of 3d graphics/threejs/algorithm-related problem I haven't yet tried.</p>
+			<p> This is a collection of small 3d projects I've created using three.js and models I made in Blender. For each project I try to implement an idea that could be useful on its own as well as tackle some new kind of 3d graphics/threejs/algorithm-related problem I haven't yet tried.</p>
 			<br>
 			
 			<br>
