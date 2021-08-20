@@ -162,8 +162,16 @@ a:focus{
 	height: 60px;
 }
 
-/* FOR SMALLER MEDIA */
+#projectsGrid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: repeat(auto-fill, 1fr);
+	grid-row-gap: 1.5em;
+	grid-column-gap: 2.5em;
+}
 
+
+/* FOR SMALLER MEDIA */
 @media screen and (max-width: 1000px){
 	
 	body{
