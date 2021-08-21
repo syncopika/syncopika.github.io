@@ -164,10 +164,22 @@ a:focus{
 
 #projectsGrid {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	grid-template-rows: repeat(auto-fill, 1fr);
-	grid-row-gap: 1.5em;
-	grid-column-gap: 2.5em;
+	grid-row-gap: 4em;
+	grid-column-gap: 5em;
+}
+
+.imgContainer {
+	width: 110%;
+	height: auto;
+}
+
+.screenshot {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border: 1px solid #000;
 }
 
 
