@@ -164,7 +164,7 @@ a:focus{
 
 #projectsGrid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	grid-template-rows: repeat(auto-fill, 1fr);
 	grid-row-gap: 4em;
 	grid-column-gap: 5em;
@@ -184,7 +184,7 @@ a:focus{
 
 
 /* FOR SMALLER MEDIA */
-@media screen and (max-width: 1000px){
+@media screen and (max-width: 900px){
 	
 	body{
 		color: #000; /*#fff;*/
@@ -232,5 +232,14 @@ a:focus{
 	a{
 		color: #383838;	
 	}
+	
+	#projectsGrid {
+		display: grid;
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+		grid-template-rows: repeat(auto-fill, 1fr);
+		grid-row-gap: 4em;
+		grid-column-gap: 5em;
+	}
+}
 	
 }
