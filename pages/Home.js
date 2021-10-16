@@ -1,7 +1,7 @@
 const Home = {
 	template: `
 		<div id='home'>
-			<h4> hello! </h4>
+			<h4> welcome! </h4>
 		</div>
 	`
 }
