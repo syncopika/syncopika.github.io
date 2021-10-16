@@ -4,6 +4,7 @@ import { Music } from './pages/Music.js';
 import { Software } from './pages/Software.js';
 import { Novelties } from './pages/Novelties.js';
 import { Blog } from './pages/Blog.js';
+import { BlogEntry } from './pages/BlogEntry.js';
 import { NotFound } from './pages/NotFound.js';
 
 const Contact = {
@@ -32,6 +33,7 @@ const router = new VueRouter({
 		{path: '/software', component: Software},
 		{path: '/novelties', component: Novelties},
 		{path: '/blog', component: Blog},
+		{path: '/blog/:entryTitle', name: 'blog', component: BlogEntry, props: true},
 		{path: '/contact', component: Contact},
 		{path: '*', component: NotFound}
 	]

@@ -61,7 +61,7 @@ json_entries = set(get_filenames("json_entries"))
 # note that when this script runs it basically recreates every blog entry in json! :|
 for entry in txt_entries:
 	# create new json obj for this blog entry
-	json_doc = {}
+	json_doc = {"filename": entry}
 	with open(f"txt_entries/{entry}.txt", 'r', encoding='utf-8') as file:
 		lines = file.readlines()
 		last_metadata_flag = None
