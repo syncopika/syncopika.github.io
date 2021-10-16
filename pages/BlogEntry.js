@@ -107,12 +107,12 @@ const BlogEntry = {
 	
 	template:
 		`<div>
-			<h3 v-if="entryData.title"> {{entryData.title}}, {{entryData.date}} </h3>
+			<h3 v-if="entryData.title"> {{entryData.date}}, {{entryData.title}} </h3>
 			<h3 v-else> {{entryData.date}} </h3>
 			<hr />
 			<span v-html="entryData.content"></span>
 			<hr />
-			<br />
+			<br>
 		</div>`
 }
 
