@@ -1,0 +1,67 @@
+--title
+taking a closer look at asynchronous JavaScript
+
+--date
+11/24/21
+
+--tags
+programming, javascript
+
+--content
+
+--p
+Recently I thought about async/await in JavaScript and I (again) got confused how using await differed from just regular synchronous, blocking code.
+It turns out await itself does block (just the function it's running in) but it does not necessarily prevent other code from running asynchronously because the function that's called that await
+is waiting for could be running async code inside itself. I realize that's a lot of sync/async word usage so I hope this makes sense!
+
+--p
+I also happened upon this blog post by Richard Clayton (https://rclayton.silvrback.com/avoid-synchronous-functions-in-node-js) and was inspired to do some digging myself
+and to see if I could actually compare the performance of doing things synchronously vs asynchronously.
+
+--p
+Let's have a look at this code snippet, for example, with Node.js:
+--code
+const fs = require("fs");
+const util = require("util");
+
+async function main(){
+    // reading files synchronously
+    const start = Date.now();
+    const file1 = fs.readFileSync("test.txt");
+    const file2 = fs.readFileSync("test2.txt");
+    const end = Date.now();
+    console.log("start: " + start);
+    console.log("end: " + end);
+    
+    console.log("-------------------------");
+    
+    // now reading files "synchronously" using await
+    // note that fs.readFile needs to be promisified
+    // so it will return a Promise
+    const readFile = util.promisify(fs.readFile);
+    const start2 = Date.now();
+    const f1 = await readFile("test.txt");
+    const f2 = await readFile("test2.txt");
+    const end2 = Date.now();
+    console.log("start: " + start2);
+    console.log("end: " + end2);
+    
+    console.log("-------------------------");
+    // gathering up the results of a bunch of async tasks
+    // I think highlights a use case for needing async functionality,
+    // even though a lot of examples out there demo async/await
+    // in a synchronous process (e.g. just await on one thing)
+    // in this way we allow the reading of multiple files to
+    // happen asynchronously (so concurrently, but not parallel), 
+    // which should allow a performance advantage
+    // over synchronously (especially with a large enough numbers of files)
+    const start3 = Date.now();
+    const res = await Promise.all([readFile("test.txt"), readFile("test2.txt")]);
+    const end3 = Date.now();
+    console.log("start: " + start3);
+    console.log("end: " + end3);
+}
+
+main();
+
+--endcode
