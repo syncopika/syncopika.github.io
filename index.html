@@ -3,81 +3,77 @@
 <html>
 
 <head>
-	<script src='lib/vue.js'></script>
-	<script src='lib/vue-router.js'></script>
-	<script src="lib/roulette.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="https://use.fontawesome.com/58938a654b.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans">
-	<link rel="stylesheet" href="style.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta charset='UTF-8'>
-	<title>hey there</title>
+    <script src='lib/vue.js'></script>
+    <script src='lib/vue-router.js'></script>
+    <script src="lib/roulette.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/58938a654b.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset='UTF-8'>
+    <title>hey there</title>
 </head>
 
 <body>
-	<div id='app' class='container-fluid'>
-		<div class='row'>
-			<div id='sidebar' class='col-lg-2 col-md-2 col-sm-12'>
-				
-				<ul>
-					<h2 class='title'><router-link to="/" id="homelink">n.c.h / 熊志文</router-link></h2>
-					<p class='title'>welcome!</p>
-				</ul>
-				
-				<ul id='index'>
-					<hr>
-					<li id='about'><router-link to="/about">about</router-link></li>
-					<li id='music'><router-link to="/music">music</router-link></li>
-					<li id='software'><router-link to="/software">software</router-link></li>
-					<li id='blog'><router-link to="/blog">blog</router-link></li>
-					<!--<li id='contact'><router-link to="/contact">contact</router-link></li>-->
-					<hr>
-					<p id='footerTag'>c. 2016 </p>
-				</ul>
-			</div>
-			
-			<div id='content' class='col-lg-6 col-md-6 col-sm-12'>
-				<router-view></router-view>
-			</div>
-			
-		</div>
-	</div>
-	<script type="module" src='main.js'></script>
+    <div id='app'>
+        <nav id='sidebar' class='col-lg-2 col-md-2 col-sm-12'>
+            <header>
+                <h2 class='title'><router-link to="/" id="homelink">n.c.h / 熊志文</router-link></h2>
+                <p class='title'>welcome!</p>
+            </header>
+            
+            <ul id='index'>
+                <hr>
+                <li id='about'><router-link to="/about">about</router-link></li>
+                <li id='music'><router-link to="/music">music</router-link></li>
+                <li id='software'><router-link to="/software">software</router-link></li>
+                <li id='blog'><router-link to="/blog">blog</router-link></li>
+                <!--<li id='contact'><router-link to="/contact">contact</router-link></li>-->
+                <hr>
+                <p id='footerTag'>c. 2016 </p>
+            </ul>
+        </nav>
+        
+        <main id='content' class='col-lg-6 col-md-6 col-sm-12'>
+            <router-view></router-view>
+        </main>
+    </div>
+    <script type="module" src='main.js'></script>
 </body>
 
 
 <script>
 
 function changeHeight(content){
-	if(content === "#musicContent"){
-		var height = $(content).height();
-		$('#sidebar').height(height + 50);
-	}else{
-		$('#sidebar').height("100%");
-	}
+    if(content === "#musicContent"){
+        var height = $(content).height();
+        $('#sidebar').height(height + 50);
+    }else{
+        $('#sidebar').height("100%");
+    }
 }
 
 //this changes the sidebar height depending on viewport
 //my music portfolio is the only section that goes past 100% height, so 
 //I'm specifically targeting that section
 $(window).resize(function(){
-	var viewportWidth = $(window).width();
-	//if on mobile, don't adjust sidebar height
-	//keep at 100%
-	if(viewportWidth <= 960){
-		$('#sidebar').height("100%");
-	}
-	if(viewportWidth > 960 && viewportWidth < 990){
-		$('#sidebar').height("auto");
-	}
-	//if not mobile and current content shown is my music content
-	else if(viewportWidth > 960 && $('#musicContent').css('display') === "block"){
-		changeHeight("#musicContent");
-	}else{
-		$('#sidebar').height("100%");
-	}
+    var viewportWidth = $(window).width();
+    //if on mobile, don't adjust sidebar height
+    //keep at 100%
+    if(viewportWidth <= 960){
+        $('#sidebar').height("100%");
+    }
+    if(viewportWidth > 960 && viewportWidth < 990){
+        $('#sidebar').height("auto");
+    }
+    //if not mobile and current content shown is my music content
+    else if(viewportWidth > 960 && $('#musicContent').css('display') === "block"){
+        changeHeight("#musicContent");
+    }else{
+        $('#sidebar').height("100%");
+    }
 });
 
 </script>

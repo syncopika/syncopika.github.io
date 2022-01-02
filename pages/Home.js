@@ -1,10 +1,10 @@
 const Home = {
-	template: `
-		<div id='home'>
-		</div>
-	`
+    template: `
+        <div id='home'>
+        </div>
+    `
 }
 
 export {
-	Home
+    Home
 }
