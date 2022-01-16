@@ -12,6 +12,28 @@ programming, javascript
 --p
 Recently I thought about async/await in JavaScript and I (again) got confused how using await differed from just regular synchronous, blocking code.
 From what I understand, await itself does block, but just the function it's running in (I think <b><a href="https://softwareengineering.stackexchange.com/questions/183576/asyncawait-sync">this post</a></b> is fairly helpful); it doesn't prevent other code from running asynchronously because the function await is waiting on could be running asynchronous code.
+For example:
+--code
+async function doSomething(){
+    // using await in here makes everything run synchronously
+    const data = await fetch("https://reqres.in/api/products/3");
+    const json = await data.json();
+    console.log(typeof(json)); // should print "object"
+}
+
+doSomething();         // calling an asynchronous function
+console.log("hello");  // this gets printed first
+
+--endcode
+
+--p
+results in the following:
+
+--code
+hello
+object
+--endcode
+
 
 --p
 I also happened upon <b><a href="https://rclayton.silvrback.com/avoid-synchronous-functions-in-node-js">this blog post</a></b> by Richard Clayton and was inspired to compare the performance of doing things synchronously vs asynchronously.
@@ -143,4 +165,4 @@ If any technical, spelling or grammatical errors are present, please feel free t
 <br> Thanks for reading!
 
 --p
-edited 12/4/21
+edited 1/16/22
