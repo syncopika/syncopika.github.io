@@ -98,6 +98,7 @@ const Music = {
                 <h3>clients</h3>
                 <h2><a href='https://armouredboar.itch.io/'>ArmouredBoar</a></h2>
                 <h2><a href='https://store.steampowered.com/app/442710/Fantasy_Tales_Online/'>Fantasy Tales Online</a></h2>
+                <h2><a href='https://skyrune.com/play/'>SpireBloom</a></h2>
                 <h2><a href='https://wolff95.weebly.com/wolffware.html'>WolffWare</a></h2>
             </div>
             <br>

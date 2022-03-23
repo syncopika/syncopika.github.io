@@ -49,7 +49,8 @@ const Software = {
                     </div>
                     <br>
                     <p> React, pdf.js </p>
-                    <p>Nothing super special but this is a tool that allows you to sync music score page turning (a pdf score) with audio with some manual intervention in the form of JSON. </p>
+                    <p>This is a tool that allows you to sync music score page turning (a pdf score) with audio with some manual intervention in the form of JSON. </p>
+                    <p>Each score has its own unique URL so it's shareable.</p>
                     <br>
                 </div>
                 
