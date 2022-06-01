@@ -4,7 +4,7 @@ const Software = {
             <h2>programming</h2>
             <p>some selected projects</p>
             <hr>
-            <p style='font-size: 13px'>please note: most of my web apps are not designed/optimized for mobile at the moment </p>
+            <p style='font-size: 13px'>please note: most of my web apps are not designed/optimized for mobile </p>
             <br>
             
             <div id='projectsGrid'>
