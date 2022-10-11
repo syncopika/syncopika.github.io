@@ -1,5 +1,14 @@
 /*style page for syncopika.github.io */
 
+:root {
+    --grey: #7e7e7e;
+    --blue: #117ab7;
+    --darker-blue: #2e6da4;
+    --dark-purple: #00002A;
+    --charcoal: #383838;
+    --font-type: 'PT Sans', sans-serif;
+}
+
 #aboutContent{
     margin-top: 10%;
     width: 70%;
@@ -23,7 +32,7 @@ html, body{
 }
 
 .tag{
-    color: #7e7e7e;
+    color: var(--grey);
     margin-left: 1%;
     cursor: pointer;
 }
@@ -34,12 +43,12 @@ html, body{
 
 h2.title{
     text-align: center;
-    font-family: 'PT Sans', sans-serif;
+    font-family: var(--font-type);
 }
 
 p.title{
     text-align: center;
-    font-family: 'PT Sans', sans-serif;
+    font-family: var(--font-type);
     font-size: 14px;
 }
 
@@ -54,7 +63,7 @@ a{
 
 a:hover{
     text-decoration: none;
-    color: #7e7e7e;
+    color: var(--grey);
 }
 
 a:focus{
@@ -86,11 +95,11 @@ a:focus{
 
 #index li{
     list-style-type: none;
-    font-family: 'PT Sans', sans-serif;
+    font-family: var(--font-type);
     font-size: 26px;
     padding-top: 8px;
     padding-left: 5px;
-    color: #00002A;
+    color: var(--dark-purple);
 }
 
 #browserTools, #desktopTools, #clients h3{
@@ -99,17 +108,17 @@ a:focus{
 
 #clearTagSearch{
     margin-left: 3px;
-    color: #7e7e7e;
+    color: var(--grey);
     cursor: pointer;
     text-decoration: underline;
 }
 
 #clients a{
-    color: #2e6da4;
+    color: var(--darker-blue);
 }
 
 #clients a:hover{
-    color: #117ab7;
+    color: var(--blue);
 }
 
 #musicContent{
@@ -124,7 +133,7 @@ a:focus{
 
 #links li{
     list-style-type: none;
-    font-family: 'PT Sans', sans-serif;
+    font-family: var(--font-type);
     font-size: 22px;
     padding-left: 0;
     padding-top: 10px;
@@ -210,7 +219,7 @@ a:focus{
     }
     
     a{
-        color: #383838;    
+        color: var(--charcoal);
     }
     
     #projectsGrid {
