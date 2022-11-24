@@ -2,11 +2,11 @@ const Novelties = {
     template: 
         `<div id='novelties'>
             <br />
-            <p> These applications are pretty small and more like idea prototypes so not a lot of time has been put into them (compared to some of my other work). </p>
-            <p> But hopefully they may serve as springboards for new ideas or be useful for implementing similar ideas in other contexts </p>
+            <p> more software! :D </p>
             <hr>
             <h3> desktop </h3>
             <p><a href='https://github.com/syncopika/artstation'> artstation </a></p>
+            <p><a href='https://github.com/syncopika/basic_screen_recorder_windows'> screen recorder </a></p>
             <br />
             <h3> mobile </h3>
             <p><a href='https://github.com/syncopika/mobile-qr-code-scanner'>QR code scanner for Android</a></p>
