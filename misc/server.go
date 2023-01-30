@@ -4,16 +4,24 @@ package main
 
 import (
     "fmt"
+    "flag"
     "log"
     "net/http"
 )
 
 func main() {
+    portPtr := flag.Int("port", 8080, "port number to serve on")
+    
+    flag.Parse()
+    
+    fmt.Printf("starting server @ localhost on %d...\n", *portPtr)
+    
     fileServer := http.FileServer(http.Dir("./"))
     http.Handle("/", fileServer)
     
-    fmt.Printf("starting server @localhost on port 8080...\n")
-    if err := http.ListenAndServe(":8080", nil); err != nil {
+    port := fmt.Sprint(":", *portPtr)
+    
+    if err := http.ListenAndServe(port, nil); err != nil {
         log.Fatal(err)
     }
 }
