@@ -1,0 +1,152 @@
+<!doctype html>
+
+<head>
+<title> webm-to-wav </title>
+<style>
+    body {
+        font-family: sans-serif;
+    }
+</style>
+</head>
+
+
+<body>
+<h1>convert webm to wav</h1>
+
+<button id='import'>import webm file</button>
+<p id='filename'>filename: </p>
+<br />
+<button id='convert'>convert</button>
+<p id='status'>status:</p>
+
+</body>
+
+<script>
+let webmData = null;
+let filename = null;
+
+function updateFilename(filename){
+    document.getElementById('filename').textContent = `filename: ${filename}`;
+}
+
+function updateStatus(newState){
+    document.getElementById('status').textContent = `status: ${newState}`;
+}
+
+// start wav-related functions
+function writeStringToWav(dataViewObj, offset, string){
+	for(let i = 0; i < string.length; i++){
+		dataViewObj.setUint8(offset + i, string.charCodeAt(i));
+	}
+}
+
+function interleave(leftChan, rightChan){
+	const len = leftChan.length + rightChan.length;
+	const buf = new Float32Array(len);
+	
+	let index = 0;
+	let chanIndex = 0;
+	
+	while(index < len){
+		buf[index++] = leftChan[chanIndex];
+		buf[index++] = rightChan[chanIndex];
+		chanIndex++;
+	}
+	
+	return buf;
+}
+
+function floatTo16BitPCM(dataViewObj, offset, input){
+	for(let i = 0; i < input.length; i++, offset += 2){
+		const s = Math.max(-1, Math.min(1, input[i]));
+		dataViewObj.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+	}
+}
+
+function toWAV(audioBuffer){
+	const numChannels = audioBuffer.numberOfChannels;
+	const sampleRate = audioBuffer.sampleRate;
+	
+	let audioDataBuf;
+	if(numChannels === 2){
+		audioDataBuf = interleave(audioBuffer.getChannelData(0), audioBuffer.getChannelData(1));
+	}else{
+		audioDataBuf = audioBuffer.getChannelData(0);
+	}
+	
+	// note: assuming a bitDepth of 16 and so 2 bytes per sample
+	const bytesPerSample = 2;
+	const blockAlign = numChannels * bytesPerSample;
+	
+	const wavBuffer = new ArrayBuffer(44 + audioDataBuf.length * bytesPerSample); // 44 for wav header 
+	const view = new DataView(wavBuffer);
+	
+	writeStringToWav(view, 0, 'RIFF');
+	view.setUint32(4, 36 + audioDataBuf.length * bytesPerSample, true);
+	writeStringToWav(view, 8, 'WAVE');
+	writeStringToWav(view, 12, 'fmt ');
+	view.setUint32(16, 16, true); // format chunk length
+	view.setUint16(20, 1, true);  // sample format 
+	view.setUint16(22, numChannels, true);
+	view.setUint32(24, sampleRate, true);
+	view.setUint32(28, sampleRate * blockAlign, true); // byte rate
+	view.setUint16(32, blockAlign, true);
+	view.setUint16(34, 16, true); // bits per sample
+	writeStringToWav(view, 36, 'data');
+	view.setUint32(40, audioDataBuf.length * 2, true);
+	floatTo16BitPCM(view, 44, audioDataBuf);
+	
+	return view;
+}
+// end wav-related functions
+
+function importWebm(){
+    fileHandler();
+    
+    function fileHandler(){
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.addEventListener('change', getFile, false);
+        input.click();
+    }
+    
+    function getFile(e){
+        const reader = new FileReader();
+        const file = e.target.files[0];
+        
+        reader.onload = function(evt){
+            webmData = evt.target.result;
+            //console.log(file.name);
+            filename = file.name.substring(0, file.name.indexOf(".webm"));
+            updateFilename(filename);
+            updateStatus("");
+            
+            // TODO: file type validation
+        }
+        
+        reader.readAsArrayBuffer(file);
+    }  
+}
+document.getElementById('import').addEventListener('click', importWebm);
+
+async function convert(){
+    if(webmData){
+        updateStatus("converting...");
+        const audioCtx = new AudioContext();
+        const pcmData = await audioCtx.decodeAudioData(webmData);
+        const wav = toWAV(pcmData);
+        const wavBlob = new Blob([wav], {type: 'audio/wav'});
+		const blobUrl = URL.createObjectURL(wavBlob);
+		const anchorEl = document.createElement('a');
+		anchorEl.href = blobUrl;
+		anchorEl.download = `${filename}.wav`;
+		anchorEl.click();
+		URL.revokeObjectURL(blobUrl);
+        updateStatus("conversion successful!");
+    }
+}
+document.getElementById('convert').addEventListener('click', convert);
+
+</script>
+
+</html>
