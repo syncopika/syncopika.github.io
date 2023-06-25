@@ -32,7 +32,7 @@ metadata_flags = {
 	"--title": "title",
 	"--date": "date",
 	"--tags": "tags",
-	"--content": "content"
+	"--content": "content",
 }
 
 flags = {
@@ -43,10 +43,11 @@ flags = {
 	"--code": create_html_element("<pre><code>", "</code></pre>"),
 	"--endcode": None,
 	"--image": create_img_element,
+	"--font": None,
 }
 
 style = {
-	"--br": "<br />"
+	"--br": "<br />",
 }
 
 
@@ -108,6 +109,8 @@ for entry in txt_entries:
 			elif last_flag:
 				if last_flag == "--code":
 					code_block += line
+				elif last_flag == "--font":
+					json_doc["fontFamily"] = line.strip()
 				else:
 					#print(f"last flag: {last_flag}, line: {line}")
 					data = flags[last_flag](line)

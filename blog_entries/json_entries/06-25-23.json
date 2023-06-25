@@ -1,0 +1,11 @@
+{
+    "filename": "06-25-23",
+    "date": "06/25/23",
+    "title": "hello again",
+    "fontFamily": "\"Comic Sans MS\"",
+    "tags": [
+        "stuff i'm working on",
+        "misc"
+    ],
+    "content": "<h3>hi again\n</h3><p>it's been a while :).\n</p><p>just trying out some <span style='font-weight: bold'>new</span> and <span style='font-style: italic'>fancy</span> stuff like specifying font per blog post and doing inline styling via html.\n</p><p>also using Comic Sans because everyone loves Comic Sans \ud83d\ude06\n</p>"
+}
