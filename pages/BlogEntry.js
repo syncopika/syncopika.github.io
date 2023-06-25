@@ -110,10 +110,11 @@ const BlogEntry = {
             <h3 v-if="entryData.title"> {{entryData.date}}, {{entryData.title}} </h3>
             <h3 v-else> {{entryData.date}} </h3>
             <hr />
-            <span v-html="entryData.content"></span>
+            <span v-html="entryData.content" v-bind:style="entryData.fontFamily ? 'font-family: ' + entryData.fontFamily : ''"></span>
             <hr />
             <br>
-        </div>`
+        </div>
+        `
 }
 
 export {

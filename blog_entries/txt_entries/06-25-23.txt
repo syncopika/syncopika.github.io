@@ -1,0 +1,23 @@
+--date 
+06/25/23
+
+--title
+hello again
+
+--font
+"Comic Sans MS"
+
+--tags
+stuff i'm working on, misc
+
+--content
+
+--h3
+hi again
+
+--p
+it's been a while :).
+--p
+just trying out some <span style='font-weight: bold'>new</span> and <span style='font-style: italic'>fancy</span> stuff like specifying font per blog post and doing inline styling via html.
+--p
+also using Comic Sans because everyone loves Comic Sans 😆
