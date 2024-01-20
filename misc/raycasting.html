@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title> raycasting </title>
+  <style>
+    body {
+      text-align: center;
+      font-family: monospace;
+    }
+    
+    canvas {
+      border: 1px solid #000;
+    }
+    
+    #content {
+      display: flex;
+      justify-content: center;
+      column-gap: 50px;
+      flex-flow: row wrap;
+    }
+  </style>
+</head>
+
+<body>
+    <h1> raycasting a 2d map </h1>
+    <div id='content'>
+      <canvas id='canvas' width='640px' height='480px' ></canvas>
+      <div id='info'>
+        <p id='mapLocation'>curr position in map: (x, y)</p>
+        <p id='rayHit'>ray hit position: (x, y)</p>
+        <p id='playerVector'>player vector: (x, y)</p>
+        <p id='cameraVector'>camera vector: (x, y)</p>
+        <input type='checkbox' id='showFrameDraw'/><label>show drawing of frame</label>
+        <br />
+        <br />
+        <p> click on the grey door! ;) </p>
+        <br />
+        <canvas id='map'></canvas>
+      </div>
+    </div>
+</body>
+
+<script>
+  // https://lodev.org/cgtutor/raycasting.html
+  
+  // other notes:
+  // https://stackoverflow.com/questions/76485403/looking-up-and-down-implementing-camera-pitch-and-including-multiple-levels-i
+  
+  const theCanvas = document.getElementById('canvas');
+  const canvasCtx = theCanvas.getContext('2d');
+  
+  const worldMap = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
+    [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1],
+    [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,2,2,8,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  ];
+  
+  const mapWidth = worldMap[0].length;
+  const mapHeight = worldMap.length;
+  
+  // show the map on a canvas
+  const mapCanvas = document.getElementById('map');
+  const mapCtx = mapCanvas.getContext('2d');
+  const factor = 8;
+  mapCanvas.style.border = '1px solid #000';
+  mapCanvas.height = mapHeight * factor;
+  mapCanvas.width = mapWidth * factor;
+  
+  worldMap.forEach((row, rIndex) => {
+    row.forEach((val, cIndex) => {
+      if(val == 0){
+        mapCtx.fillStyle = 'rgba(0, 0, 0, 255)';
+      }else if(val == 1){
+        mapCtx.fillStyle = 'rgba(255, 0, 0, 255)';
+      }else if(val == 2){
+        mapCtx.fillStyle = 'rgba(0, 255, 0, 255)';
+      }else if(val == 3){
+        mapCtx.fillStyle = 'rgba(0, 0, 255, 255)';
+      }else if(val == 4){
+        mapCtx.fillStyle = 'rgba(255, 255, 255, 255)';
+      }else if(val == 5){
+        mapCtx.fillStyle = 'rgba(255, 0, 255, 255)';
+      }else if(val == 8){
+        mapCtx.fillStyle = 'rgba(123, 123, 123, 255)';
+      }
+      mapCtx.fillRect(cIndex * factor, rIndex * factor, factor, factor);
+    });
+  });
+  
+  function updateMapCanvas(playerPosX, playerPosY){
+    //mapCtx.fillStyle = 'rgba(255, 255, 255, 255)';
+    //mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+    
+    mapCtx.fillStyle = 'rgba(255, 255, 0, 255)';
+    mapCtx.fillRect(playerPosY * factor, playerPosX * factor, factor, factor);
+  }
+
+  //x and y start position
+  let posX = 22.0;
+  let posY = 11.5;
+  
+  //components of the direction vector of player
+  // this vector points into the computer screen. should be perpendicular to the camera "plane"
+  let dirX = -1.0;
+  let dirY = 0.0;
+  
+  // the camera "plane"
+  // this vector represents the surface of the computer screen. should be perpendicular to the player direction
+  let planeX = 0.0; 
+  let planeY = 0.66; //the 2d raycaster version of camera plane
+  
+  let isDrawingFrame = false;
+  
+  const rotSpeed = Math.PI / 12;
+  
+  function updatePlayerPosText(x, y){
+    x = Math.round(x);
+    y = Math.round(y);
+    document.getElementById('mapLocation').textContent = `curr position in map: (${x}, ${y})`;
+  }
+  
+  function updateRayHitText(x, y){
+    x = Math.round(x);
+    y = Math.round(y);
+    document.getElementById('rayHit').textContent = `ray hit position: (${x}, ${y})`;
+  }
+  
+  function updatePlayerVectorText(x, y){
+    x = Math.round(x);
+    y = Math.round(y);
+    document.getElementById('playerVector').textContent = `player vector: (${x}, ${y})`;
+  }
+  
+  function updateCameraVectorText(x, y){
+    x = Math.round(x);
+    y = Math.round(y);
+    document.getElementById('cameraVector').textContent = `camera vector: (${x}, ${y})`;
+  }
+  
+  async function update(){
+    const width = theCanvas.width;
+    const height = theCanvas.height;
+    
+    canvasCtx.fillStyle = 'rgba(0, 0, 0, 255)';
+    canvasCtx.fillRect(0, 0, theCanvas.width, theCanvas.height);
+    
+    const canvasPixelData = canvasCtx.getImageData(0, 0, width, height);
+    
+    const showFrameDraw = document.getElementById('showFrameDraw').checked;
+    
+    for(let col = 0; col < width; col++){
+      // calculate ray position and direction
+      const cameraX = 2 * col / width - 1; // x-coord in camera space
+      const rayDirX = dirX + planeX * cameraX;
+      const rayDirY = dirY + planeY * cameraX;
+      
+      // which box of the map we're in
+      let mapX = Math.round(posX);
+      let mapY = Math.round(posY);
+      
+      // length of ray from current position to next x or y side
+      let sideDistX;
+      let sideDistY;
+      
+      // length of ray from one x or y side to next x or y side
+      const deltaDistX = (rayDirX === 0) ? Infinity : Math.abs(1 / rayDirX);
+      const deltaDistY = (rayDirY === 0) ? Infinity : Math.abs(1 / rayDirY);
+      
+      let perpWallDist;
+      
+      // what direction to step in x or y dir (either +1 or -1)
+      let stepX;
+      let stepY;
+      
+      let hit = 0; // was there a wall hit
+      let side; // was a NS or EW wall hit?
+      
+      // calculate step and initial sideDist
+      if(rayDirX < 0){
+        stepX = -1;
+        sideDistX = (posX - mapX) * deltaDistX;
+      }else{
+        stepX = 1;
+        sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+      }
+      
+      if(rayDirY < 0){
+        stepY = -1;
+        sideDistY = (posY - mapY) * deltaDistY;
+      }else{
+        stepY = 1;
+        sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+      }
+      
+      // perform DDA
+      while(hit === 0){
+        // jump to the next map square, either in x or y direction
+        if(sideDistX < sideDistY){
+          sideDistX += deltaDistX;
+          mapX += stepX;
+          side = 0;
+        }else{
+          sideDistY += deltaDistY;
+          mapY += stepY;
+          side = 1; // TODO: use const to represent side? e.g. const X_DIR = 0; ?
+        }
+        
+        // check if ray has hit a wall
+        //console.log(`mapX: ${mapX}, mapY: ${mapY}`);
+        if(worldMap[mapX][mapY] > 0){
+          //console.log("got a hit");
+          updateRayHitText(mapX, mapY);     
+          hit = 1;
+        }
+      }
+      
+      // calculate distance of perpendicular ray
+      if(side === 0){
+        perpWallDist = sideDistX - deltaDistX;
+      }else{
+        perpWallDist = sideDistY - deltaDistY;
+      }
+      
+      // calculate height of line to draw on screen
+      const lineHeight = Math.round(height/perpWallDist);
+      
+      // calculate lowest and highest pixel to fill in current stripe
+      let drawStart = -lineHeight/2 + height/2;
+      if(drawStart < 0){
+        drawStart = 0;
+      }
+      
+      let drawEnd = lineHeight/2 + height/2;
+      if(drawEnd >= height){
+        drawEnd = height - 1;
+      }
+      
+      // color the walls
+      let color = [0, 255, 255]; //0x00ffff;
+      const coordVal = worldMap[mapX][mapY];
+      if(coordVal === 1){
+        color = [255, 0, 0]; //0xff0000;
+      }else if(coordVal === 2){
+        color = [0, 255, 0]; //0x00ff00;
+      }else if(coordVal === 3){
+        color = [0, 0, 255]; //0x0000ff;
+      }else if(coordVal === 4){
+        color = [255, 255, 255]; //0xffffff;
+      }else if(coordVal === 8){
+        color = [123, 123, 123];
+      }
+      
+      if(side === 1){
+        color = color.map(x => x/2);
+      }
+      
+      // draw the pixels of the stripe as a vertical line
+      //console.log(`drawStart: ${Math.round(drawStart)}, drawEnd: ${Math.round(drawEnd)}`);
+      //console.log(`width: ${width}, height: ${height}`);
+      for(let row = Math.round(drawStart); row < Math.round(drawEnd); row++){
+        canvasPixelData.data[(4 * row * width) + (4 * col)] = color[0];
+        canvasPixelData.data[(4 * row * width) + (4 * col) + 1] = color[1];
+        canvasPixelData.data[(4 * row * width) + (4 * col) + 2] = color[2];
+        canvasPixelData.data[(4 * row * width) + (4 * col) + 3] = 255;
+      }
+      
+      if(showFrameDraw){
+        isDrawingFrame = true;
+        await new Promise(resolve => setTimeout(() => resolve(), 20));
+        canvasCtx.putImageData(canvasPixelData, 0, 0);
+      }
+    }
+    
+    if(!showFrameDraw) canvasCtx.putImageData(canvasPixelData, 0, 0);
+    
+    isDrawingFrame = false;
+    //console.log("done");
+    //requestAnimationFrame(update);
+  }
+  
+  theCanvas.addEventListener('click', (evt) => {
+    const x = evt.offsetX;
+    const y = evt.offsetY;
+    const pixel = canvasCtx.getImageData(x, y, 1, 1).data;
+    
+    let withinRangeOfDoor = false;
+    
+    // assuming door is at coordinates (8, 9) based on worldMap
+    const doorX = 8;
+    const doorY = 9;
+    
+    if(Math.sqrt(Math.pow(Math.round(doorY) - Math.round(posY),2) + Math.pow(doorX - Math.round(posX),2)) <= 3){
+      withinRangeOfDoor = true;
+    }
+    
+    // assuming door is grey (rgb(123, 123, 123))
+    if(pixel[0] == 123 && 
+       pixel[1] == 123 && 
+       pixel[2] == 123 &&
+       withinRangeOfDoor
+    ){
+      const enterDoor = confirm('enter the door?');
+      if(enterDoor){
+        // we need to determine if player is outside room or inside room
+        if(Math.round(posX) > 8){
+          // if outside room, transport to (7,9)
+          posX = 7;
+          posY = 9;
+          dirY = -1.0;
+          dirX = 0.0;
+          planeX = -1.0;
+          planeY = 0.0;
+        }else{
+          // otherwise, transport to inside room @ (9, 8)
+          posX = 9;
+          posY = 8;
+          dirY = 0.0;
+          dirX = 1.0;
+          planeX = 0.0;
+          planeY = -1.0;
+        }
+      }
+      update();
+    }
+  });
+  
+  window.addEventListener('keydown', (evt) => {
+    // console.log(evt.keyCode);
+    // 87 = w
+    // 65 = a
+    // 68 = d
+    // 83 = s
+    if(isDrawingFrame) return;
+    
+    if(evt.keyCode === 87){
+      if(worldMap[Math.round(posX + dirX)][Math.round(posY)] == 0){
+        posX += dirX;
+      }
+      if(worldMap[Math.round(posX)][Math.round(posY + dirY)] == 0){
+        posY += dirY;
+      }
+    }else if(evt.keyCode === 65){
+      // both camera direction and camera need to be rotated
+      const oldDirX = dirX;
+      dirX = dirX * Math.cos(rotSpeed) - dirY * Math.sin(rotSpeed);
+      dirY = oldDirX * Math.sin(rotSpeed) + dirY * Math.cos(rotSpeed);
+      
+      const oldPlaneX = planeX;
+      planeX = planeX * Math.cos(rotSpeed) - planeY * Math.sin(rotSpeed);
+      planeY = oldPlaneX * Math.sin(rotSpeed) + planeY * Math.cos(rotSpeed);
+    }else if(evt.keyCode === 68){
+      const oldDirX = dirX;
+      dirX = dirX * Math.cos(-rotSpeed) - dirY * Math.sin(-rotSpeed);
+      dirY = oldDirX * Math.sin(-rotSpeed) + dirY * Math.cos(-rotSpeed);
+      
+      const oldPlaneX = planeX;
+      planeX = planeX * Math.cos(-rotSpeed) - planeY * Math.sin(-rotSpeed);
+      planeY = oldPlaneX * Math.sin(-rotSpeed) + planeY * Math.cos(-rotSpeed);
+    }else if(evt.keyCode === 83){
+      if(worldMap[Math.round(posX - dirX)][Math.round(posY)] == 0){
+        posX -= dirX;
+      }
+      if(worldMap[Math.round(posX)][Math.round(posY - dirY)] == 0){
+        posY -= dirY;
+      }
+    }
+    
+    updatePlayerPosText(posX, posY);
+    updatePlayerVectorText(dirX, dirY);
+    updateCameraVectorText(planeX, planeY);
+    
+    updateMapCanvas(posX, posY);
+    
+    update();
+  });
+  
+  updatePlayerPosText(posX, posY);
+  updatePlayerVectorText(dirX, dirY);
+  updateCameraVectorText(planeX, planeY);
+  
+  updateMapCanvas(posX, posY);
+  
+  update();
+</script>
+
+</html>
