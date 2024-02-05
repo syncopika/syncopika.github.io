@@ -1,0 +1,20 @@
+{
+	"name": "get Discord emojis",
+	"version": "1.0",
+	"manifest_version": 3,
+	"minimum_chrome_version": "10.0",
+	"icons": {
+		"128": "icon128.png"
+	},
+	"action": {
+		"default_icon": "icon128.png"
+	},
+	"permissions": [
+		"tabs"
+	],
+	"host_permissions": [
+		"<all_urls>"
+	],
+	"description": "get emojis from Discord",
+	"devtools_page": "devtools.html"
+}
