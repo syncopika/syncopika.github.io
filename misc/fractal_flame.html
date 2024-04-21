@@ -415,42 +415,44 @@ function updateFractal(){
   analyser.getByteFrequencyData(freqBuffer);
   
   // TODO: I think we should take into account the bin index
-  // as that'll give us an idea of the actual frequency?
+  // as that'll give us an idea of the actual dominant frequency?
+  // right now this just tells us which bin has the largest value
   // so we can differentiate between high/low (we want to focus on low maybe?)
   const dominantFreq = getDominantFreq(freqBuffer);
-  console.log(dominantFreq);
   
   if(dominantFreq){
     // update pixels
     for(let pixelIndex in histogram){
-      const freq = histogram[pixelIndex];
+      //const freq = histogram[pixelIndex];
+      pixelIndex = parseInt(pixelIndex); // important! since object keys aren't numbers
       
       let r = originalFractalColors[pixelIndex];
       let g = originalFractalColors[pixelIndex + 1];
       let b = originalFractalColors[pixelIndex + 2];
       
-      let currR = imgData.data[pixelIndex];
-      let currG = imgData.data[pixelIndex + 1];
-      let currB = imgData.data[pixelIndex + 2];
+      const currR = imgData.data[pixelIndex];
+      const currG = imgData.data[pixelIndex + 1];
+      const currB = imgData.data[pixelIndex + 2];
+      
+      //console.log(`dominant freq: ${dominantFreq}, pixel index: ${pixelIndex}, img data length: ${imgData.data.length}, curr r: ${currR}, curr g: ${currG}, curr b: ${currB}, r: ${r}, g: ${g}, b: ${b}`);
       
       // TODO: this doesn't really do anything cool
       // or utilizes the frequency data well atm. it's just to get something working.
-      // but it's also not working too well as g and b seem to eventually become NaN. why is that?
-      r = clamp(255 * (dominantFreq / currR), 0, 255);
-      g = clamp(255 * (dominantFreq / currG), 0, 255);
-      b = clamp(255 * (dominantFreq / currB), 0, 255);
+      r = clamp(r * (dominantFreq / currR), 0, 255);
+      g = clamp(g * (dominantFreq / currG), 0, 255);
+      b = clamp(b * (dominantFreq / currB), 0, 255);
       
       imgData.data[pixelIndex] = r;
       imgData.data[pixelIndex + 1] = g;
       imgData.data[pixelIndex + 2] = b;
-      
-      console.log(`r: ${r}, g: ${g}, b: ${b}`);
     }
     
     ctx.putImageData(imgData, 0, 0);
   }
-    
-  currAnimationCallbackId = requestAnimationFrame(updateFractal);
+  
+  if(isPlaying){
+    currAnimationCallbackId = requestAnimationFrame(updateFractal);
+  }
 }
 
 function play(){
