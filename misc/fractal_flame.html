@@ -1,0 +1,521 @@
+<!DOCTYPE HTML>
+
+<html>
+  <head>
+    <title>test</title>
+  </head>
+  
+  <body>
+    <h1> fractal flame </h1>
+    <canvas id='canvas' height='800' width='800'></canvas>
+    <div id='buttons'>
+      <button id='loadAudio'>load audio</button>
+      <button id='play'>play</button>
+      <button id='stop'>stop</button>
+      <input id="fileInput" style="display:none;" type="file" />
+    </div>
+    <p id='audioFileName'> audio file name </p>
+  </body>
+  
+  <style>
+    h1 {
+      font-family: monospace;
+      text-align: center;
+    }
+    
+    button {
+      display: inline-block;
+      margin: 1%;
+    }
+    
+    body {
+      text-align: center;
+    }
+  </style>
+
+</html>
+
+<script>
+// fractal flame
+// https://flam3.com/flame_draves.pdf
+// adapted from: https://github.com/AlexanderJenke/FractalFlame
+
+const canvas = document.getElementById('canvas');
+canvas.style.border = '1px solid #000';
+canvas.style.margin = '0 auto';
+canvas.style.display = 'block';
+
+const width = canvas.width;
+const height = canvas.height;
+
+const ctx = canvas.getContext('2d');
+ctx.fillStyle = 'rgba(0, 0, 0, 255)';
+ctx.fillRect(0, 0, width, height);
+
+const imgData = ctx.getImageData(0, 0, width, height);
+const xmin = -1.8;
+const xmax = 1.8;
+const ymin = -1.5;
+const ymax = 1.5;
+const numIterations = 1000;
+const numSamples = 10000;
+let maxFreqSeen = 0;
+let originalFractalColors = null;
+const histogram = {}; // keep track of pixels we visited and frequency
+
+function linear(x, y){
+  return {x, y};
+}
+
+function sinusoidal(x, y){
+  return {x: Math.sin(x), y: Math.sin(y)};
+}
+
+function spherical(x, y){
+  const r = Math.sqrt(x * x + y * y);
+  return {
+    x: x / (r * r), 
+    y: y / (r * r)
+  };
+}
+
+function swirl(x, y){
+  const r = Math.sqrt(x * x + y * y);
+  const sinRadSq = Math.sin(r * r);
+  const cosRadSq = Math.cos(r * r);
+  return {
+    x: (x * sinRadSq) - (y * cosRadSq),
+    y: (x * cosRadSq) + (y * sinRadSq)
+  };
+}
+
+function horseshoe(x, y){
+  const r = Math.sqrt(x * x + y * y);
+  return {
+    x: (x - y) * (x + y) / r,
+    y: (2 * x * y) / r
+  };
+}
+
+function popcorn(x, y){
+  // TODO: pass c and f coefficients from the function that uses this variation
+  const c = Math.random() * 0.3;
+  const f = Math.random() * 2.3;
+  return {
+    x: x + (c * Math.sin(Math.tan(3 * y))),
+    y: y + (f * Math.sin(Math.tan(3 * x)))
+  };
+}
+
+// set of flame functions
+const functions = [
+  {
+    color: [220, 25, 20],
+    //weight = 1,
+    variations: [
+      sinusoidal, swirl, horseshoe, swirl
+    ],
+    coeffs: {
+      a: -0.85,
+      b: 0.25,
+      c: -0.105,
+      d: -0.37,
+      e: -0.07,
+      f: 0.23
+    },
+    post: {
+      a: 0.054203,
+      b: -0.025,
+      c: 1.357,
+      d: 0.054203,
+      e: -0.041426,
+      f: -0.011715
+    },
+    weight: 2.5,
+  },
+  {
+    color: [10, 255, 27],
+    //weight = 0.5,
+    variations: [
+      popcorn, spherical, sinusoidal, linear, spherical, spherical
+    ],
+    coeffs: {
+      a: -0.55,
+      b: 0.45,
+      c: 0.18,
+      d: 0.77,
+      e: 0.25,
+      f: -0.23
+    },
+    post: {
+      a: 1.5,
+      b: 2.5,
+      c: 0.95,
+      d: -0.75,
+      e: 1.5,
+      f: 0.3
+    },
+    weight: 2.3,
+  },
+  {
+    color: [127, 116, 255],
+    //weight = 2,
+    variations: [
+      horseshoe, horseshoe, sinusoidal, spherical, swirl
+    ],
+    coeffs: {
+      a: 0.15,
+      b: -0.45,
+      c: 0.182,
+      d: 0.77,
+      e: -0.17,
+      f: 0.3
+    },
+    post: {
+      a: -1,
+      b: 0.5,
+      c: 0.2,
+      d: -1,
+      e: 0.075,
+      f: -0.08
+    },
+    weight: 1.2,
+  },
+  {
+    color: [220, 150, 20],
+    //weight = 1.5,
+    variations: [
+      horseshoe, swirl, spherical
+    ],
+    coeffs: {
+      a: 0.25,
+      b: -0.05,
+      c: 0.12,
+      d: -0.67,
+      e: 0.07,
+      f: 0.10
+    },
+    post: {
+      a: -1.02628,
+      b: 0.00211043,
+      c: -0.028899,
+      d: 0.999847,
+      e: 0.047017,
+      f: 0.0402695
+    },
+    weight: 0.9,
+  },
+  {
+    color: [20, 15, 200],
+    //weight = 1.5,
+    variations: [
+      swirl, swirl, horseshoe, sinusoidal
+    ],
+    coeffs: {
+      a: 0.25,
+      b: 0.15,
+      c: 0.12,
+      d: 0.67,
+      e: 0.27,
+      f: 0.10
+    },
+    post: {
+      a: 1.02628,
+      b: -1.3,
+      c: -0.028899,
+      d: 2.2,
+      e: -0.57,
+      f: 1.5
+    },
+    weight: 1.9,
+  },
+  {
+    color: [25, 150, 20],
+    //weight = 1.5,
+    variations: [
+      sinusoidal, sinusoidal
+    ],
+    coeffs: {
+      a: 0.25,
+      b: 0.15,
+      c: -0.12,
+      d: 0.67,
+      e: 0.27,
+      f: -0.10
+    },
+    post: {
+      a: 1.8,
+      b: -1.3,
+      c: 0.03,
+      d: 2.2,
+      e: -0.57,
+      f: 1.5
+    },
+    weight: 2.8,
+  },
+];
+
+function applyFunction(currX, currY, f){
+  const coeffs = f.coeffs;
+  
+  // apply all variation functions
+  f.variations.forEach(func => {
+    const newX = (coeffs.a * currX) + (coeffs.b * currY) + coeffs.c;
+    const newY = (coeffs.d * currX) + (coeffs.e * currY) + coeffs.f;
+    
+    const {x, y} = func(newX, newY);
+    
+    currX = x * f.weight;
+    currY = y * f.weight;
+  });
+  
+  // then apply post-transformation
+  const postCoeffs = f.post;
+  currX = (postCoeffs.a * currX) + (postCoeffs.b * currY) + postCoeffs.c;
+  currY = (postCoeffs.d * currX) + (postCoeffs.e * currY) + postCoeffs.f;
+  
+  //console.log(`${currX}, ${currY}`);
+  
+  return {newX: currX, newY: currY};
+}
+
+function isValidCoordinate(x, y, canvasWidth, canvasHeight){
+  return x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight;
+}
+
+function getImageDataIndex(x, y, width){
+  return (4 * x) + (4 * width * y);
+}
+
+function render(){
+  console.log('rendering...');
+  
+  for(let s = 0; s < numSamples; s++){
+    // pick a random point
+    const currX = Math.floor(Math.random() * width);
+    const currY = Math.floor(Math.random() * height);
+  
+    //console.log(`working on sample: ${s}`);
+  
+    for(let i = 0; i < numIterations; i++){
+      // pick a random function
+      const randIdx = Math.floor(Math.random() * functions.length);
+      const randFunc = functions[randIdx];
+      
+      // apply it
+      let {newX, newY} = applyFunction(currX, currY, randFunc);
+      
+      // apply final transform
+      
+      if(i >= 20){
+        // plot the point
+        if(newX >= xmin && newX <= xmax && newY >= ymin && newY <= ymax){
+          // get the canvas coordinate based on newX and newY values
+          const xCoord = Math.round((newX - xmin) / (xmax - xmin) * width);
+          const yCoord = Math.round((newY - ymin) / (ymax - ymin) * height);
+          
+          //console.log(`${xCoord}, ${yCoord}`);
+          
+          if(isValidCoordinate(xCoord, yCoord, width, height)){
+            const idx = getImageDataIndex(xCoord, yCoord, width);
+            const color = randFunc.color;
+            
+            imgData.data[idx] = Math.round(color[0] / 2 + imgData.data[idx] / 2);
+            imgData.data[idx + 1] = Math.round(color[1] / 2 + imgData.data[idx + 1] / 2);
+            imgData.data[idx + 2] = Math.round(color[2] / 2 + imgData.data[idx + 2] / 2);
+            
+            if(histogram[idx] === undefined){
+              histogram[idx] = 1;
+            }else{
+              histogram[idx]++;
+            }
+            
+            maxFreqSeen = Math.max(maxFreqSeen, histogram[idx]);
+          }
+        }
+      }
+    }
+  }
+  
+  console.log(Object.keys(histogram).length);
+  
+  // apply log for color enhancement
+  for(let pixelIndex in histogram){
+    const freq = histogram[pixelIndex];
+    let r = imgData.data[pixelIndex];
+    let g = imgData.data[pixelIndex + 1];
+    let b = imgData.data[pixelIndex + 2];
+    r *= Math.log(freq, maxFreqSeen);
+    g *= Math.log(freq, maxFreqSeen);
+    b *= Math.log(freq, maxFreqSeen);
+    imgData.data[pixelIndex] = r;
+    imgData.data[pixelIndex + 1] = g;
+    imgData.data[pixelIndex + 2] = b;
+  }
+  
+  ctx.putImageData(imgData, 0, 0);
+  originalFractalColors = new Uint8ClampedArray(imgData.data);
+  //console.log(histogram);
+}
+
+render();
+
+
+// setting up audio stuff
+// https://github.com/syncopika/threejs-projects/blob/master/audio_visualization/index.js
+const audioCtx = new window.AudioContext();
+const analyser = audioCtx.createAnalyser();
+analyser.fftSize = 256;
+const freqBufferLength = analyser.frequencyBinCount;
+const freqBuffer = new Uint8Array(freqBufferLength);
+
+let audioSource;
+let audioFileUrl;
+let isPlaying = false;
+let isStopped = true;
+let currAnimationCallbackId = null;
+
+function loadAudioFile(url){
+    audioSource = audioCtx.createBufferSource();  
+
+    const req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.responseType = 'arraybuffer';
+    req.onload = function(){
+        audioCtx.decodeAudioData(req.response, (buffer) => {
+            if (!audioSource.buffer) audioSource.buffer = buffer;
+            audioSource.connect(analyser);
+            audioSource.connect(audioCtx.destination);
+        });
+    }
+    req.send();
+}
+
+function getDominantFreq(audioBuffer){
+  const max = 0;
+  const dominant = audioBuffer.reduce((acc, curr) => Math.max(acc, curr), max);
+  return dominant;
+}
+
+function clamp(x, left, right){
+  if(x < left){
+    return left;
+  }
+  if(x > right){
+    return right;
+  }
+  return x;
+}
+
+function updateFractal(){
+  if(!isPlaying){
+    return;
+  }
+  
+  analyser.getByteFrequencyData(freqBuffer);
+  
+  // TODO: I think we should take into account the bin index
+  // as that'll give us an idea of the actual frequency?
+  // so we can differentiate between high/low (we want to focus on low maybe?)
+  const dominantFreq = getDominantFreq(freqBuffer);
+  console.log(dominantFreq);
+  
+  if(dominantFreq){
+    // update pixels
+    for(let pixelIndex in histogram){
+      const freq = histogram[pixelIndex];
+      
+      let r = originalFractalColors[pixelIndex];
+      let g = originalFractalColors[pixelIndex + 1];
+      let b = originalFractalColors[pixelIndex + 2];
+      
+      let currR = imgData.data[pixelIndex];
+      let currG = imgData.data[pixelIndex + 1];
+      let currB = imgData.data[pixelIndex + 2];
+      
+      // TODO: this doesn't really do anything cool
+      // or utilizes the frequency data well atm. it's just to get something working.
+      // but it's also not working too well as g and b seem to eventually become NaN. why is that?
+      r = clamp(255 * (dominantFreq / currR), 0, 255);
+      g = clamp(255 * (dominantFreq / currG), 0, 255);
+      b = clamp(255 * (dominantFreq / currB), 0, 255);
+      
+      imgData.data[pixelIndex] = r;
+      imgData.data[pixelIndex + 1] = g;
+      imgData.data[pixelIndex + 2] = b;
+      
+      console.log(`r: ${r}, g: ${g}, b: ${b}`);
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
+  }
+    
+  currAnimationCallbackId = requestAnimationFrame(updateFractal);
+}
+
+function play(){
+  if(!isPlaying && audioSource){
+    isPlaying = true;
+    isStopped = false;
+    audioSource.start();
+    
+    currAnimationCallbackId = requestAnimationFrame(updateFractal);
+  }
+}
+document.getElementById("play").addEventListener("click", play);
+
+function stop(){
+  if(isPlaying && audioSource){
+    cancelAnimationFrame(currAnimationCallbackId);
+    isPlaying = false;
+    isStopped = true;
+    audioSource.stop();
+  }
+  
+  // reload since we can't restart buffer source
+  if(audioFileUrl) loadAudioFile(audioFileUrl);
+}
+document.getElementById("stop").addEventListener("click", stop);
+
+// enable audio file finding
+const openFile = (function(){    
+   return function(handleFileFunc){
+       if(isPlaying) return;
+       
+       const fileInput = document.getElementById('fileInput');
+       
+       function onFileChange(evt){
+           const files = evt.target.files;
+           if(files && files.length > 0){
+               handleFileFunc(files[0]);
+           }
+       }
+       
+       fileInput.addEventListener("change", onFileChange, false);
+       fileInput.click();
+   } 
+})();
+
+function handleFile(file){
+  audioFileUrl = URL.createObjectURL(file);
+  const type = /audio.*/;
+  if(!file.type.match(type)){
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = (function(f){
+    return function(evt){
+      document.getElementById('audioFileName').textContent = f.name;
+    }
+  })(file);
+  
+  reader.readAsDataURL(file);
+  loadAudioFile(audioFileUrl);
+}
+
+document.getElementById("loadAudio").addEventListener("click", () => {
+  openFile(handleFile);
+});
+
+</script>
