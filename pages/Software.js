@@ -15,7 +15,7 @@ const Software = {
                         <img src="projectScreenshots/piano_roll_browser.png" class="screenshot">
                     </div>
                     <br>
-                    <p> mostly vanilla JavaScript, jQuery, SCSS, Web Audio API </p>
+                    <p> vanilla JavaScript, Web Audio API </p>
                     <p> This project lets you compose music in the browser! I also created an incomplete companion application called <span class='projectTitle'><a href='https://syncopika.github.io/soundmaker/'> soundmaker </a></span> to create custom instruments that you could import into the piano roll.</p>
                     <br>
                 </div>
@@ -37,7 +37,7 @@ const Software = {
                         <img src="projectScreenshots/trip_planner.png" class="screenshot">
                     </div>
                     <br>
-                    <p> Vue, TypeScript, PostgreSQL, MapBox API </p>
+                    <p> Vue 2, TypeScript, PostgreSQL, MapBox API </p>
                     <p> This is an experimental idea I had for a trip planner. It has an interactive map in which the user can plot markers for trip destinations and provide extra information about each destination (notes, pictures, dates). </p>
                     <br>
                 </div>
