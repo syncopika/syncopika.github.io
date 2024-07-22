@@ -53,15 +53,19 @@ ctx.fillStyle = 'rgba(0, 0, 0, 255)';
 ctx.fillRect(0, 0, width, height);
 
 const imgData = ctx.getImageData(0, 0, width, height);
-const xmin = -1.8;
-const xmax = 1.8;
-const ymin = -1.5;
-const ymax = 1.5;
+
+// changing these values affects the 'zoom' on the fractal image
+// the smaller the value, the more 'zoomed in' it looks
+const xmin = -4.5;
+const xmax = 4.5;
+const ymin = -4.5;
+const ymax = 4.5;
+
 const numIterations = 1000;
-const numSamples = 10000;
+const numSamples = 30000;
+const histogram = {}; // keep track of pixels we visited and frequency
 let maxFreqSeen = 0;
 let originalFractalColors = null;
-const histogram = {}; // keep track of pixels we visited and frequency
 
 function linear(x, y){
   return {x, y};
@@ -107,35 +111,51 @@ function popcorn(x, y){
   };
 }
 
+function heart(x, y){
+  const r = Math.sqrt(x * x + y * y);
+  const theta = Math.atan2(y, x);
+  return {
+    x: r * Math.sin(theta * r), 
+    y: -r * Math.cos(theta * r)
+  };
+}
+
+function disk(x, y){
+  const r = Math.sqrt(x * x + y * y) * Math.PI;
+  const theta = Math.atan2(y, x) / Math.PI;
+  return {
+    x: theta * Math.sin(r), 
+    y: theta * Math.cos(r)
+  };
+}
+
 // set of flame functions
 const functions = [
   {
     color: [220, 25, 20],
-    //weight = 1,
     variations: [
-      sinusoidal, swirl, horseshoe, swirl
+      sinusoidal, sinusoidal, horseshoe
     ],
     coeffs: {
-      a: -0.85,
-      b: 0.25,
-      c: -0.105,
-      d: -0.37,
-      e: -0.07,
-      f: 0.23
+      a: 1, //-0.85,
+      b: 0, //0.25,
+      c: 0.1, //-0.105,
+      d: 0, //-0.37,
+      e: 1, //-0.07,
+      f: 0.1, //0.23
     },
     post: {
-      a: 0.054203,
-      b: -0.025,
-      c: 1.357,
-      d: 0.054203,
-      e: -0.041426,
-      f: -0.011715
+      a: 1, //0.054203,
+      b: 0, //-0.025,
+      c: 0, //1.357,
+      d: 0, //0.054203,
+      e: 1, //-0.041426,
+      f: 0, //-0.011715
     },
-    weight: 2.5,
+    weight: 1,
   },
   {
     color: [10, 255, 27],
-    //weight = 0.5,
     variations: [
       popcorn, spherical, sinusoidal, linear, spherical, spherical
     ],
@@ -155,37 +175,35 @@ const functions = [
       e: 1.5,
       f: 0.3
     },
-    weight: 2.3,
+    weight: 2.1,
   },
   {
     color: [127, 116, 255],
-    //weight = 2,
     variations: [
-      horseshoe, horseshoe, sinusoidal, spherical, swirl
+      horseshoe, sinusoidal, spherical, swirl
     ],
     coeffs: {
-      a: 0.15,
-      b: -0.45,
-      c: 0.182,
-      d: 0.77,
-      e: -0.17,
-      f: 0.3
+      a: 1, //0.15,
+      b: 0, //-0.45,
+      c: 0.1, //0.182,
+      d: 0, //0.77,
+      e: 1, //-0.17,
+      f: 0.1, //0.3
     },
     post: {
-      a: -1,
-      b: 0.5,
-      c: 0.2,
-      d: -1,
-      e: 0.075,
-      f: -0.08
+      a: 1.5, //-1,
+      b: 0, //0.5,
+      c: 0, //0.2,
+      d: 0, //-1,
+      e: 1.5, //0.075,
+      f: 2, //-0.08
     },
     weight: 1.2,
   },
   {
     color: [220, 150, 20],
-    //weight = 1.5,
     variations: [
-      horseshoe, swirl, spherical
+      horseshoe, disk, spherical
     ],
     coeffs: {
       a: 0.25,
@@ -207,9 +225,8 @@ const functions = [
   },
   {
     color: [20, 15, 200],
-    //weight = 1.5,
     variations: [
-      swirl, swirl, horseshoe, sinusoidal
+      swirl, horseshoe, sinusoidal
     ],
     coeffs: {
       a: 0.25,
@@ -231,9 +248,8 @@ const functions = [
   },
   {
     color: [25, 150, 20],
-    //weight = 1.5,
     variations: [
-      sinusoidal, sinusoidal
+      sinusoidal, disk
     ],
     coeffs: {
       a: 0.25,
@@ -244,16 +260,40 @@ const functions = [
       f: -0.10
     },
     post: {
-      a: 1.8,
+      a: 1.2,
       b: -1.3,
       c: 0.03,
-      d: 2.2,
+      d: 1.2,
       e: -0.57,
       f: 1.5
     },
     weight: 2.8,
   },
 ];
+
+const finalFunc = {
+  color: [212, 235, 242],
+  variations: [
+    heart
+  ],
+  coeffs: {
+    a: 1,
+    b: 0,
+    c: 0,
+    d: 1,
+    e: 1,
+    f: 0
+  },
+  post: {
+    a: 1,
+    b: 0,
+    c: 0,
+    d: 1,
+    e: 1,
+    f: 0
+  },
+  weight: 1.2,
+};
 
 function applyFunction(currX, currY, f){
   const coeffs = f.coeffs;
@@ -306,6 +346,7 @@ function render(){
       let {newX, newY} = applyFunction(currX, currY, randFunc);
       
       // apply final transform
+      ({newX, newY} = applyFunction(newX, newY, finalFunc));
       
       if(i >= 20){
         // plot the point
