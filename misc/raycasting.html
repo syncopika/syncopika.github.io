@@ -32,7 +32,7 @@
         <p id='rayHit'>ray hit position: (x, y)</p>
         <p id='playerVector'>player vector: (x, y)</p>
         <p id='cameraVector'>camera vector: (x, y)</p>
-        <input type='checkbox' id='showFrameDraw'/><label>show drawing of frame</label>
+        <input type='checkbox' id='showFrameDraw'/><label>show raycasting steps</label>
         <br />
         <br />
         <p> click on the grey door! ;) </p>
@@ -215,7 +215,7 @@
         sideDistY = (mapY + 1.0 - posY) * deltaDistY;
       }
       
-      // perform DDA
+      // perform DDA (digital differential analysis)
       while(hit === 0){
         // jump to the next map square, either in x or y direction
         if(sideDistX < sideDistY){

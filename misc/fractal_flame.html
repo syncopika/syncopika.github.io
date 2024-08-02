@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>test</title>
+    <title>fractal flame demo</title>
   </head>
   
   <body>
@@ -15,6 +15,7 @@
       <input id="fileInput" style="display:none;" type="file" />
     </div>
     <p id='audioFileName'> audio file name </p>
+    <p id='rendering'>rendering...</p>
   </body>
   
   <style>
@@ -56,14 +57,14 @@ const imgData = ctx.getImageData(0, 0, width, height);
 
 // changing these values affects the 'zoom' on the fractal image
 // the smaller the value, the more 'zoomed in' it looks
-const xmin = -4.5;
-const xmax = 4.5;
-const ymin = -4.5;
-const ymax = 4.5;
+let xmin = -4.5;
+let xmax = 4.5;
+let ymin = -4.5;
+let ymax = 4.5;
 
 const numIterations = 1000;
 const numSamples = 30000;
-const histogram = {}; // keep track of pixels we visited and frequency
+let histogram = {}; // keep track of pixels we visited and frequency
 let maxFreqSeen = 0;
 let originalFractalColors = null;
 
@@ -152,7 +153,7 @@ const functions = [
       e: 1, //-0.041426,
       f: 0, //-0.011715
     },
-    weight: 1,
+    weight: 1.0,
   },
   {
     color: [10, 255, 27],
@@ -244,7 +245,7 @@ const functions = [
       e: -0.57,
       f: 1.5
     },
-    weight: 1.9,
+    weight: 0.1,
   },
   {
     color: [25, 150, 20],
@@ -348,7 +349,8 @@ function render(){
       // apply final transform
       ({newX, newY} = applyFunction(newX, newY, finalFunc));
       
-      if(i >= 20){
+      // does not plotting until after the first 20 iterations make a significant difference in the result?
+      //if(i >= 20){
         // plot the point
         if(newX >= xmin && newX <= xmax && newY >= ymin && newY <= ymax){
           // get the canvas coordinate based on newX and newY values
@@ -374,7 +376,7 @@ function render(){
             maxFreqSeen = Math.max(maxFreqSeen, histogram[idx]);
           }
         }
-      }
+      //}
     }
   }
   
@@ -396,6 +398,9 @@ function render(){
   
   ctx.putImageData(imgData, 0, 0);
   originalFractalColors = new Uint8ClampedArray(imgData.data);
+  
+  document.getElementById('rendering').style.display = 'none';
+  
   //console.log(histogram);
 }
 
@@ -560,5 +565,111 @@ function handleFile(file){
 document.getElementById("loadAudio").addEventListener("click", () => {
   openFile(handleFile);
 });
+
+function makeViewportDimensionSliders(){
+  const div = document.createElement('div');
+  
+  ['xmin', 'xmax', 'ymin', 'ymax'].forEach(dim => {
+    const sliderDiv = document.createElement('div');
+    sliderDiv.style.display = 'flex';
+    sliderDiv.style.alignItems = 'center';
+    sliderDiv.style.justifyContent = 'center';
+    
+    const label = document.createElement('label');
+    label.for = `${dim}`;
+    label.textContent = `${dim}: `;
+    
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = -50;
+    slider.max = 50;
+    slider.step = 0.1;
+    slider.value = dim.includes('min') ? -4.5 : 4.5
+    
+    const currVal = document.createElement('p');
+    currVal.textContent = slider.value;
+    
+    slider.addEventListener('input', (evt) => {
+      currVal.textContent = evt.target.value;
+      const newVal = parseFloat(evt.target.value);
+      if(dim === 'xmin'){
+        xmin = newVal;
+      }else if(dim === 'ymin'){
+        ymin = newVal;
+      }else if(dim === 'xmax'){
+        xmax = newVal;
+      }else{
+        ymax = newVal;
+      }
+    });
+    
+    sliderDiv.appendChild(label);
+    sliderDiv.appendChild(slider);
+    sliderDiv.appendChild(currVal);
+    
+    div.appendChild(sliderDiv);
+  });
+  
+  document.body.appendChild(div);
+}
+makeViewportDimensionSliders();
+
+function makeFunctionSliders(){
+  const div = document.createElement('div');
+  
+  functions.forEach((func, idx) => {
+    const sliderDiv = document.createElement('div');
+    sliderDiv.style.display = 'flex';
+    sliderDiv.style.alignItems = 'center';
+    sliderDiv.style.justifyContent = 'center';
+    
+    const label = document.createElement('label');
+    label.for = `func${idx}`;
+    label.textContent = `function ${idx} weight`;
+    
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = 0.05;
+    slider.max = 3.0;
+    slider.step = 0.01;
+    slider.value = func.weight;
+    
+    const currVal = document.createElement('p');
+    currVal.textContent = slider.value;
+    
+    slider.addEventListener('input', (evt) => {
+      currVal.textContent = evt.target.value;
+      func.weight = parseFloat(evt.target.value);
+    });
+    
+    sliderDiv.appendChild(label);
+    sliderDiv.appendChild(slider);
+    sliderDiv.appendChild(currVal);
+    
+    div.appendChild(sliderDiv);
+  });
+  
+  const renderBtn = document.createElement('button');
+  renderBtn.textContent = 're-render';
+  renderBtn.addEventListener('click', () => {
+    //ctx.fillStyle = 'rgba(0, 0, 0, 255)';
+    //ctx.fillRect(0, 0, width, height);
+    
+    for(let i = 0; i < imgData.data.length; i++){
+      imgData.data[i] = (i !== 0 && (i+1) % 4 === 0) ?　255 : 0;
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
+    
+    document.getElementById('rendering').style.display = 'block';
+    histogram = {};
+    maxFreqSeen = 0;
+    setTimeout(() => render(), 300);
+  });
+  div.appendChild(renderBtn);
+  
+  document.body.appendChild(div);
+}
+makeFunctionSliders();
 
 </script>
