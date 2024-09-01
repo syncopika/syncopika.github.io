@@ -1,0 +1,38 @@
+--date 
+8/31/24
+
+--title
+playing with Morrowind armor and weapon models!
+
+--tags
+fun
+
+--content
+
+--p
+Morrowind is one of my most favorite video games of all time. I spent many many hours playing it :).
+
+--p
+I recently extracted some assets (namely some armor and weapons), converted them to .obj files with the helpful <a href='https://github.com/niftools/nifskope'>nifskope</a> program and imported them into Blender! Then I was able to arrange the pieces in various poses.
+
+--image
+blog_entries/images/morrowind_armor/royal_guard.png
+blog_entries/images/morrowind_armor/high_ordinator.png
+blog_entries/images/morrowind_armor/glass_armor.png
+blog_entries/images/morrowind_armor/31-08-2024_173726.gif
+
+--br
+--br
+
+--p
+I also exported them as .gltf files and was able to do funny stuff like this using my <a href='https://syncopika.github.io/livery/'>livery web app</a>:
+
+--image
+blog_entries/images/morrowind_armor/lol-ordinator.png
+
+--br
+--br
+
+--p
+I suppose a good next step would be to make an armature in Blender with which to bind the armor to for more easier posing!
+
