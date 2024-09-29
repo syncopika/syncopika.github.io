@@ -15,9 +15,10 @@ const Novelties = {
             <p><a href='https://github.com/syncopika/flashcard-android-app'>Chinese flashcard app</a></p>
             <br />
             <h3> web </h3>
+            <p><a href='https://syncopika.github.io/music-visualizer-web/'> recordable music visualizer </a></p>
             <p><a href='https://syncopika.github.io/flashcards/'> flashcards </a></p>
             <p><a href='misc/karaokeget.html'> karaoke-get </a></p>
-            <p><a href='misc/webm-to-wav.html'> webm-to-wav converter </a></p>
+            <p><a href='misc/playbackAutomation.html'> audio playback rate automation track </a></p>
             <p><a href='misc/slot-machine.html'> vtuber slot machine </a></p>
             <p><a href='https://syncopika.github.io/visual_novel_maker/'> visual novel examples </a></p>
         </div>`

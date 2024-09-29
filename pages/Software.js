@@ -37,7 +37,7 @@ const Software = {
                         <img src="projectScreenshots/trip_planner.png" class="screenshot">
                     </div>
                     <br>
-                    <p> Vue 2, TypeScript, PostgreSQL, MapBox API </p>
+                    <p> Vue 3, TypeScript, PostgreSQL, MapBox API </p>
                     <p> This is an experimental idea I had for a trip planner. It has an interactive map in which the user can plot markers for trip destinations and provide extra information about each destination (notes, pictures, dates). </p>
                     <br>
                 </div>
