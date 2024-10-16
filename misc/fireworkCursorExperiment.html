@@ -1,0 +1,128 @@
+<!doctype html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title> firework cursor experiment </title>
+		
+    <style>
+      canvas {
+        border: 1px solid #000;
+      }
+      
+      #center {
+        display: block;
+        height: auto;
+        width: 100%;
+        margin: 20px auto;
+        text-align: center;
+      }
+		</style>
+  </head>
+	
+  <body>
+    <div id='center'>
+      <h1> firework cursor experiment </h1>
+      <canvas id='canvas' width='600px' height='600px'></canvas>
+    </div>
+	
+    <script>
+      let fireworks = [];
+      
+      class Firework {
+        lights = [];
+        colors = ['red', 'black', 'yellow', 'green', 'blue', 'pink'];
+        lineCaps = ['butt', 'round', 'square'];
+        
+        constructor(type, canvasCtx, x, y){
+          if(type === 'circle'){
+            this.radius = 60 * Math.random();
+            this.speed = 2 * Math.random();
+            this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            this.lineCap = this.lineCaps[Math.floor(Math.random() * this.lineCaps.length)];
+            this.ctx = canvasCtx;
+            this.startX = x;
+            this.startY = y;
+            this.isFinished = false;
+            
+            let deg = 0;
+            const slices = 8;
+            const sliceDeg = 360 / slices;
+            for(let i = 0; i < slices; i++){
+              this.lights.push({
+                forward: {x: Math.cos(deg * Math.PI / 180), y: Math.sin(deg * Math.PI / 180)},
+                currX: x,
+                currY: y,
+                done: false,
+              });
+              
+              deg += sliceDeg;
+            }
+          }
+        }
+        
+        distance(currX, currY){
+          const xDelta = currX - this.startX;
+          const yDelta = currY - this.startY;
+          return Math.sqrt((xDelta * xDelta) + (yDelta * yDelta));
+        }
+        
+        render(){
+          if(this.lights){
+            this.lights.forEach(l => {
+              if(!l.done){
+                if(this.distance(l.currX, l.currY) < this.radius){
+                  const nextX = l.currX + l.forward.x * this.speed;
+                  const nextY = l.currY + l.forward.y * this.speed;
+                  this.ctx.strokeStyle = this.color;
+                  this.ctx.lineCap = this.lineCap;
+                  this.ctx.lineWidth = 10 * Math.random() + 1; // TODO: set random line width per firework
+                  this.ctx.beginPath();
+                  this.ctx.moveTo(nextX, nextY);
+                  this.ctx.lineTo(nextX, nextY + 1);
+                  this.ctx.closePath();
+                  this.ctx.stroke();
+                  l.currX = nextX;
+                  l.currY = nextY;
+                }else{
+                  l.done = true;
+                }
+              }
+            });
+            this.lights = this.lights.filter(l => !l.done);
+            if(this.lights.length === 0){
+              //console.log('done rendering firework');
+              this.isFinished = true;
+            }
+          }
+        }
+      }
+      
+      const canvas = document.getElementById('canvas');
+      const ctx = document.getElementById('canvas').getContext('2d');
+      
+      function renderFireworks(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        fireworks.forEach(f => f.render());
+        fireworks = fireworks.filter(f => !f.isFinished);
+        requestAnimationFrame(renderFireworks);
+      }
+      
+      canvas.addEventListener('pointerdown', evt => {
+        const canvas = evt.target.getBoundingClientRect();
+        const x = evt.offsetX;
+        const y = evt.offsetY;
+        //console.log(`creating new firework @ x: ${x}, y: ${y}`);
+        
+        const layers = Math.floor(Math.random() * 3) + 1;
+        for(let i = 0; i < layers; i++){
+          fireworks.push(
+            new Firework('circle', ctx, x, y)
+          );
+        }
+      });
+      
+      renderFireworks();
+    </script>
+  </body>
+</html>    
