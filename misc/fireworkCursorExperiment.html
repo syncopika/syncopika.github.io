@@ -23,6 +23,7 @@
   <body>
     <div id='center'>
       <h1> firework cursor experiment </h1>
+      <p> click anywhere on the canvas for fireworks </p>
       <canvas id='canvas' width='600px' height='600px'></canvas>
     </div>
 	
@@ -31,13 +32,16 @@
       
       class Firework {
         lights = [];
-        colors = ['red', 'black', 'yellow', 'green', 'blue', 'pink'];
+        colors = ['red', 'black', 'yellow', 'green', 'blue', 'pink', 'purple'];
         lineCaps = ['butt', 'round', 'square'];
         
         constructor(type, canvasCtx, x, y){
+          
+          this.type = type;
+          
           if(type === 'circle'){
-            this.radius = 60 * Math.random();
-            this.speed = 2 * Math.random();
+            this.radius = 60 * Math.random() + 10;
+            this.speed = 2 * Math.random() + 0.2;
             this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
             this.lineCap = this.lineCaps[Math.floor(Math.random() * this.lineCaps.length)];
             this.ctx = canvasCtx;
@@ -53,6 +57,32 @@
                 forward: {x: Math.cos(deg * Math.PI / 180), y: Math.sin(deg * Math.PI / 180)},
                 currX: x,
                 currY: y,
+                currWidth: 12 * Math.random() + 1, // TODO: set random line width per firework instead of per light?
+                done: false,
+              });
+              
+              deg += sliceDeg;
+            }
+          }
+        
+          if(type === 'fountain'){
+            this.speed = 10; //2 * Math.random() + 0.2;
+            this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            this.lineCap = this.lineCaps[Math.floor(Math.random() * this.lineCaps.length)];
+            this.ctx = canvasCtx;
+            this.startX = x;
+            this.startY = y;
+            this.isFinished = false;
+            
+            let deg = 0;
+            const slices = 10;
+            const sliceDeg = -180 / slices; // no lights should be going downward initially - they should all be aiming upwards
+            for(let i = 0; i < slices; i++){
+              this.lights.push({
+                forward: {x: Math.cos(deg * Math.PI / 180), y: Math.sin(deg * Math.PI / 180)},
+                currX: x,
+                currY: y,
+                currWidth: 3,
                 done: false,
               });
               
@@ -71,21 +101,45 @@
           if(this.lights){
             this.lights.forEach(l => {
               if(!l.done){
-                if(this.distance(l.currX, l.currY) < this.radius){
-                  const nextX = l.currX + l.forward.x * this.speed;
-                  const nextY = l.currY + l.forward.y * this.speed;
-                  this.ctx.strokeStyle = this.color;
-                  this.ctx.lineCap = this.lineCap;
-                  this.ctx.lineWidth = 10 * Math.random() + 1; // TODO: set random line width per firework
-                  this.ctx.beginPath();
-                  this.ctx.moveTo(nextX, nextY);
-                  this.ctx.lineTo(nextX, nextY + 1);
-                  this.ctx.closePath();
-                  this.ctx.stroke();
-                  l.currX = nextX;
-                  l.currY = nextY;
-                }else{
-                  l.done = true;
+                if(this.type === 'circle'){
+                  if(this.distance(l.currX, l.currY) < this.radius){
+                    const nextX = l.currX + (l.forward.x * this.speed);
+                    const nextY = l.currY + (l.forward.y * this.speed);
+                    this.ctx.strokeStyle = this.color;
+                    this.ctx.lineCap = this.lineCap;
+                    this.ctx.lineWidth = l.currWidth;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(nextX, nextY);
+                    this.ctx.lineTo(nextX, nextY + 1); // this.ctx.lineTo(nextX + 1, nextY + 1); for slanted lights
+                    this.ctx.closePath();
+                    this.ctx.stroke();
+                    l.currX = nextX;
+                    l.currY = nextY;
+                    l.currWidth -= 1;
+                  }else{
+                    l.done = true;
+                  }
+                }
+                
+                // helpful: https://visualize-it.github.io/projectile_motion/simulation.html
+                if(this.type === 'fountain'){
+                  if(this.distance(l.currX, l.currY) < 80){
+                    const nextX = l.currX + (l.forward.x * this.speed);
+                    const nextY = l.currY + (l.forward.y * this.speed);
+                    this.ctx.strokeStyle = this.color;
+                    this.ctx.lineCap = this.lineCap;
+                    this.ctx.lineWidth = l.currWidth;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(nextX, nextY);
+                    this.ctx.lineTo(nextX, nextY + 1);
+                    this.ctx.closePath();
+                    this.ctx.stroke();
+                    l.currX = nextX;
+                    l.currY = nextY;
+                    l.forward.y += 3.8 * 0.02; // update y-component of initial velocity vector
+                  }else{
+                    l.done = true;
+                  }
                 }
               }
             });
@@ -114,10 +168,14 @@
         const y = evt.offsetY;
         //console.log(`creating new firework @ x: ${x}, y: ${y}`);
         
+        const pick = Math.random() * 2 + 1;
+        
         const layers = Math.floor(Math.random() * 3) + 1;
         for(let i = 0; i < layers; i++){
           fireworks.push(
-            new Firework('circle', ctx, x, y)
+            pick < 2 ?
+            new Firework('circle', ctx, x, y) :
+            new Firework('fountain', ctx, x, y)
           );
         }
       });
