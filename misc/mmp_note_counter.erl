@@ -134,7 +134,7 @@ get_instrument_note_count([First | Rest], Inst, Acc) ->
   end.
 
 
-%%%% get total notes per instrument in piece
+%%%% get list of total notes per instrument in piece
 get_instrument_note_counts(_, [], Acc) ->
   Acc;
 
@@ -148,23 +148,51 @@ get_instrument_note_counts(XmlContent, [FirstInst | RestInst], Acc) ->
     } | Acc]
   ).
 
+print_instrument_note_counts(_, []) -> ok;
+print_instrument_note_counts(XmlContent, [FirstInst | RestInst]) ->
+  io:format(
+    "~p\n", 
+    [
+      #instrumentNoteCount{
+        name=FirstInst,
+        count=get_instrument_note_count(XmlContent, FirstInst, 0)
+      }
+    ]),
+  print_instrument_note_counts(XmlContent, RestInst).
+  
 
 test(Path) -> 
   { ParseResult, _ } = xmerl_scan:file(Path),  %% path="xmltest.mmp"
+
+  %% https://stackoverflow.com/questions/2140604/redirect-output-from-erlang-shell-into-a-file
+  {_, File} = file:open("mmp_note_counter_output.txt", [write]),
+  
+  InitialGroupLeader = erlang:group_leader(),
+  
+  erlang:group_leader(File, self()),
+  
+  io:format("file: ~p\n", [Path]),
   
   %% print the instruments found
-  print_inst_list(get_instruments(ParseResult#xmlElement.content, [])),
+  InstrumentsList = get_instruments(ParseResult#xmlElement.content, []),
+  print_inst_list(InstrumentsList),
   
   %% show total note count
   io:format("total note count: ~p\n", [get_note_counts(ParseResult#xmlElement.content, 0)]),
   
-  %% get individual note counts
-  get_instrument_note_counts(
-    ParseResult#xmlElement.content, 
-    get_instruments(ParseResult#xmlElement.content, []),
-    []
-  ).
+  %% get list of individual note counts
+  %%get_instrument_note_counts(
+  %%  ParseResult#xmlElement.content, 
+  %%  get_instruments(ParseResult#xmlElement.content, []),
+  %%  []
+  %%),
   
-  %%get_instrument_note_count(ParseResult#xmlElement.content, "piano", 0).
-  %%get_note_counts(ParseResult#xmlElement.content, 0).
+  %%io:format("piano note count: ~p\n", [get_instrument_note_count(ParseResult#xmlElement.content, "piano", 0)]),
+  
+  %% print individual instrument note counts - if there are multiple instruments with the same name,
+  %% their note count is the total of all the instruments with the same name.
+  print_instrument_note_counts(ParseResult#xmlElement.content, InstrumentsList),
+  
+  %% reset group_leader
+  erlang:group_leader(InitialGroupLeader, self()).
   
