@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <title>webgl testing</title>
+  <style>
+    body {
+      text-align: center;
+    }
+    
+    #webglCanvas {
+      border: 1px solid #ddd;
+      width: 600px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+  <p> hi </p>
+  <canvas id='webglCanvas' width='600px' height='600px'></canvas>
+</body>
+
+
+<!-- 
+helpful links:
+https://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
+https://webglfundamentals.org/webgl/lessons/webgl-image-processing.html
+-->
+
+<!-- vertex shader -->
+<script id='vertexShader' type='x-shader/x-vertex'>
+  attribute vec4 a_position;
+  uniform vec2 u_rotation;
+  
+  void main(){
+    // rotate position
+    vec2 rotation = vec2(
+      a_position.x * u_rotation.y + a_position.y * u_rotation.x,
+      a_position.y * u_rotation.y - a_position.x * u_rotation.x
+    );
+  
+    gl_Position = vec4(rotation, 0, 1); //a_position;
+  }
+</script>
+
+<!-- fragment shader -->
+<script id='fragmentShader' type='x-shader/x-fragment'>
+  precision mediump float;
+  uniform vec3 u_color;
+  
+  void main(){
+    gl_FragColor = vec4(u_color, 1.0); //vec4(0.5, 1, 0.5, 1);
+  }
+</script>
+
+<script>
+  function compileShader(gl, shaderSource, shaderType){
+    const shader = gl.createShader(shaderType);
+    gl.shaderSource(shader, shaderSource);
+    gl.compileShader(shader);
+    const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if(!success){
+      throw "failed to compile shader: " + gl.getShaderInfoLog(shader);
+    }
+    return shader;
+  }
+  
+  function setupShaders(gl){
+    const vsSource = document.getElementById('vertexShader').text;
+    const fsSource = document.getElementById('fragmentShader').text;
+    
+    const vs = compileShader(gl, vsSource, gl.VERTEX_SHADER);
+    const fs = compileShader(gl, fsSource, gl.FRAGMENT_SHADER);
+    
+    const program = gl.createProgram();
+    
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    
+    gl.linkProgram(program);
+    
+    const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    if(!success){
+      throw ("failed to link program: " + gl.getProgramInfoLog(program));
+    }
+    
+    console.log('shaders are set up.');
+    
+    return program;
+  }
+  
+  function drawTriangle(gl, program){
+    const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+    const posBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    const positions = [
+      0, 0,
+      -0.3, 0.5,
+      0.7, 0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    
+    // render triangle
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(program);
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    
+    const size = 2;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+    
+    const primitiveType = gl.TRIANGLES;
+    const count = 3;
+    gl.drawArrays(primitiveType, offset, count);
+  }
+  
+  function setUniforms(gl, program){
+    // set any uniform attribute data for shaders
+    const colors = [Math.random(), Math.random(), Math.random()];
+    //console.log(colors);
+    
+    const timeDelta = Date.now() - startTime;
+    const angleInRadians = timeDelta * Math.PI * 5 / 180;
+    const newRotation = [Math.sin(angleInRadians), Math.cos(angleInRadians)];
+    
+    // make sure we use the shader program
+    gl.useProgram(program);
+    
+    const colorLocation = gl.getUniformLocation(program, 'u_color');
+    const rotationLocation = gl.getUniformLocation(program, 'u_rotation');
+    
+    // assign value to attribute
+    gl.uniform3fv(colorLocation, colors);
+    gl.uniform2fv(rotationLocation, newRotation);
+  }
+  
+  function animate(){
+    setUniforms(gl, program);
+    drawTriangle(gl, program);
+    requestAnimationFrame(animate);
+  }
+
+  const startTime = Date.now();
+  const canvas = document.getElementById('webglCanvas');
+  const gl = canvas.getContext('webgl');
+  const program = setupShaders(gl);
+  
+  //setUniforms(gl, program);
+  //drawTriangle(gl, program);
+  
+  requestAnimationFrame(animate);
+</script>
+
+</html>
