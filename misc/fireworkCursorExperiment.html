@@ -27,16 +27,13 @@
       <canvas id='canvas' width='600px' height='600px'></canvas>
     </div>
 	
-    <script>
-      let fireworks = [];
-      
+    <script>      
       class Firework {
         lights = [];
         colors = ['red', 'black', 'yellow', 'green', 'blue', 'pink', 'purple'];
         lineCaps = ['butt', 'round', 'square'];
         
-        constructor(type, canvasCtx, x, y){
-          
+        constructor(type, canvasCtx, x, y){  
           this.type = type;
           
           if(type === 'circle'){
@@ -152,11 +149,18 @@
         }
       }
       
+      let fireworks = [];
+
       const canvas = document.getElementById('canvas');
       const ctx = document.getElementById('canvas').getContext('2d');
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       function renderFireworks(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // use clearRect if bg color is #fff
+        //ctx.clearRect(0, 0, canvas.width, canvas.height);
         fireworks.forEach(f => f.render());
         fireworks = fireworks.filter(f => !f.isFinished);
         requestAnimationFrame(renderFireworks);

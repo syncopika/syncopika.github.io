@@ -17,10 +17,15 @@ const Novelties = {
             <h3> web </h3>
             <p><a href='https://syncopika.github.io/music-visualizer-web/'> recordable music visualizer </a></p>
             <p><a href='https://syncopika.github.io/flashcards/'> flashcards </a></p>
+            <p><a href='https://syncopika.github.io/visual_novel_maker/'> visual novel examples </a></p>
+            <br />
+            <h3> random small stuff </h3>
+            <p><a href='misc/fireworkCursorExperiment.html'> canvas fireworks </a></p>
+            <p><a href='misc/raycasting.html'> raycasting demo </a></p>
+            <p><a href='misc/memory-cards.html'> cards </a></p>
             <p><a href='misc/karaokeget.html'> karaoke-get </a></p>
             <p><a href='misc/playbackAutomation.html'> audio playback rate automation track </a></p>
             <p><a href='misc/slot-machine.html'> vtuber slot machine </a></p>
-            <p><a href='https://syncopika.github.io/visual_novel_maker/'> visual novel examples </a></p>
         </div>`
 }
 

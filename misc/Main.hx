@@ -102,7 +102,7 @@ class Main {
     return map;
   }
   
-  static private function printMap(map:Map<String, Map<String, Int>>) {
+  static private function printMap(map:Map<String, Map<String, Array<String>>>) {
     for (year in map.keys()) {
       trace('---- compositions for 20$year ----');
       
@@ -111,14 +111,15 @@ class Main {
       months.sort((a, b) -> Std.parseInt(a) - Std.parseInt(b));
       
       for (month in months) {
-        trace('month $month : ${map[year][month]}');
+        trace('month $month : ${map[year][month].length}');
+        //trace('month $month : ${map[year][month]}');
       }
     }
   }
   
   static private function checkLMMSOutputOverTime(directory:String):Void {
     // key will be year, value will be a map of months to number of pieces started for that month
-    var timeMap:Map<String, Map<String, Int>> = [];
+    var timeMap:Map<String, Map<String, Array<String>>> = [];
     var total = 0;
     
     // check directory for .mmpz files
@@ -141,14 +142,13 @@ class Main {
               var year = date["year"];
               
               if (!timeMap.exists(year)) {
-                var monthMap:Map<String, Int> = [];
+                var monthMap:Map<String, Array<String>> = [];
                 timeMap[year] = monthMap;
               } else {
                 if (!timeMap[year].exists(month)) {
-                  timeMap[year][month] = 1;
+                  timeMap[year][month] = [file];
                 } else {
-                  var curr = timeMap[year][month];
-                  timeMap[year][month] = curr + 1;
+                  timeMap[year][month].push(file);
                 }
                 total++;
               }
