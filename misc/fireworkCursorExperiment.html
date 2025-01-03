@@ -14,8 +14,11 @@
         display: block;
         height: auto;
         width: 100%;
-        margin: 20px auto;
         text-align: center;
+      }
+      
+      label {
+        display: block;
       }
 		</style>
   </head>
@@ -25,6 +28,10 @@
       <h1> firework cursor experiment </h1>
       <p> click anywhere on the canvas for fireworks </p>
       <canvas id='canvas' width='600px' height='600px'></canvas>
+      <label for='bgColorPicker'>
+        bg color:
+        <input id='bgColorPicker' type='color' value='#dddddd' />
+      </label>
     </div>
 	
     <script>      
@@ -37,7 +44,7 @@
           this.type = type;
           
           if(type === 'circle'){
-            this.radius = 60 * Math.random() + 10;
+            this.radius = 90 * Math.random() + 10;
             this.speed = 2 * Math.random() + 0.2;
             this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
             this.lineCap = this.lineCaps[Math.floor(Math.random() * this.lineCaps.length)];
@@ -54,7 +61,7 @@
                 forward: {x: Math.cos(deg * Math.PI / 180), y: Math.sin(deg * Math.PI / 180)},
                 currX: x,
                 currY: y,
-                currWidth: 12 * Math.random() + 1, // TODO: set random line width per firework instead of per light?
+                currWidth: 18 * Math.random() + 1, // TODO: set random line width per firework instead of per light?
                 done: false,
               });
               
@@ -63,7 +70,7 @@
           }
         
           if(type === 'fountain'){
-            this.speed = 10; //2 * Math.random() + 0.2;
+            this.speed = 7; //2 * Math.random() + 0.2;
             this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
             this.lineCap = this.lineCaps[Math.floor(Math.random() * this.lineCaps.length)];
             this.ctx = canvasCtx;
@@ -79,7 +86,7 @@
                 forward: {x: Math.cos(deg * Math.PI / 180), y: Math.sin(deg * Math.PI / 180)},
                 currX: x,
                 currY: y,
-                currWidth: 3,
+                currWidth: 8,
                 done: false,
               });
               
@@ -153,12 +160,19 @@
 
       const canvas = document.getElementById('canvas');
       const ctx = document.getElementById('canvas').getContext('2d');
-      ctx.fillStyle = '#000';
+      ctx.fillStyle = '#ddd';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      function renderFireworks(){
-        ctx.fillStyle = '#000';
+      function updateBgColor(){
+        const selectedColor = document.getElementById('bgColorPicker').value;
+        ctx.fillStyle = selectedColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      
+      document.getElementById('bgColorPicker').addEventListener('change', () => updateBgColor());
+      
+      function renderFireworks(){
+        updateBgColor();
         // use clearRect if bg color is #fff
         //ctx.clearRect(0, 0, canvas.width, canvas.height);
         fireworks.forEach(f => f.render());
