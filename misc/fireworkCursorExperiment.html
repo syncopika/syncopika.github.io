@@ -93,6 +93,25 @@
               deg += sliceDeg;
             }
           }
+          
+          if(type === 'ripple'){
+            this.speed = 7; //2 * Math.random() + 0.2;
+            this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            this.lineCap = this.lineCaps[Math.floor(Math.random() * this.lineCaps.length)];
+            this.ctx = canvasCtx;
+            this.startX = x;
+            this.startY = y;
+            this.isFinished = false;
+            
+            this.lights.push({
+              //forward: {x: Math.cos(deg * Math.PI / 180), y: Math.sin(deg * Math.PI / 180)},
+              currX: x,
+              currY: y,
+              currRadius: Math.random() + 5,
+              maxRadius: 10 * Math.random() + (5 * Math.random()),
+              done: false,
+            });
+          }
         }
         
         distance(currX, currY){
@@ -141,6 +160,20 @@
                     l.currX = nextX;
                     l.currY = nextY;
                     l.forward.y += 3.8 * 0.02; // update y-component of initial velocity vector
+                  }else{
+                    l.done = true;
+                  }
+                }
+                
+                if(this.type === 'ripple'){
+                  if(l.currRadius < l.maxRadius){
+                    this.ctx.strokeStyle = this.color;
+                    this.ctx.lineCap = this.lineCap;
+                    this.ctx.lineWidth = l.currWidth;
+                    this.ctx.beginPath();
+                    this.ctx.arc(l.currX, l.currY, l.currRadius, 0, 2 * Math.PI);
+                    this.ctx.stroke();
+                    l.currRadius += Math.random();
                   }else{
                     l.done = true;
                   }
