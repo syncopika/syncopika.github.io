@@ -1,0 +1,62 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title> anime trends </title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>anime trends</h1>
+  <button id='test'>test .env</button>
+  <button id='getData'>get data</button>
+  <div id='data'>
+  </div>
+</body>
+
+<script>
+  function processData(data){
+    // TODO
+    document.getElementById('data').innerHTML = "";
+    const preElement = document.createElement('pre');
+    preElement.textContent = JSON.stringify(data, null, 4);
+    document.getElementById('data').appendChild(preElement);
+  }
+
+  // fetch anime data
+  async function getData(){
+    const url = 'http://localhost:3000/api/data';
+    try {
+      console.log('fetching data...');
+      const resp = await fetch(url);
+      if(!resp.ok){
+        console.error(resp.status);
+      }
+      const json = await resp.json();
+      console.log(json);
+      processData(json);
+      console.log('done!');
+    }catch(err){
+      console.error(err.message);
+    }
+  }
+  
+  document.getElementById('getData').addEventListener('click', () => {
+    getData();
+  });
+  
+  document.getElementById('test').addEventListener('click', async () => {
+    const testResp = await fetch('http://localhost:3000/api/test');
+    const res = await testResp.json();
+    console.log(res);
+  });
+  
+</script>
+
+</html>
