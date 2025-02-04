@@ -16,6 +16,29 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+function dataAsHtml(data){
+  let html = '<div>';
+  
+  for(const year in data){
+    let yr = `<ul><li>${year}</li>`;
+    for(const genre in data[year]){
+      let gr = `<ul><li>${genre}</li><ul>`;
+      
+      for(const title of data[year][genre]){
+        gr += `<li>${title}</li>`;
+      }
+      
+      gr += '</ul></ul>';
+      yr += gr;
+    }
+    yr += '</ul>';
+    html += yr;
+  }
+  
+  html += '</div>';
+  return html;
+}
+
 app.get('/api/test', (req, res) => {
   res.json({'msg': process.env.MAL_CLIENT_ID});
 });
@@ -88,7 +111,14 @@ app.get('/api/data', async (req, res) => {
     console.error(err.message);
   }
   
-  res.json({data});
+  if(req.query.html){
+    // trying out HTMX, which is designed to handle HTML in API request responses and
+    // not JSON, which is interesting! so if query param for html is set, send back HTML instead of JSON
+    res.setHeader('content-type', 'text/html');
+    res.send(dataAsHtml(data));
+  }else{
+    res.json({data});
+  }
 });
 
 app.use('/', express.static((path.join(__dirname, ''))));

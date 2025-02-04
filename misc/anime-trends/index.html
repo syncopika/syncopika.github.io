@@ -5,6 +5,8 @@
 <head>
   <title> anime trends </title>
   <meta charset="UTF-8">
+  <!-- try HTMX -->
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
   <style>
     body {
       font-family: Arial;
@@ -16,6 +18,14 @@
   <h1>anime trends</h1>
   <button id='test'>test .env</button>
   <button id='getData'>get data</button>
+  <button 
+    id='getDataHtmx' 
+    hx-get='/api/data?html=true'
+    hx-trigger='click'
+    hx-swap='innerHTML'
+    hx-target='#data'>
+    get data (htmx)
+  </button>
   <div id='data'>
   </div>
 </body>
