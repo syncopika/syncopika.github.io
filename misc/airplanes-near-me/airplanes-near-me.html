@@ -1,0 +1,155 @@
+<!doctype html>
+
+<!-- notes
+https://docs.mapbox.com/mapbox-gl-js/guides/install/
+https://api.adsb.lol/docs
+
+run server.exe from this directory in a terminal (launches a proxy server to get the airplane data + serves the html)
+then navigate to http://localhost:3000 and click on airplanes-near-me.html
+-->
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title> airplanes near me </title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+  <style>
+    body {
+      text-align: center;
+    }
+    
+    #map {
+      width: 80%;
+      height: 600px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1> find airplanes near you! </h1>
+  <p> within 10 nm </p>
+  <div id="map"></div>
+  <p id="currLocation"></p>
+  <button onclick="updateCurrLocation()"> update current location </button>
+  <button onclick="getLocalAirplanes()"> show airplanes within 10 nm radius </button>
+</body>
+
+<script>
+  const mapContainer = document.getElementById('map');
+  const map = new mapboxgl.Map({
+      container: mapContainer,
+      style: {
+          'version': 8,
+          'sources': {
+              'raster-tiles': {
+                  'type': 'raster',
+                  'tiles': [
+                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+                  ],
+                  'tileSize': 256,
+                  'attribution': '© <a href="https://www.openstreetmap.org/copyright"> OpenStreetMap contributors </a>'
+              }
+          },
+          'layers': [
+              {
+                  'id': 'simple-tiles',
+                  'type': 'raster',
+                  'source': 'raster-tiles',
+                  'minzoom': 0,
+                  'maxzoom': 22
+              }
+          ]
+      },
+      center: [-77.04, 38.907],
+      zoom: 10.00
+  });
+  
+  let userLocationMapMarker = null;
+  let airplaneLocationMapMarkers = [];
+  let currLatitude;
+  let currLongitude;
+  
+  function updateCurrLocation(){
+    navigator.geolocation.getCurrentPosition(pos => {
+      currLatitude = pos.coords.latitude;
+      currLongitude = pos.coords.longitude;
+      document.getElementById('currLocation').textContent = `lat: ${currLatitude}, lng: ${currLongitude}`;
+      
+      if(userLocationMapMarker === null){
+        userLocationMapMarker = new mapboxgl.Marker({});
+        userLocationMapMarker.setLngLat([currLongitude, currLatitude]);
+        userLocationMapMarker.addTo(map);
+      }else{
+        userLocationMapMarker.setLngLat([currLongitude, currLatitude]);
+      }
+      
+      map.flyTo({
+            center: [currLongitude, currLatitude]
+      });
+    });
+  }
+  
+  function createAirplaneMarker(airplaneData){
+    const newMarker = new mapboxgl.Marker({color: '#3bd45c'});
+    newMarker.setLngLat([airplaneData.lon, airplaneData.lat]);
+    
+    const popup = new mapboxgl.Popup({offset: 25});
+    let popupText = "";
+    popupText += `<p> flight: ${airplaneData.flight.trim()} <\/p>`;
+    popupText += `<p> lat: ${airplaneData.lat} <\/p>`;
+    popupText += `<p> lng: ${airplaneData.lon} <\/p>`;
+    popup.setHTML(popupText);
+    
+    newMarker.setPopup(popup);
+    
+    return newMarker;
+  }
+  
+  async function getLocalAirplanes(){
+    if(!currLatitude && !currLongitude){
+      alert('please update your current location first!');
+      return;
+    }
+    
+    if(airplaneLocationMapMarkers.length > 0){
+      airplaneLocationMapMarkers.forEach(marker => {
+        marker.remove();
+      });
+      airplaneLocationMapMarkers = [];
+    }
+    
+    // note: can't just fetch from the api because their server doesn't set a 'Access-Control-Allow-Origin' header in the response :(
+    // https://stackoverflow.com/questions/43262121/trying-to-use-fetch-and-pass-in-mode-no-cors
+    /*
+    const response = await fetch(`https:\/\/api.adsb.lol/v2/point/${currLatitude}/${currLongitude}/10`);
+    if(!response.ok){
+      console.error(`could not fetch airplane data - response status: ${response.status}`);
+    }else{
+      const results = await response.json();
+      results.ac.forEach(r => {
+        const newMarker = createAirplaneMarker(r);
+        airplaneLocationMapMarkers.push(newMarker);
+        newMarker.addTo(map);
+      });
+    }*/
+    
+    const response = await fetch(`http:\/\/localhost:3000/localplanes?lat=${currLatitude}&lng=${currLongitude}`);
+    if(!response.ok){
+      console.error(`could not fetch airplane data - response status: ${response.status}`);
+    }else{
+      const results = await response.json();
+      console.log(results);
+      results.ac.forEach(r => {
+        const newMarker = createAirplaneMarker(r);
+        airplaneLocationMapMarkers.push(newMarker);
+        newMarker.addTo(map);
+      });
+    }
+  }
+</script>
+
+</html>
