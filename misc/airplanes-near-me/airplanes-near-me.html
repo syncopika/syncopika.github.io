@@ -4,7 +4,7 @@
 https://docs.mapbox.com/mapbox-gl-js/guides/install/
 https://api.adsb.lol/docs
 
-run server.exe from this directory in a terminal (launches a proxy server to get the airplane data + serves the html)
+run server.exe from this directory (might have to run "go build server.go" first) in a terminal (launches a proxy server to get the airplane data + serves the html)
 then navigate to http://localhost:3000 and click on airplanes-near-me.html
 -->
 
@@ -99,7 +99,8 @@ then navigate to http://localhost:3000 and click on airplanes-near-me.html
     
     const popup = new mapboxgl.Popup({offset: 25});
     let popupText = "";
-    popupText += `<p> flight: ${airplaneData.flight.trim()} <\/p>`;
+    const flightName = airplaneData.flight.trim();
+    popupText += `<p> flight: <a href='https://www.flightaware.com/live/flight/${flightName}' target='_blank'>${flightName} <\/a><\/p>`;
     popupText += `<p> lat: ${airplaneData.lat} <\/p>`;
     popupText += `<p> lng: ${airplaneData.lon} <\/p>`;
     popup.setHTML(popupText);
