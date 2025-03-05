@@ -8,6 +8,7 @@ const Novelties = {
             <p><a href='https://github.com/syncopika/artstation'> artstation </a></p>
             <p><a href='https://github.com/syncopika/basic_screen_recorder_windows'> screen recorder </a></p>
             <p><a href='https://github.com/syncopika/basicWAVplayer'> basic WAV audio player </a></p>
+            <p><a href='https://github.com/syncopika/imgui_image_editor'> image editor </a></p>
             <br />
             <h3> mobile (Android) </h3>
             <p><a href='https://github.com/syncopika/mobile-qr-code-scanner'>QR code scanner</a></p>
@@ -22,7 +23,6 @@ const Novelties = {
             <h3> random small stuff </h3>
             <p><a href='misc/fireworkCursorExperiment.html'> canvas fireworks </a></p>
             <p><a href='misc/raycasting.html'> raycasting demo </a></p>
-            <p><a href='misc/memory-cards.html'> cards </a></p>
             <p><a href='misc/karaokeget.html'> karaoke-get </a></p>
             <p><a href='misc/playbackAutomation.html'> audio playback rate automation track </a></p>
             <p><a href='misc/slot-machine.html'> vtuber slot machine </a></p>
