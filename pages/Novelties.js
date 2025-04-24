@@ -21,6 +21,7 @@ const Novelties = {
             <p><a href='https://syncopika.github.io/visual_novel_maker/'> visual novel examples </a></p>
             <br />
             <h3> random small stuff </h3>
+            <p><a href='misc/basicPdfEditor.html'> basic pdf editor (for merging, deleting and moving pages) </a></p>
             <p><a href='misc/fireworkCursorExperiment.html'> canvas fireworks </a></p>
             <p><a href='misc/raycasting.html'> raycasting demo </a></p>
             <p><a href='misc/karaokeget.html'> karaoke-get </a></p>

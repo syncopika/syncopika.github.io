@@ -1,0 +1,174 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title> pdf editor </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.0/dist/pdf-lib.min.js"></script>
+  <style>
+    body {
+      font-family: arial;
+      text-align: center;
+      height: 100vh;
+    }
+    
+    iframe {
+      border: 1px solid #000;
+      width: 30vw;
+      height: 70vh;
+    }
+    
+    @media (max-width: 900px) {
+      iframe {
+        width: 80vw;
+      }
+    }
+    
+    button {
+      display: block;
+      margin: 0 auto;
+    }
+    
+    .inlineBtn {
+      display: inline-block;
+    }
+    
+    #importExportPdf {
+      margin-top: 25px;
+    }
+  </style>
+</head>
+
+<body>
+<h1> pdf editor </h1>
+
+<iframe id="iframe"></iframe>
+
+<div id="importExportPdf">
+  <label for="importPdf">import pdf:</label>
+  <input 
+    id="importPdf" 
+    name="importPdf" 
+    type="file"
+    accept=".pdf"
+    onchange="getPdf(this.files[0])"
+  />
+  <!--<button class="inlineBtn" id="exportPdf">export pdf</button>-->
+</div>
+
+<div>
+  <h2> delete page </h2>
+  <label for="deletePageSelect"> page to delete: </label>
+  <select id="deletePageSelect">
+  </select>
+  <button class="inlineBtn" id="deletePage">delete page</button>
+</div>
+
+<div>
+  <h2> move page </h2>
+  <label for="movePageSelect"> page to move: </label>
+  <select id="movePageSelect">
+  </select>
+  <label for="movePageIndexSelect"> position to move to: </label>
+  <select id="movePageIndexSelect">
+  </select>
+  <button class="inlineBtn" id="movePage">move</button>
+</div>
+
+</body>
+
+<script>
+// https://pdf-lib.js.org
+// TODO:
+// option to clear current pdf file
+// do we need an export button in addition to the default download option via the iframe?
+// might be having issues displaying pdf on mobile/smaller screens - try googling "iframe mobile screen not showing pdf iframe src"
+// bug - load a 3 page pdf, delete first page, then try to move last page to 0 index. now you get 2 of the same page?
+
+const { PDFDocument } = PDFLib;
+
+const iframe = document.getElementById("iframe");
+
+let pdfDoc = null;
+
+async function getPdf(file){
+  console.log(file);
+
+  //const pdfBytes = await fetch(url).then(res => res.arrayBuffer());
+  const pdfBytes = await new Response(file).arrayBuffer();
+  
+  if(pdfDoc === null){
+    pdfDoc = await PDFDocument.load(pdfBytes);
+  }else{
+    const newPdf = await PDFDocument.load(pdfBytes);
+    const pages = newPdf.getPageIndices();
+    const copiedPages = await pdfDoc.copyPages(newPdf, pages);
+    copiedPages.forEach(page => pdfDoc.addPage(page));
+  }
+  
+  const pdfDataUri = await pdfDoc.saveAsBase64({dataUri: true});
+  iframe.src = pdfDataUri;
+  
+  updatePageSelect();
+}
+
+async function deletePage(pageNum){
+  pdfDoc.removePage(pageNum);
+  const pdfDataUri = await pdfDoc.saveAsBase64({dataUri: true});
+  iframe.src = pdfDataUri;
+  updatePageSelect();
+}
+
+function updatePageSelect(){
+  const deletePageSelect = document.getElementById("deletePageSelect");
+  const movePageSelect = document.getElementById("movePageSelect");
+  const movePageIndexSelect = document.getElementById("movePageIndexSelect");
+  
+  // clear options
+  deletePageSelect.innerHTML = ""; // lol, maybe don't do this? but it seems to work
+  movePageSelect.innerHTML = "";
+  movePageIndexSelect.innerHTML = "";
+  
+  // update options
+  pdfDoc.getPageIndices().forEach(page => {
+    addNewSelectOption(deletePageSelect, page);
+    addNewSelectOption(movePageSelect, page);
+    addNewSelectOption(movePageIndexSelect, page);
+  });
+}
+
+function addNewSelectOption(selectNode, value){
+  const newOption = document.createElement("option");
+  newOption.textContent = value;
+  selectNode.appendChild(newOption);
+}
+
+document.getElementById("deletePage").addEventListener("click", () => {
+  const pageNum = parseInt(document.getElementById("deletePageSelect").value);
+  deletePage(pageNum);
+});
+
+document.getElementById("movePage").addEventListener("click", async () => {
+  const pageNumToMove = parseInt(document.getElementById("movePageSelect").value);
+  const pageIndexToMoveTo = parseInt(document.getElementById("movePageIndexSelect").value);
+  
+  // get the page to move
+  const pageToMove = pdfDoc.getPage(pageNumToMove);
+  
+  // remove from current position
+  pdfDoc.removePage(pageNumToMove);
+  
+  // insert it to desired position
+  pdfDoc.insertPage(pageIndexToMoveTo, pageToMove);
+  
+  // save
+  const pdfDataUri = await pdfDoc.saveAsBase64({dataUri: true});
+  iframe.src = pdfDataUri;
+  
+  updatePageSelect();
+});
+
+</script>
+
+</html>
