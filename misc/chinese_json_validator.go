@@ -5,6 +5,7 @@ import (
   "fmt"
   "log"
   "os"
+  "strings"
 )
 
 type ChineseData struct {
@@ -35,14 +36,21 @@ func main(){
     fmt.Println(err)
   }
   
-  var seenCharacters = make(map[string]bool)
-  for idx, character := range(chineseVocab) {
-    if seenCharacters[character.Value] {
-      fmt.Printf("@ line %d: %s is a duplicate! \n", idx + 2, character.Value)
+  var seenWords = make(map[string]bool)
+  var seenChars = make(map[string]bool)
+  for idx, word := range(chineseVocab) {
+    if seenWords[word.Value] {
+      fmt.Printf("@ line %d: %s is a duplicate! \n", idx + 2, word.Value)
       break
     }
-    seenCharacters[character.Value] = true
+    seenWords[word.Value] = true
+    
+    wordChars := strings.Split(word.Value, "")
+    for _, char := range(wordChars) {
+      seenChars[char] = true
+    }
   }
   
-  fmt.Printf(fmt.Sprintf("data size: %d \n", len(chineseVocab)))
+  fmt.Printf(fmt.Sprintf("num words: %d \n", len(chineseVocab)))
+  fmt.Printf(fmt.Sprintf("num unique characters: %d \n", len(seenChars)))
 }
