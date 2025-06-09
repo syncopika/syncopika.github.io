@@ -26,30 +26,29 @@ fn has_dups(data: serde_json::Value) -> () {
     let data_len = data.as_array().unwrap().len();
     for n in 0..data_len {
       // some other small checks like making sure value, pinyin and definition are not empty
-      // this is a bit hacky(?) but somehow an empty string in the JSON is becoming a string of length 2 after calling to_string() :/
-      // TODO: investigate/understand why that is but for now, checking for a length of 2 to represent empty JSON strings
-      // seems to work
-      let val = (&data[n]["value"]).to_string();
-      if val.trim().len() == 2 {
+      // https://stackoverflow.com/questions/72345657/how-do-i-get-the-string-value-of-a-json-value-without-quotes
+      // https://docs.rs/serde_json/latest/serde_json/ - ctrl+f for as_str
+      let val = (&data[n]["value"]).as_str().unwrap();
+      if val.trim().is_empty() {
         println!("ERROR: no value on line {}!", n+2); 
         return
       }
       
-      let pinyin = (&data[n]["pinyin"]).to_string();
-      if pinyin.trim().len() == 2 {
+      let pinyin = (&data[n]["pinyin"]).as_str().unwrap();
+      if pinyin.trim().is_empty() {
         println!("ERROR: no pinyin on line {}!", n+2); 
         return
       }
       
-      let definition = (&data[n]["definition"]).to_string();
-      if definition.trim().len() == 2 {
+      let definition = (&data[n]["definition"]).as_str().unwrap();
+      if definition.trim().is_empty() {
         println!("ERROR: no definition on line {}!", n+2); 
         return
       }
       
       if set.contains(&data[n]["value"]) {
         println!("ERROR: duplicate {} found on line {}!", &data[n]["value"], n+2); // +2 to account for the outermost array bracket being on the first line of the file and the 0-indexing for array traversal
-        //return true;
+        return
       } else {
         set.insert(&data[n]["value"]);
       }
