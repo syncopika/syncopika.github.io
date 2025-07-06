@@ -81,15 +81,15 @@ class Main {
     var year = name.substr(4, 6);
     
     if (month.charAt(0) == '0') {
-      month = month.substr(1, 2);
+      month = month.charAt(1);
     }
     
     if (day.charAt(0) == '0') {
-      day = day.substr(1, 2);
+      day = day.charAt(1);
     }
     
     if (year.charAt(0) == '0') {
-      year = year.substr(1, 2);
+      year = year.charAt(1);
     }
     
     // TODO: convert month number to month name? (e.g. 1 -> January)
@@ -112,7 +112,6 @@ class Main {
       
       for (month in months) {
         trace('month $month : ${map[year][month].length}');
-        //trace('month $month : ${map[year][month]}');
       }
     }
   }
@@ -123,7 +122,7 @@ class Main {
     var total = 0;
     
     // check directory for .mmpz files
-    var dateRegex = new EReg("[0-9]{6}", "i");
+    var dateRegex = new EReg("^[0-9]{6}|[0-9]{6}.mmpz", "i");
     var mmpzRegex = new EReg(".mmpz$", "i");
     
     if (sys.FileSystem.exists(directory)) {
@@ -132,9 +131,15 @@ class Main {
         if (!sys.FileSystem.isDirectory(path)) {
           if (mmpzRegex.match(path)) {
             if (dateRegex.match(file)) {
-              // note that this can yield some wrong results. sometimes I might have a filename like funbgm2120224, which would capture 212022 :/
-              // TODO: match better to handle cases where we may have a number in front of the actual date
-              var match = dateRegex.matched(0);
+              // sometimes I might have a filename like funbgm2120224, which would capture 212022 :/ or something like like bgm3022814.mmpz
+              // but also I have some filenames where the date comes first like 011514bgmv2.mmpz
+              
+              var match = dateRegex.matched(0); // 0 to get whole matched substring
+              
+              if (StringTools.contains(match, '.mmpz')) {
+                match = match.substr(0, match.lastIndexOf('.'));
+              }
+              
               //trace(match);
               
               var date = parseDateFromFilename(match);
@@ -144,14 +149,15 @@ class Main {
               if (!timeMap.exists(year)) {
                 var monthMap:Map<String, Array<String>> = [];
                 timeMap[year] = monthMap;
-              } else {
-                if (!timeMap[year].exists(month)) {
-                  timeMap[year][month] = [file];
-                } else {
-                  timeMap[year][month].push(file);
-                }
-                total++;
               }
+                
+              if (!timeMap[year].exists(month)) {
+                timeMap[year][month] = [file];
+              } else {
+                timeMap[year][month].push(file);
+              }
+                
+              total++;
             }
           }
         } else {
