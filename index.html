@@ -76,6 +76,23 @@ $(window).resize(function(){
     }
 });
 
+// for use on software page
+// img1 and img2 should be filepaths to images
+function switchImgOnClick(img1, img2){
+  return (evt) => {
+    // evt.target should be an img element
+    const imgSrc = new URL(evt.target.src).pathname;
+    if(imgSrc === img1){
+      evt.target.src = img2;
+      evt.target.classList.add('screenshot-flip');
+      setTimeout(() => {evt.target.classList.remove('screenshot-flip')}, 180);
+    }else{
+      evt.target.src = img1;
+      evt.target.classList.add('screenshot-flip');
+      setTimeout(() => {evt.target.classList.remove('screenshot-flip')}, 180);
+    }
+  };
+}
 </script>
 
 

@@ -11,8 +11,11 @@ const Software = {
             
                 <div>
                     <h4 class="projectTitle"><a href='https://syncopika.github.io/piano_roll_browser/'> piano roll browser </a></h4>
-                    <div class="imgContainer">
-                        <img src="projectScreenshots/piano_roll_browser.png" class="screenshot">
+                    <div id="pianoRollBrowser" class="imgContainer">
+                        <img 
+                          onclick="switchImgOnClick('/projectScreenshots/piano_roll_browser.png', '/pages/app_qr_codes/piano_roll_app.png')(event)" 
+                          src="projectScreenshots/piano_roll_browser.png" 
+                          class="screenshot">
                     </div>
                     <br>
                     <p> vanilla JavaScript, Web Audio API </p>
@@ -22,8 +25,11 @@ const Software = {
                 
                 <div>
                     <h4 class="projectTitle"><a href='https://syncopika.github.io/funSketch/'> funSketch </a></h4>
-                    <div class="imgContainer">
-                        <img src="projectScreenshots/fun_sketch.png" class="screenshot">
+                    <div id="funSketch" class="imgContainer">
+                        <img 
+                          onclick="switchImgOnClick('/projectScreenshots/fun_sketch.png', '/pages/app_qr_codes/fun_sketch.png')(event)" 
+                          src="projectScreenshots/fun_sketch.png" 
+                          class="screenshot">
                     </div>
                     <br>
                     <p> React, Canvas API </p>
@@ -33,8 +39,11 @@ const Software = {
                 
                 <div>
                     <h4 class="projectTitle"><a href='https://syncopika.github.io/trip-planner/'> trip-planner </a></h4>
-                    <div class="imgContainer">
-                        <img src="projectScreenshots/trip_planner.png" class="screenshot">
+                    <div id="tripPlanner" class="imgContainer">
+                        <img
+                          onclick="switchImgOnClick('/projectScreenshots/trip_planner.png', '/pages/app_qr_codes/trip_planner.png')(event)" 
+                          src="projectScreenshots/trip_planner.png" 
+                          class="screenshot">
                     </div>
                     <br>
                     <p> Vue 3, TypeScript, PostgreSQL, MapBox API </p>
@@ -44,8 +53,11 @@ const Software = {
                 
                 <div>
                     <h4 class="projectTitle"><a href='https://syncopika.github.io/music-score-viewer/'> music score viewer </a></h4>
-                    <div class="imgContainer">
-                        <img src="projectScreenshots/music_score_viewer.png" class="screenshot">
+                    <div id="musicScoreViewer" class="imgContainer">
+                        <img 
+                          onclick="switchImgOnClick('/projectScreenshots/music_score_viewer.png', '/pages/app_qr_codes/music_score_viewer.png')(event)" 
+                          src="projectScreenshots/music_score_viewer.png" 
+                          class="screenshot">
                     </div>
                     <br>
                     <p> React, pdf.js </p>
@@ -56,8 +68,11 @@ const Software = {
                 
                 <div>
                     <h4 class="projectTitle"><a href='https://syncopika.github.io/threejs-projects/'> threejs projects </a></h4>
-                    <div class="imgContainer">
-                        <img src="projectScreenshots/airshow.png" class="screenshot">
+                    <div id="threejsProjects" class="imgContainer">
+                        <img 
+                          onclick="switchImgOnClick('/projectScreenshots/airshow.png', '/pages/app_qr_codes/threejs_projects.png')(event)" 
+                          src="projectScreenshots/airshow.png" 
+                          class="screenshot">
                     </div>
                     <br>
                     <p> JavaScript (three.js), Blender </p>
