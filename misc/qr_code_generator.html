@@ -1,0 +1,121 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title> QR code generator (WIP) </title>
+  
+  <style>
+    body {
+      text-align: center;
+    }
+    
+    canvas {
+      display: block;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h1> QR code generator (WIP) </h1>
+  <p> hi, nothing to see here yet :) </p>
+  <input type='text' />
+  <button onclick="init()"> generate </button>
+</body>
+
+<script>
+// https://www.thonky.com/qr-code-tutorial/introduction
+// https://www.qrcode.com/en/about/version.html
+
+function init(){
+  // create the canvas to draw the QR code in
+  const canvas = document.createElement('canvas'); 
+  const ctx = canvas.getContext('2d');
+  
+  // set bg to black
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // TODO: how do we know how big the canvas should be?
+  // size of a QR code can be calculated with ((V - 1) * 4) + 21
+  // where V is the QR code version
+  
+  drawFinderPatterns(ctx, canvas.width, canvas.height);
+  
+  document.body.appendChild(canvas);
+}
+
+function drawFinderPatterns(ctx, width, height){
+  // finder patterns are always 7 x 7
+  // with an inner white square of 5 x 5
+  // and a solid black square in the center that's 3 x 3
+  // finder patterns are also always surrounded by a separator, which is just a white line
+  const separatorDim = 8;
+  const finderOuterDim = 7;
+  const finderInnerDim = 5;
+  const finderInnerCenter = 3;
+  
+  // draw top-right corner pattern
+  ctx.fillStyle = 'rgb(255,255,255)'; // draw separator first
+  ctx.fillRect(width - finderOuterDim - 1, 0, separatorDim, separatorDim);
+  
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(width - finderOuterDim, 0, finderOuterDim, finderOuterDim);
+  
+  ctx.fillStyle = 'rgb(255,255,255)';
+  ctx.fillRect(width - finderOuterDim + 1, 1, finderInnerDim, finderInnerDim);
+  
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(width - finderOuterDim + 2, 2, finderInnerCenter, finderInnerCenter);
+  
+  // draw top-left corner pattern
+  ctx.fillStyle = 'rgb(255,255,255)'; // draw separator first
+  ctx.fillRect(0, 0, separatorDim, separatorDim);
+  
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(0, 0, finderOuterDim, finderOuterDim);
+  
+  ctx.fillStyle = 'rgb(255,255,255)';
+  ctx.fillRect(1, 1, finderInnerDim, finderInnerDim);
+  
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(2, 2, finderInnerCenter, finderInnerCenter);
+  
+  // draw bottom-left corner pattern
+  ctx.fillStyle = 'rgb(255,255,255)'; // draw separator first
+  ctx.fillRect(0, height - finderOuterDim - 1, separatorDim, separatorDim);
+  
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(0, height - finderOuterDim, finderOuterDim, finderOuterDim);
+  
+  ctx.fillStyle = 'rgb(255,255,255)';
+  ctx.fillRect(1, height - finderOuterDim + 1, finderInnerDim, finderInnerDim);
+  
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(2, height - finderOuterDim + 2, finderInnerCenter, finderInnerCenter);  
+}
+
+function addAlignmentPatterns(){
+  // TODO
+  // QR codes that are >= version 2 are required to have alignment patterns
+  // an alignment pattern is a 5 x 5 black square with a 3 x 3 white square inside and a black squar e in the center
+}
+
+function addTimingPatterns(){
+  // TODO
+}
+
+function addDarkModuleAndReservedAreas(){
+  // TODO
+}
+
+function addData(){
+  // TODO
+}
+
+</script>
+
+
+</html>
