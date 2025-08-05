@@ -296,10 +296,6 @@ function init(){
   ctx.fillStyle = 'rgb(0,0,0)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  // TODO: how do we know how big the canvas should be?
-  // size of a QR code can be calculated with ((V - 1) * 4) + 21
-  // where V is the QR code version
-  
   // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
   const mode = "0100"; // mode indicator (4 bits)
   
@@ -307,18 +303,48 @@ function init(){
   // the higher the error correction level, the larger the QR code will be (b/c it takes more bytes)
   const errorCorrectionLevel = "M";
   
-  // TODO: need character count indicator
-  
   // figure out QR code version/size
+  const qrVersion = getSmallestQRVersion("TODO: pass input string here", errorCorrectionLevel);
   
+  // TODO: how do we know how big the canvas should be?
+  // size of a QR code can be calculated with ((V - 1) * 4) + 21
+  // where V is the QR code version
+  
+  // TODO: need character count indicator
+  const charCountIndicator = getCharacterCountIndicator("TODO: pass input string here", qrVersion);
   
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
   document.body.appendChild(canvas);
 }
 
-function getCharacterCapacityForVersion(version){
+// TODO: needs tests
+function getSmallestQRVersion(inputString, errorCorrectionLevel){
+  // https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string
+  
+  // get num bytes of inputString
+  const numBytesInput = (new Blob([inputString])).size;
+  
+  // check table for version
+  const versions = Array.from(Object.keys(characterCapacities));
+  versions.sort();
+  for(let i = versions.length - 1; i >= 0; i--){
+    const v = versions[i];
+    if(characterCapacities[v][errorCorrectionLevel] >= numBytesInput){
+      return v;
+    }
+  }
+  
+  return null;
+}
+
+function getCharacterCountIndicator(inputString, qrVersion){
   // TODO
+  const numChars = inputString.length;
+  
+  // convert numChars to binary
+  
+  // pad as needed depending on QR version
 }
 
 function drawFinderPatterns(ctx, width, height){
