@@ -277,6 +277,233 @@ const characterCapacities = {
 };
 
 // TODO: add error correction table
+// atm we only care about level M for error correction
+const errorCorrectionTable = {
+  "1M": {
+    "totalDataCodewords": 16,
+    "ecCodewordsPerBlock": 10,
+    "numBlocksGroup1": 1,
+    "numDataCodewordsPerGroup1Block": 16,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "2M": {
+    "totalDataCodewords": 28,
+    "ecCodewordsPerBlock": 16,
+    "numBlocksGroup1": 1,
+    "numDataCodewordsPerGroup1Block": 28,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "3M": {
+    "totalDataCodewords": 44,
+    "ecCodewordsPerBlock": 26,
+    "numBlocksGroup1": 1,
+    "numDataCodewordsPerGroup1Block": 44,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "4M": {
+    "totalDataCodewords": 64,
+    "ecCodewordsPerBlock": 18,
+    "numBlocksGroup1": 2,
+    "numDataCodewordsPerGroup1Block": 32,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "5M": {
+    "totalDataCodewords": 86,
+    "ecCodewordsPerBlock": 24,
+    "numBlocksGroup1": 2,
+    "numDataCodewordsPerGroup1Block": 43,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "6M": {
+    "totalDataCodewords": 108,
+    "ecCodewordsPerBlock": 16,
+    "numBlocksGroup1": 4,
+    "numDataCodewordsPerGroup1Block": 27,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "7M": {
+    "totalDataCodewords": 124,
+    "ecCodewordsPerBlock": 18,
+    "numBlocksGroup1": 4,
+    "numDataCodewordsPerGroup1Block": 31,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "8M": {
+    "totalDataCodewords": 154,
+    "ecCodewordsPerBlock": 22,
+    "numBlocksGroup1": 2,
+    "numDataCodewordsPerGroup1Block": 38,
+    "numBlocksGroup2": 2,
+    "numDataCodewordsPerGroup2Block": 39,
+  },
+  "9M": {
+    "totalDataCodewords": 182,
+    "ecCodewordsPerBlock": 22,
+    "numBlocksGroup1": 3,
+    "numDataCodewordsPerGroup1Block": 36,
+    "numBlocksGroup2": 2,
+    "numDataCodewordsPerGroup2Block": 37,
+  },
+  "10M": {
+    "totalDataCodewords": 216,
+    "ecCodewordsPerBlock": 26,
+    "numBlocksGroup1": 4,
+    "numDataCodewordsPerGroup1Block": 43,
+    "numBlocksGroup2": 1,
+    "numDataCodewordsPerGroup2Block": 44,
+  },
+  "11M": {
+    "totalDataCodewords": 254,
+    "ecCodewordsPerBlock": 30,
+    "numBlocksGroup1": 1,
+    "numDataCodewordsPerGroup1Block": 50,
+    "numBlocksGroup2": 4,
+    "numDataCodewordsPerGroup2Block": 51,
+  },
+  "12M": {
+    "totalDataCodewords": 290,
+    "ecCodewordsPerBlock": 22,
+    "numBlocksGroup1": 6,
+    "numDataCodewordsPerGroup1Block": 36,
+    "numBlocksGroup2": 2,
+    "numDataCodewordsPerGroup2Block": 37,
+  },
+  "13M": {
+    "totalDataCodewords": 334,
+    "ecCodewordsPerBlock": 22,
+    "numBlocksGroup1": 8,
+    "numDataCodewordsPerGroup1Block": 37,
+    "numBlocksGroup2": 1,
+    "numDataCodewordsPerGroup2Block": 38,
+  },
+  "14M": {
+    "totalDataCodewords": 365,
+    "ecCodewordsPerBlock": 24,
+    "numBlocksGroup1": 4,
+    "numDataCodewordsPerGroup1Block": 40,
+    "numBlocksGroup2": 5,
+    "numDataCodewordsPerGroup2Block": 41,
+  },
+  "15M": {
+    "totalDataCodewords": 415,
+    "ecCodewordsPerBlock": 24,
+    "numBlocksGroup1": 5,
+    "numDataCodewordsPerGroup1Block": 41,
+    "numBlocksGroup2": 5,
+    "numDataCodewordsPerGroup2Block": 42,
+  },
+  "16M": {
+    "totalDataCodewords": 453,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 7,
+    "numDataCodewordsPerGroup1Block": 45,
+    "numBlocksGroup2": 3,
+    "numDataCodewordsPerGroup2Block": 46,
+  },
+  "17M": {
+    "totalDataCodewords": 507,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 10,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 1,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "18M": {
+    "totalDataCodewords": 563,
+    "ecCodewordsPerBlock": 26,
+    "numBlocksGroup1": 9,
+    "numDataCodewordsPerGroup1Block": 43,
+    "numBlocksGroup2": 4,
+    "numDataCodewordsPerGroup2Block": 44,
+  },
+  "19M": {
+    "totalDataCodewords": 627,
+    "ecCodewordsPerBlock": 26,
+    "numBlocksGroup1": 3,
+    "numDataCodewordsPerGroup1Block": 44,
+    "numBlocksGroup2": 11,
+    "numDataCodewordsPerGroup2Block": 45,
+  },
+  "20M": {
+    "totalDataCodewords": 669,
+    "ecCodewordsPerBlock": 26,
+    "numBlocksGroup1": 3,
+    "numDataCodewordsPerGroup1Block": 41,
+    "numBlocksGroup2": 13,
+    "numDataCodewordsPerGroup2Block": 42,
+  },
+  "21M": {
+    "totalDataCodewords": 714,
+    "ecCodewordsPerBlock": 26,
+    "numBlocksGroup1": 17,
+    "numDataCodewordsPerGroup1Block": 42,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "22M": {
+    "totalDataCodewords": 782,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 17,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 0,
+    "numDataCodewordsPerGroup2Block": 0,
+  },
+  "23M": {
+    "totalDataCodewords": 860,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 4,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 14,
+    "numDataCodewordsPerGroup2Block": 48,
+  },
+  "24M": {
+    "totalDataCodewords": 860,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 4,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 14,
+    "numDataCodewordsPerGroup2Block": 48,
+  },
+  "25M": {
+    "totalDataCodewords": 1000,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 8,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 13,
+    "numDataCodewordsPerGroup2Block": 48,
+  },
+  "26M": {
+    "totalDataCodewords": 1062,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 19,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 4,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "27M": {
+    "totalDataCodewords": 1128,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 22,
+    "numDataCodewordsPerGroup1Block": 45,
+    "numBlocksGroup2": 3,
+    "numDataCodewordsPerGroup2Block": 46,
+  },
+  "28M": {
+    "totalDataCodewords": 1193,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 3,
+    "numDataCodewordsPerGroup1Block": 45,
+    "numBlocksGroup2": 23,
+    "numDataCodewordsPerGroup2Block": 46,
+  }
+};
 
 // note: only caring about byte mode atm
 const versionCharCountIndicatorSizeMap = {
@@ -296,7 +523,6 @@ function getCharCountIndicatorSize(version){
 }
 
 function getInputStrAsBinaryStr(inputStr){
-  // TODO
   // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encode
   // convert the input to 8-bit ints per TextEncoder.encode
   const textEncoder = new TextEncoder();
@@ -352,12 +578,17 @@ function init(){
   // size of a QR code can be calculated with ((V - 1) * 4) + 21
   // where V is the QR code version
   
-  // TODO: need character count indicator
+  // get character count indicator
   const charCountIndicator = getCharacterCountIndicator("TODO: pass input string here", qrVersion);
   
   // put charCountIndicator after mode
   
   // now encode the data into binary
+  const encodedData = getInputStrAsBinaryStr("TODO: pass input string here");
+  
+  // put encodedData after charCountIndicator
+  
+  // determine required number of bits for this QR code
   
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
@@ -483,6 +714,24 @@ function addDarkModuleAndReservedAreas(){
 
 function addData(){
   // TODO
+}
+
+
+function test(){
+  // TODO
+  // assumptions: level M for error correction, byte mode only
+  const mode = "0100";
+  const errorCorrectionLevel = "M";
+  const input = "http://www.google.com";
+  
+  const qrVersion = getSmallestQRVersion(input, errorCorrectionLevel);
+  // assertion for qrVersion
+  
+  const charCountIndicator = getCharacterCountIndicator(input, qrVersion);
+  // assertion for charCountIndicator
+  
+  const encodedInputStr = getInputStrAsBinaryStr(input);
+  // assertion for encodedInputStr
 }
 
 </script>
