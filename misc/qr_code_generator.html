@@ -295,6 +295,27 @@ function getCharCountIndicatorSize(version){
   return null;
 }
 
+function getInputStrAsBinaryStr(inputStr){
+  // TODO
+  // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encode
+  // convert the input to 8-bit ints per TextEncoder.encode
+  const textEncoder = new TextEncoder();
+  const encodedStrArray = textEncoder.encode(inputStr);
+  
+  // convert each 8-bit int to binary
+  const result = encodedStrArray.map(i => {
+    // convert to binary
+    const binStr = intToBinary(i);
+    
+    // pad as needed to match a length of 8
+    const paddingAmount = 8 - binStr.length;
+    return zeroPadLeftStr(binStr, paddingAmount);
+  });
+  
+  // concat each binary
+  return result.join(" "); // TODO: should there be a space?
+}
+
 function intToBinary(n){
   // TODO: need to pad up to certain num of bits based on version
   const binStr = [];
@@ -372,6 +393,8 @@ function getCharacterCountIndicator(inputString, qrVersion){
   // pad as needed depending on QR version
   const expectedLen = getCharCountIndicatorSize(qrVersion);
   const padLen = expectedLen - numCharsBinStr.length;
+  
+  // TODO: use zeroPadLeftStr function below
   if(padLen > 0){
     let zeroPadding = "";
     for(let i = 0; i < padLen; i++){
@@ -381,6 +404,17 @@ function getCharacterCountIndicator(inputString, qrVersion){
   }
   
   return numCharsBinStr;
+}
+
+function zeroPadLeftStr(inputStr, paddingAmount){
+  if(paddingAmount > 0){
+    let zeroPadding = "";
+    for(let i = 0; i < paddingAmount; i++){
+      zeroPadding += "0";
+    }
+    return zeroPadding + inputStr;
+  }
+  return inputStr;
 }
 
 function drawFinderPatterns(ctx, width, height){
