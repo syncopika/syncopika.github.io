@@ -276,15 +276,36 @@ const characterCapacities = {
   },
 };
 
-// only caring about byte mode atm
+// TODO: add error correction table
+
+// note: only caring about byte mode atm
 const versionCharCountIndicatorSizeMap = {
-  1: 8, // version 1 -> 8 bits for representing the character count
+  1: 8, // version 1-9 -> 8 bits for representing the character count
   10: 16, // versions 10 - 26 -> 16 bits
   27: 16, // versions 27 - 40 -> 16 bits
 };
 
+function getCharCountIndicatorSize(version){
+  const keys = Array.from(Object.keys(versionCharCountIndicatorSizeMap)).reverse();
+  for(let k of keys){
+    if(version >= k){
+      return versionCharCountIndicatorSizeMap[k]; // e.g. if version is 20, we should get back 16
+    }
+  }
+  return null;
+}
+
 function intToBinary(n){
   // TODO: need to pad up to certain num of bits based on version
+  const binStr = [];
+  
+  while(n > 0){
+    const rem = n % 2;
+    binStr.unshift(rem);
+    n = Math.floor(n / 2);
+  }
+  
+  return binStr.join('');
 }
 
 function init(){
@@ -313,6 +334,10 @@ function init(){
   // TODO: need character count indicator
   const charCountIndicator = getCharacterCountIndicator("TODO: pass input string here", qrVersion);
   
+  // put charCountIndicator after mode
+  
+  // now encode the data into binary
+  
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
   document.body.appendChild(canvas);
@@ -339,12 +364,23 @@ function getSmallestQRVersion(inputString, errorCorrectionLevel){
 }
 
 function getCharacterCountIndicator(inputString, qrVersion){
-  // TODO
   const numChars = inputString.length;
   
-  // convert numChars to binary
+  // convert numChars to binary string
+  let numCharsBinStr = intToBinary(numChars);
   
   // pad as needed depending on QR version
+  const expectedLen = getCharCountIndicatorSize(qrVersion);
+  const padLen = expectedLen - numCharsBinStr.length;
+  if(padLen > 0){
+    let zeroPadding = "";
+    for(let i = 0; i < padLen; i++){
+      zeroPadding += "0";
+    }
+    numCharsBinStr = zeroPadding + numCharsBinStr;
+  }
+  
+  return numCharsBinStr;
 }
 
 function drawFinderPatterns(ctx, width, height){
