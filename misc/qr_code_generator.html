@@ -502,6 +502,102 @@ const errorCorrectionTable = {
     "numDataCodewordsPerGroup1Block": 45,
     "numBlocksGroup2": 23,
     "numDataCodewordsPerGroup2Block": 46,
+  },
+  "29M": {
+    "totalDataCodewords": 1267,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 21,
+    "numDataCodewordsPerGroup1Block": 45,
+    "numBlocksGroup2": 7,
+    "numDataCodewordsPerGroup2Block": 46,
+  },
+  "30M": {
+    "totalDataCodewords": 1373,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 19,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 10,
+    "numDataCodewordsPerGroup2Block": 116,
+  },
+  "31M": {
+    "totalDataCodewords": 1455,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 2,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 29,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "32M": {
+    "totalDataCodewords": 1541,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 10,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 23,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "33M": {
+    "totalDataCodewords": 1631,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 14,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 21,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "34M": {
+    "totalDataCodewords": 1725,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 14,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 23,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "35M": {
+    "totalDataCodewords": 1812,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 12,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 26,
+    "numDataCodewordsPerGroup2Block": 48,
+  },
+  "36M": {
+    "totalDataCodewords": 1914,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 6,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 34,
+    "numDataCodewordsPerGroup2Block": 48,
+  },
+  "37M": {
+    "totalDataCodewords": 1992,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 29,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 14,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "38M": {
+    "totalDataCodewords": 2102,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 13,
+    "numDataCodewordsPerGroup1Block": 46,
+    "numBlocksGroup2": 32,
+    "numDataCodewordsPerGroup2Block": 47,
+  },
+  "39M": {
+    "totalDataCodewords": 2216,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 40,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 7,
+    "numDataCodewordsPerGroup2Block": 48,
+  },
+  "40M": {
+    "totalDataCodewords": 2334,
+    "ecCodewordsPerBlock": 28,
+    "numBlocksGroup1": 18,
+    "numDataCodewordsPerGroup1Block": 47,
+    "numBlocksGroup2": 31,
+    "numDataCodewordsPerGroup2Block": 48,
   }
 };
 
@@ -539,7 +635,7 @@ function getInputStrAsBinaryStr(inputStr){
   });
   
   // concat each binary
-  return result.join(" "); // TODO: should there be a space?
+  return result.join(""); // TODO: should there be a space?
 }
 
 function intToBinary(n){
@@ -565,11 +661,11 @@ function init(){
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
   // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
-  const mode = "0100"; // mode indicator (4 bits)
+  const mode = '0100'; // mode indicator (4 bits)
   
   // let's default to level M for error correction (L - 7% data recovery, M - 15%, Q - 25%, H - 30%)
   // the higher the error correction level, the larger the QR code will be (b/c it takes more bytes)
-  const errorCorrectionLevel = "M";
+  const errorCorrectionLevel = 'M';
   
   // figure out QR code version/size
   const qrVersion = getSmallestQRVersion("TODO: pass input string here", errorCorrectionLevel);
@@ -584,11 +680,37 @@ function init(){
   // put charCountIndicator after mode
   
   // now encode the data into binary
-  const encodedData = getInputStrAsBinaryStr("TODO: pass input string here");
+  let encodedData = getInputStrAsBinaryStr("TODO: pass input string here");
   
   // put encodedData after charCountIndicator
   
   // determine required number of bits for this QR code
+  const errorCorrection = errorCorrectionTable[`${qrVersion}M`];
+  const totalDataCodewords = errorCorrection.totalDataCodewords;
+  const totalBitsRequired = totalDataCodewords * 8;
+  
+  // add terminator bits (of 0) if needed
+  if(encodedData + 4 < totalBitsRequired - 4){
+    encodedData += '0000';
+  } else if(encodedData + 4 >= totalBitsRequired){
+    // TODO: add remaining 0s
+  }
+  
+  // add pad bytes if encoded data is too short
+  const bitsToPad = totalBitsRequired - encodedData.length;
+  let padBytesToAdd = bitsToAdd / 8;
+  let count = 0;
+  while(padBytesToAdd > 0){
+    if(count % 2 === 0){
+      // if count is even
+      encodedData += '11101100';
+    }else{
+      // if count is odd
+      encodedData += '00010001';
+    }
+    count++;
+    padBytesToAdd--;
+  }
   
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
