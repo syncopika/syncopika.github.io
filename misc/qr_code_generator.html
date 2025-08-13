@@ -622,20 +622,23 @@ function getInputStrAsBinaryStr(inputStr){
   // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encode
   // convert the input to 8-bit ints per TextEncoder.encode
   const textEncoder = new TextEncoder();
-  const encodedStrArray = textEncoder.encode(inputStr);
+  
+  // .encode() returns a unint8 array, but we want to run map() on it to convert the ints to binary, so convert the result to a generic array
+  const encodedStrArray = Array.from(textEncoder.encode(inputStr));
   
   // convert each 8-bit int to binary
-  const result = encodedStrArray.map(i => {
+  const res = encodedStrArray.map((i) => {
     // convert to binary
     const binStr = intToBinary(i);
     
     // pad as needed to match a length of 8
     const paddingAmount = 8 - binStr.length;
+    //console.log(`int: ${i}, bin: ${binStr}`);
     return zeroPadLeftStr(binStr, paddingAmount);
   });
   
   // concat each binary
-  return result.join(""); // TODO: should there be a space?
+  return res.join(" "); // TODO: should there be a space?
 }
 
 function intToBinary(n){
@@ -648,7 +651,7 @@ function intToBinary(n){
     n = Math.floor(n / 2);
   }
   
-  return binStr.join('');
+  return binStr.join("");
 }
 
 function init(){
@@ -690,13 +693,19 @@ function init(){
   const totalBitsRequired = totalDataCodewords * 8;
   
   // add terminator bits (of 0) if needed
-  if(encodedData + 4 < totalBitsRequired - 4){
+  if(encodedData.length + 4 < totalBitsRequired - 4){
+    // if diff is greater than 4, add 4 0's max
     encodedData += '0000';
-  } else if(encodedData + 4 >= totalBitsRequired){
-    // TODO: add remaining 0s
+  } else if(encodedData.length + 4 >= totalBitsRequired){
+    // add remaining 0s if diff < 4
+    let diff = totalBitsRequired - encodedData.length;
+    while(diff > 0){
+      encodedData += '0';
+      diff--;
+    }
   }
   
-  // add pad bytes if encoded data is too short
+  // add pad bytes if encoded data is still too short (e.g. a lot less than totalBitsRequired)
   const bitsToPad = totalBitsRequired - encodedData.length;
   let padBytesToAdd = bitsToAdd / 8;
   let count = 0;
@@ -847,14 +856,19 @@ function test(){
   const input = "http://www.google.com";
   
   const qrVersion = getSmallestQRVersion(input, errorCorrectionLevel);
+  console.log(`QR version: ${qrVersion}`);
   // assertion for qrVersion
   
   const charCountIndicator = getCharacterCountIndicator(input, qrVersion);
+  console.log(`character count indicator: ${charCountIndicator}`);
   // assertion for charCountIndicator
   
   const encodedInputStr = getInputStrAsBinaryStr(input);
+  console.log(`encoded input str: ${encodedInputStr}`);
   // assertion for encodedInputStr
 }
+
+test();
 
 </script>
 
