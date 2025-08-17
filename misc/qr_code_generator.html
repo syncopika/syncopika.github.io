@@ -654,6 +654,20 @@ function intToBinary(n){
   return binStr.join("");
 }
 
+function binaryToInt(binStr){
+  let result = 0;
+  let currMultiplier = 1;
+  let idx = binStr.length - 1;
+  while(idx > -1){
+    if(binStr[idx] === '1'){
+      result += currMultiplier;
+    }
+    currMultiplier *= 2;
+    idx--;
+  }
+  return result;
+}
+
 function init(){
   // create the canvas to draw the QR code in
   const canvas = document.createElement('canvas'); 
@@ -852,6 +866,7 @@ function test(){
   // TODO
   // assumptions: level M for error correction, byte mode only
   const mode = "0100";
+  console.log(`mode: ${binaryToInt(mode)}`);
   const errorCorrectionLevel = "M";
   const input = "http://www.google.com";
   
