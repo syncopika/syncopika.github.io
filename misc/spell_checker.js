@@ -169,6 +169,8 @@ async function main(){
   console.log("correction for somthing: " + spellchecker.correction("somthing"));
   console.log("correction for speling: " + spellchecker.correction("speling"));
   console.log("correction for korrectud: " + spellchecker.correction("korrectud"));
+  console.log("correction for correct: " + spellchecker.correction("correct"));
+  console.log("correction for pizza: " + spellchecker.correction("pizza")); // huh?? lol but I guess it makes sense given the data
 }
 
 main();
