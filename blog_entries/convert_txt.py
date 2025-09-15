@@ -15,6 +15,10 @@ def create_img_element(src, alt="", class_name=""):
 			return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\" height={newHeight}px width={newWidth}px>"
 		"""
 		return f"<img class=\"{class_name}\" src=\"{src}\" alt=\"{alt}\">"
+    
+def create_video_element(src):
+	src = src.strip()
+	return f"<video width=\"250px\" controls> <source src=\"{src}\" type=\"video/mp4\" /> </video>"
 	
 def create_html_element(open_tags="", close_tags=""):
 	def create_el(data):
@@ -43,6 +47,7 @@ flags = {
 	"--code": create_html_element("<pre><code>", "</code></pre>"),
 	"--endcode": None,
 	"--image": create_img_element,
+	"--video": create_video_element,
 	"--font": None,
 }
 
