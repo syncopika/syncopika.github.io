@@ -70,6 +70,10 @@ a:focus{
     color: #000;
 }
 
+video{
+  margin: 0px 5px 0px 5px;
+}
+
 #home{
     margin-top: 10%;
 }
@@ -235,6 +239,4 @@ a:focus{
         grid-row-gap: 4em;
         grid-column-gap: 5em;
     }
-}
-    
 }
