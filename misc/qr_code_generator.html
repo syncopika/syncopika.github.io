@@ -2309,6 +2309,17 @@ function init(){
     padBytesToAdd--;
   }
   
+  // if QR code version > 2, we need to break up the data codewords into smaller blocks
+  const numGroup1Blocks = errorCorrection.numBlocksGroup1;
+  const numCodewordsPerGroup1Block = errorCorrection.numDataCodewordsPerGroup1Block;
+  const numGroup2Blocks = errorCorrection.numBlocksGroup2;
+  const numCodewordsPerGroup2Block = errorCorrection.numDataCodewordsPerGroup2Block;
+  const numErrorCorrectionCodewordsPerBlock = errorCorrection.ecCodewordsPerBlock;
+  
+  // TODO: break up the data codewords into their respective groups and blocks
+  
+  // TODO: generate the error correction codewords
+  
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
   document.body.appendChild(canvas);
