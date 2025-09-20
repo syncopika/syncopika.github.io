@@ -2213,7 +2213,7 @@ function getInputStrAsBinaryStr(inputStr){
   });
   
   // concat each binary
-  return res.join(" "); // TODO: should there be a space?
+  return res.join(""); // TODO: should there be a space?
 }
 
 function intToBinary(n){
@@ -2254,6 +2254,84 @@ function getDataCodewordsFromEncodedString(inputStr){
   return codewords;
 }
 
+function padEncodedData(encodedData, totalBitsRequired){
+  // add terminator bits (of 0) if needed
+  if(encodedData.length + 4 < totalBitsRequired - 4){
+    // if diff is greater than 4, add 4 0's max
+    encodedData += '0000';
+  } else if(encodedData.length + 4 >= totalBitsRequired){
+    // add remaining 0s if diff < 4
+    let diff = totalBitsRequired - encodedData.length;
+    while(diff > 0){
+      encodedData += '0';
+      diff--;
+    }
+  }
+  
+  // add pad bytes if encoded data is still too short (e.g. a lot less than totalBitsRequired)
+  const bitsToPad = totalBitsRequired - encodedData.length;
+  let padBytesToAdd = bitsToPad / 8;
+  let count = 0;
+  while(padBytesToAdd > 0){
+    if(count % 2 === 0){
+      // if count is even
+      encodedData += '11101100';
+    }else{
+      // if count is odd
+      encodedData += '00010001';
+    }
+    count++;
+    padBytesToAdd--;
+  }
+  
+  return encodedData;
+}
+
+function divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block){
+  const wordBlocks = {
+    '1': {}, // group 1 blocks
+    '2': {}, // group 2 blocks
+  };
+  
+  // add the codewords in from the result of getDataCodewordsFromEncodedString(encodedData) to wordBlocks
+  const codewords = getDataCodewordsFromEncodedString(encodedData);
+  let codewordIndex = 0;
+  
+  // do group 1
+  let group1BlocksCount = 0;
+  while(group1BlocksCount < numGroup1Blocks && codewordIndex < codewords.length){
+    const newBlock = []; // new block in group 1
+    
+    let numCodewordsAddedToBlock = 0;
+    while(numCodewordsAddedToBlock < numCodewordsPerGroup1Block && codewordIndex < codewords.length){
+      newBlock.push(codewords[codewordIndex++]);
+      numCodewordsAddedToBlock++;
+    }
+    
+    wordBlocks['1'][`${group1BlocksCount + 1}`] = newBlock;
+    
+    group1BlocksCount++;
+  }
+  
+  // do group 2
+  let group2BlocksCount = 0;
+  while(group2BlocksCount < numGroup2Blocks && codewordIndex < codewords.length){
+    const newBlock = []; // new block in group 2
+    
+    let numCodewordsAddedToBlock = 0;
+    while(numCodewordsAddedToBlock < numCodewordsPerGroup2Block && codewordIndex < codewords.length){
+      newBlock.push(codewords[codewordIndex++]);
+      numCodewordsAddedToBlock++;
+    }
+    
+    wordBlocks['2'][`${group2BlocksCount + 1}`] = newBlock;
+    
+    group2BlocksCount++;
+  }
+  
+  return wordBlocks;
+}
+
 function init(){
   // create the canvas to draw the QR code in
   const canvas = document.createElement('canvas'); 
@@ -2292,39 +2370,7 @@ function init(){
   const totalDataCodewords = errorCorrection.totalDataCodewords;
   const totalBitsRequired = totalDataCodewords * 8;
   
-  // add terminator bits (of 0) if needed
-  if(encodedData.length + 4 < totalBitsRequired - 4){
-    // if diff is greater than 4, add 4 0's max
-    encodedData += '0000';
-  } else if(encodedData.length + 4 >= totalBitsRequired){
-    // add remaining 0s if diff < 4
-    let diff = totalBitsRequired - encodedData.length;
-    while(diff > 0){
-      encodedData += '0';
-      diff--;
-    }
-  }
-  
-  // add pad bytes if encoded data is still too short (e.g. a lot less than totalBitsRequired)
-  const bitsToPad = totalBitsRequired - encodedData.length;
-  let padBytesToAdd = bitsToAdd / 8;
-  let count = 0;
-  while(padBytesToAdd > 0){
-    if(count % 2 === 0){
-      // if count is even
-      encodedData += '11101100';
-    }else{
-      // if count is odd
-      encodedData += '00010001';
-    }
-    count++;
-    padBytesToAdd--;
-  }
-  
-  if(encodedData.length % 8 !== 0){
-    console.error(`encodedData length is not divisible by 8! length: ${encodedData.length}`);
-    return;
-  }
+  encodedData = padEncodedData(encodedData, totalBitsRequired);
   
   // if QR code version > 2, we need to break up the data codewords into smaller blocks
   const numGroup1Blocks = errorCorrection.numBlocksGroup1;
@@ -2333,45 +2379,8 @@ function init(){
   const numCodewordsPerGroup2Block = errorCorrection.numDataCodewordsPerGroup2Block;
   const numErrorCorrectionCodewordsPerBlock = errorCorrection.ecCodewordsPerBlock;
   
-  // TODO: break up the data codewords into their respective groups and blocks
-  const wordBlocks = {
-    '1': {}, // group 1 blocks
-    '2': {}, // group 2 blocks
-  };
-  
-  // add the codewords in from the result of getDataCodewordsFromEncodedString(encodedData) to wordBlocks
-  /*
-  const codewords = getDataCodewordsFromEncodedString(encodedData);
-  let codewordIndex = 0;
-  
-  // do group 1
-  let group1BlocksCount = 0;
-  while(group1BlocksCount < numGroup1Blocks){
-    wordBlocks['1'][`${group1BlocksCount + 1}`] = []; // new block in group 1
-    
-    let numCodewordsAddedToBlock = 0;
-    while(numCodewordsAddedToBlock < numCodewordsPerGroup1Block){
-      wordBlocks['1'][`${group1BlocksCount + 1}`].push(codewords[codewordIndex++]);
-      numCodewordsAddedToBlock++;
-    }
-    
-    group1BlocksCount++;
-  }
-  
-  // do group 2
-  let group2BlocksCount = 0;
-  while(group2BlocksCount < numGroup2Blocks){
-    wordBlocks['2'][`${group2BlocksCount + 1}`] = []; // new block in group 2
-    
-    let numCodewordsAddedToBlock = 0;
-    while(numCodewordsAddedToBlock < numCodewordsPerGroup2Block){
-      wordBlocks['1'][`${group2BlocksCount + 1}`].push(codewords[codewordIndex++]);
-      numCodewordsAddedToBlock++;
-    }
-    
-    group2BlocksCount++;
-  }
-  */
+  //  break up the data codewords into their respective groups and blocks
+  const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block);
   
   // TODO: generate the error correction codewords
   
@@ -2531,6 +2540,33 @@ function test(){
   const encodedInputStr = getInputStrAsBinaryStr(input);
   console.log(`encoded input str: ${encodedInputStr}`);
   // assertion for encodedInputStr
+  
+  // pad the data as needed and then divide into blocks/groups
+  const errorCorrection = errorCorrectionTable[`${qrVersion}M`];
+  console.log(errorCorrection);
+  
+  const totalDataCodewords = errorCorrection.totalDataCodewords;
+  const totalBitsRequired = totalDataCodewords * 8;
+  
+  const encodedData = padEncodedData(encodedInputStr, totalBitsRequired);
+  console.log(encodedData);
+  
+  const numGroup1Blocks = errorCorrection.numBlocksGroup1;
+  const numCodewordsPerGroup1Block = errorCorrection.numDataCodewordsPerGroup1Block;
+  const numGroup2Blocks = errorCorrection.numBlocksGroup2;
+  const numCodewordsPerGroup2Block = errorCorrection.numDataCodewordsPerGroup2Block;
+  const numErrorCorrectionCodewordsPerBlock = errorCorrection.ecCodewordsPerBlock;
+  
+  // break up the data codewords into their respective groups and blocks
+  const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(
+    encodedData, 
+    numGroup1Blocks, 
+    numCodewordsPerGroup1Block, 
+    numGroup2Blocks, 
+    numCodewordsPerGroup2Block
+  );
+  console.log(wordBlocks);
+  
 }
 
 test();
