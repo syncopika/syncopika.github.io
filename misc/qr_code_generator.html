@@ -2242,6 +2242,18 @@ function binaryToInt(binStr){
   return result;
 }
 
+// https://stackoverflow.com/questions/7033639/split-large-string-in-n-size-chunks-in-javascript
+function getDataCodewordsFromEncodedString(inputStr){
+  const numCodewords = Math.ceil(inputStr.length / 8); // each codeword should have a length of 8
+  const codewords = new Array(numCodewords);
+  
+  for(let i = 0, offset = 0; i < numCodewords; i++, offset += 8){
+    codewords[i] = inputStr.substring(offset, offset + 8);
+  }
+  
+  return codewords;
+}
+
 function init(){
   // create the canvas to draw the QR code in
   const canvas = document.createElement('canvas'); 
@@ -2309,6 +2321,11 @@ function init(){
     padBytesToAdd--;
   }
   
+  if(encodedData.length % 8 !== 0){
+    console.error(`encodedData length is not divisible by 8! length: ${encodedData.length}`);
+    return;
+  }
+  
   // if QR code version > 2, we need to break up the data codewords into smaller blocks
   const numGroup1Blocks = errorCorrection.numBlocksGroup1;
   const numCodewordsPerGroup1Block = errorCorrection.numDataCodewordsPerGroup1Block;
@@ -2317,6 +2334,44 @@ function init(){
   const numErrorCorrectionCodewordsPerBlock = errorCorrection.ecCodewordsPerBlock;
   
   // TODO: break up the data codewords into their respective groups and blocks
+  const wordBlocks = {
+    '1': {}, // group 1 blocks
+    '2': {}, // group 2 blocks
+  };
+  
+  // add the codewords in from the result of getDataCodewordsFromEncodedString(encodedData) to wordBlocks
+  /*
+  const codewords = getDataCodewordsFromEncodedString(encodedData);
+  let codewordIndex = 0;
+  
+  // do group 1
+  let group1BlocksCount = 0;
+  while(group1BlocksCount < numGroup1Blocks){
+    wordBlocks['1'][`${group1BlocksCount + 1}`] = []; // new block in group 1
+    
+    let numCodewordsAddedToBlock = 0;
+    while(numCodewordsAddedToBlock < numCodewordsPerGroup1Block){
+      wordBlocks['1'][`${group1BlocksCount + 1}`].push(codewords[codewordIndex++]);
+      numCodewordsAddedToBlock++;
+    }
+    
+    group1BlocksCount++;
+  }
+  
+  // do group 2
+  let group2BlocksCount = 0;
+  while(group2BlocksCount < numGroup2Blocks){
+    wordBlocks['2'][`${group2BlocksCount + 1}`] = []; // new block in group 2
+    
+    let numCodewordsAddedToBlock = 0;
+    while(numCodewordsAddedToBlock < numCodewordsPerGroup2Block){
+      wordBlocks['1'][`${group2BlocksCount + 1}`].push(codewords[codewordIndex++]);
+      numCodewordsAddedToBlock++;
+    }
+    
+    group2BlocksCount++;
+  }
+  */
   
   // TODO: generate the error correction codewords
   
