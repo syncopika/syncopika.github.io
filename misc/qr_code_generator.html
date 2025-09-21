@@ -2332,15 +2332,34 @@ function divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, nu
   return wordBlocks;
 }
 
-function getMessagePolynomialCoefficients(encodedData){
+function getMessagePolynomial(codewordsArray){
   // for each codeword in encodedData, convert it to decimal.
   // each codeword is a coefficient in the message polynomial
-  const codewords = getDataCodewordsFromEncodedString(encodedData);
-  const coefficients = [];
-  codewords.forEach(w => {
-    coefficients.push(binaryToInt(w));
+  return codewordsArray.map((w, idx) => {
+    const decimal = binaryToInt(w);
+    const exponent = codewordsArray.length - idx - 1;
+    return {
+      c: decimal, //coefficient
+      exp: exponent,
+    };
   });
-  return coefficients;
+}
+
+function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock){
+  console.log(`need to generate ${numErrorCodewordsPerBlock} error codewords per block`);
+  for(let group in wordBlocks){
+    for(let block in wordBlocks[group]){
+      //console.log(`group: ${group}, block: ${block}`);
+      // first generate message polynomial for the block using codewords in encodedData
+      const blockCodewords = wordBlocks[group][block];
+      const msgPolynomial = getMessagePolynomial(blockCodewords);
+      console.log(msgPolynomial);
+  
+      // then generate the generator polynomial for the block
+  
+      // divide the message polynomial by generator polynomial to get the error correction codewords
+    }
+  }
 }
 
 function init(){
@@ -2393,7 +2412,8 @@ function init(){
   //  break up the data codewords into their respective groups and blocks
   const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block);
   
-  // TODO: generate the error correction codewords
+  // TODO: generate the error correction codewords for each block
+  generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);  
   
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
@@ -2578,9 +2598,8 @@ function test(){
   );
   console.log(wordBlocks);
   
-  // coefficients for message polynomial
-  const msgPolynomialCoeffs = getMessagePolynomialCoefficients(encodedData);
-  console.log(msgPolynomialCoeffs);
+  // generate error correction codewords
+  generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
 }
 
 test();
