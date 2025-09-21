@@ -2332,6 +2332,17 @@ function divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, nu
   return wordBlocks;
 }
 
+function getMessagePolynomialCoefficients(encodedData){
+  // for each codeword in encodedData, convert it to decimal.
+  // each codeword is a coefficient in the message polynomial
+  const codewords = getDataCodewordsFromEncodedString(encodedData);
+  const coefficients = [];
+  codewords.forEach(w => {
+    coefficients.push(binaryToInt(w));
+  });
+  return coefficients;
+}
+
 function init(){
   // create the canvas to draw the QR code in
   const canvas = document.createElement('canvas'); 
@@ -2567,6 +2578,9 @@ function test(){
   );
   console.log(wordBlocks);
   
+  // coefficients for message polynomial
+  const msgPolynomialCoeffs = getMessagePolynomialCoefficients(encodedData);
+  console.log(msgPolynomialCoeffs);
 }
 
 test();
