@@ -2345,8 +2345,101 @@ function getMessagePolynomial(codewordsArray){
   });
 }
 
+function findIntegerOfAlpha(alphaExp){
+  // given an exponent of alpha, return the corresponding integer value based on the log-antilog table
+  for(let entry of logAntilogTable){
+    if(alphaExp === entry.exponent_of_alpha){
+      return entry.power_of_2_gf_256;
+    }
+  }
+  return null;
+}
+
+function findAlphaOfInteger(integer){
+  // given an integer, return the corresponding alpha exponent based on the log-antilog table
+ for(let entry of logAntilogTable){
+  if(integer === entry.power_of_2_gf_256){
+    return entry.exponent_of_alpha;
+  }
+ }
+ return null;
+}
+
+function createGeneratorPolynomial(numErrorCorrectionCodewordsPerBlock){
+  // start with polynomial for 2 codewords since we'll always need error correction codewords > 2 anyway
+  let prevPolynomial = [
+    {'alpha': 0, 'x': 2},
+    {'alpha': 25, 'x': 1},
+    {'alpha': 1, 'x': 0},
+  ];
+  
+  // we need to know the polynomial corresponding to the number of error correction codewords needed
+  // so we need to generate the polynomial at each preceding number of error correction codewords
+  // since each step's polynomial if built off the previous step's
+  // e.g. (g(x) for n-1 error correction codewords) * (x - (alpha^n-1)) = (g(x) for n error correction codewords)
+  let count = 2;
+  let currAlphaToMultiplyBy = 2;
+  while(count < numErrorCorrectionCodewordsPerBlock){ 
+    const newPolynomialToMultiplyBy = [
+      {'alpha': 0, 'x': 1},
+      {'alpha': currAlphaToMultiplyBy, 'x': 0},
+    ];
+    
+    // multiply previous polynomial by the new one
+    const polynomialMultiplicationResult = [];
+    for(let term of prevPolynomial){
+      for(let term2 of newPolynomialToMultiplyBy){
+        polynomialMultiplicationResult.push({
+          'alpha': (term.alpha + term2.alpha) % 255, // alpha exponents shouldn't exceed 255
+          'x': term.x + term2.x,
+        });
+      }
+    }
+    
+    // combine like terms in the multiplication result
+    // remember that when combining alphas in this case, convert the alphas to their integer counterparts and then XOR them
+    const likeTermsMap = {}; // group like-terms based on their 'x' value (this is the exponent of x)
+    for(let term of polynomialMultiplicationResult){
+      if(likeTermsMap[term.x] === undefined){
+        likeTermsMap[term.x] = [term];
+      }else{
+        likeTermsMap[term.x].push(term);
+      }
+    }
+    
+    const resultingPolynomial = [];
+    for(let likeTermsX in likeTermsMap){
+      const likeTerms = likeTermsMap[likeTermsX];
+      if(likeTerms.length > 1){
+        // now we can combine like-terms
+        const newTerm = {
+          // convert a to integer using the log-antilog table for XOR step, then convert back to alpha exponent
+          'alpha': findAlphaOfInteger(likeTerms.map(t => findIntegerOfAlpha(t.alpha)).reduce((acc, curr) => acc ^ curr, 0)),
+          'x': likeTerms[0].x, // exponent of x will stay the same
+        };
+        resultingPolynomial.push(newTerm);
+      }else{
+        resultingPolynomial.push(likeTerms[0]);
+      }
+    }
+    
+    prevPolynomial = resultingPolynomial;
+    
+    currAlphaToMultiplyBy++;
+    count++;
+  }
+  
+  return prevPolynomial;
+}
+
 function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock){
   console.log(`need to generate ${numErrorCodewordsPerBlock} error codewords per block`);
+  
+  // generate the generator polynomial that each block can use
+  // can verify with: https://www.thonky.com/qr-code-tutorial/generator-polynomial-tool?degree=22
+  const generatorPolynomial = createGeneratorPolynomial(numErrorCodewordsPerBlock);
+  console.log(generatorPolynomial);
+  
   for(let group in wordBlocks){
     for(let block in wordBlocks[group]){
       //console.log(`group: ${group}, block: ${block}`);
@@ -2354,9 +2447,7 @@ function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock)
       const blockCodewords = wordBlocks[group][block];
       const msgPolynomial = getMessagePolynomial(blockCodewords);
       console.log(msgPolynomial);
-  
-      // then generate the generator polynomial for the block
-  
+      
       // divide the message polynomial by generator polynomial to get the error correction codewords
     }
   }
