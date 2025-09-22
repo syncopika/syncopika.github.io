@@ -2415,7 +2415,7 @@ function createGeneratorPolynomial(numErrorCorrectionCodewordsPerBlock){
         const newTerm = {
           // convert a to integer using the log-antilog table for XOR step, then convert back to alpha exponent
           'alpha': findAlphaOfInteger(likeTerms.map(t => findIntegerOfAlpha(t.alpha)).reduce((acc, curr) => acc ^ curr, 0)),
-          'x': likeTerms[0].x, // exponent of x will stay the same
+          'x': likeTerms[0].x, // exponent of x will stay the same for all like-terms
         };
         resultingPolynomial.push(newTerm);
       }else{
@@ -2432,25 +2432,198 @@ function createGeneratorPolynomial(numErrorCorrectionCodewordsPerBlock){
   return prevPolynomial;
 }
 
+function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, numErrorCodewordsPerBlock){
+  // reverse generator polynomial because the leading term is actually at the end >_<
+  genPoly.reverse();
+
+  const errorCorrectionCodewords = [];
+  
+  let iteration = 0;
+  let numIterations = msgPoly.length;
+  let xorResult = JSON.parse(JSON.stringify(msgPoly));
+  //console.log(xorResult);
+  //console.log(JSON.parse(JSON.stringify(genPoly)));
+  
+  while(iteration < numIterations){
+    // This is where we can loop I think. 
+    // the number of steps in the division must equal the number of terms in the message polynomial.
+    // make a copy of the original generator polynomial for each iteration but adjust it accordingly since each iteration we chop off the leading term
+    let genPolyCopy = JSON.parse(JSON.stringify(genPoly));
+    if(iteration > 0){
+      // if after the first iteration, adjust the generator polynomial exponents to align with the xorResult of the previous step
+      genPolyCopy.forEach(t => t.x -= iteration);
+    }
+
+    // multiply generator polynomial by lead term of message polynomial
+    const leadMsgPolyTerm = xorResult[0];
+    //console.log(leadMsgPolyTerm);
+    
+    // convert coeff of lead term to alpha exponent
+    const leadTermAlpha = findAlphaOfInteger(leadMsgPolyTerm.c);
+    //console.log(leadTermAlpha);
+    
+    // multiply generator polynomial by leadTermAlpha
+    genPolyCopy.forEach(t => t.alpha = (t.alpha + leadTermAlpha) % 255); // don't forget to mod by 255 again to keep it below 256
+    
+    // convert alphas to integer
+    genPolyCopy.forEach(t => t.alpha = findIntegerOfAlpha(t.alpha));
+    
+    // then XOR the generator polynomial with the message polynomial
+    let newXorRes = [];
+    genPolyCopy.forEach((term, idx) => {
+      if(idx < xorResult.length){
+        newXorRes.push({
+          'c': term.alpha ^ xorResult[idx].c, // this is in integer form. do we need to re-convert these back to alpha or no?
+          'exp': term.x,
+        });
+      }else{
+        newXorRes.push({
+          'c': term.alpha, // this is in integer form. do we need to re-convert these back to alpha or no?
+          'exp': term.x,
+        });
+      }
+    });
+    
+    //console.log(xorResult);
+    if(newXorRes[0].c !== 0){
+      console.error("leading term coefficient for xorResult was not 0!");
+    }
+    
+    // discard leading term of xorResult because alpha should be 0
+    xorResult = newXorRes.splice(1);
+    
+    // repeat the steps but with xorResult as the new message polynomial
+    // also update the generator polynomial exponents of each term and take off the leading term
+    
+    iteration++;
+  }
+  
+  //console.log(xorResult);
+  return xorResult;
+}
+
 function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock){
   console.log(`need to generate ${numErrorCodewordsPerBlock} error codewords per block`);
-  
-  // generate the generator polynomial that each block can use
-  // can verify with: https://www.thonky.com/qr-code-tutorial/generator-polynomial-tool?degree=22
-  const generatorPolynomial = createGeneratorPolynomial(numErrorCodewordsPerBlock);
-  console.log(generatorPolynomial);
+
+  const result = {};
   
   for(let group in wordBlocks){
+    result[group] = {};
     for(let block in wordBlocks[group]){
       //console.log(`group: ${group}, block: ${block}`);
       // first generate message polynomial for the block using codewords in encodedData
       const blockCodewords = wordBlocks[group][block];
       const msgPolynomial = getMessagePolynomial(blockCodewords);
-      console.log(msgPolynomial);
+      //console.log(msgPolynomial);
       
-      // divide the message polynomial by generator polynomial to get the error correction codewords
+      // generate the generator polynomial. we need to create a new one for each block because we manipulate it
+      // can verify with: https://www.thonky.com/qr-code-tutorial/generator-polynomial-tool?degree=22
+      const generatorPolynomial = createGeneratorPolynomial(numErrorCodewordsPerBlock);
+      //console.log(generatorPolynomial);
+      
+      // modify message polynomial to ensure the lead term doesn't get too small during division by
+      // multiplying the message polynomial by x^numErrorCodewordsPerBlock (so basically add numErrorCodewordsPerBlock to each existing exponent of x)
+      msgPolynomial.forEach(t => t.exp += numErrorCodewordsPerBlock);
+      
+      // for the generator polynomial, make sure the lead term has the same exponent as the lead term in the message polynomial
+      // first find the leading term (which has the largest exponent)
+      let maxExpGenPoly = 0;
+      generatorPolynomial.forEach(t => maxExpGenPoly = Math.max(maxExpGenPoly, t.x));
+      // find diff between msg polynomial leading exponent
+      const expDiff = msgPolynomial[0].exp - maxExpGenPoly;
+      //console.log(expDiff);
+      // add expDiff to all the generator polynomial terms to align with the message polynomial
+      generatorPolynomial.forEach(t => t.x += expDiff);
+      
+      // then do the division
+      const errorCorrectionCodewords = doPolynomialDivisionAndGetErrorCorrectionCodewords(
+        msgPolynomial, 
+        generatorPolynomial, 
+        numErrorCodewordsPerBlock,
+      );
+      
+      // add the resulting error correction codewords
+      // TODO: we only need the coefficients of each term so just return those instead of the whole term as na object?
+      result[group][block] = errorCorrectionCodewords;
     }
   }
+  
+  // result should look like the wordBlocks object but instead of the encoded data, we have the error correction codewords
+  return result;
+}
+
+function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks){
+  // interleave all the data codewords first in dataWordBlocks
+  const dataBlocks = {};
+  let blockNum = 1;
+  for(let group in dataWordBlocks){
+    for(let n in dataWordBlocks[group]){
+      dataBlocks[blockNum++] = dataWordBlocks[group][n];
+    }
+  }
+  //console.log(dataBlocks);
+  
+  const interleavedDataCodewords = [];
+  
+  // get total number of codewords
+  let numCodewords = 0;
+  for(let block in dataBlocks){
+    numCodewords += dataBlocks[block].length;
+  }
+  
+  // then interleave the words
+  let currIdx = 0;
+  while(numCodewords > 0){
+    for(let block in dataBlocks){
+      const blockData = dataBlocks[block];
+      if(currIdx < blockData.length){
+        interleavedDataCodewords.push(blockData[currIdx]);
+        numCodewords--;
+      }
+    }
+    currIdx++;
+  }
+  
+  // then interleave the error codewords in errorWordBlocks
+  const interleavedErrorCodewords = [];
+  const errorBlocks = {};
+  blockNum = 1;
+  for(let group in errorWordBlocks){
+    for(let n in errorWordBlocks[group]){
+      // only grab the coefficient of each polynomial term of the error code polynomial because the coefficients are the error codewords
+      errorBlocks[blockNum++] = errorWordBlocks[group][n].map(t => t.c);
+    }
+  }
+  //console.log(errorBlocks);
+  
+  currIdx = 0;
+  numCodewords = 0;
+  for(let block in errorBlocks){
+    numCodewords += errorBlocks[block].length;
+  }
+  while(numCodewords > 0){
+    for(let block in errorBlocks){
+      const blockData = errorBlocks[block];
+      if(currIdx < blockData.length){
+        // convert error codewords into binary
+        interleavedErrorCodewords.push(intToBinary(blockData[currIdx]));
+        numCodewords--;
+      }
+    }
+    currIdx++;
+  }
+  
+  //console.log(interleavedDataCodewords);
+  //console.log(interleavedErrorCodewords);
+  
+  // put interleaved error correction codewords after the data codewords
+  const result = interleavedDataCodewords.join("") + interleavedErrorCodewords.join("");
+  console.log(result);
+  console.log(result.length);
+  
+  // TODO: add remainder bits depending on QR version
+  
+  return result;
 }
 
 function init(){
@@ -2503,8 +2676,12 @@ function init(){
   //  break up the data codewords into their respective groups and blocks
   const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block);
   
-  // TODO: generate the error correction codewords for each block
-  generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);  
+  // generate the error correction codewords for each block
+  const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
+  
+  // structure the final message
+  // assuming we have to interleave the data and error codewords
+  
   
   drawFinderPatterns(ctx, canvas.width, canvas.height);
   
@@ -2690,7 +2867,10 @@ function test(){
   console.log(wordBlocks);
   
   // generate error correction codewords
-  generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
+  const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
+  console.log(errorCorrectionCodewords);
+  
+  interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords);
 }
 
 test();
