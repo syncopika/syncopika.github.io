@@ -2176,6 +2176,50 @@ const logAntilogTable = [
   }
 ];
 
+// from https://www.thonky.com/qr-code-tutorial/structure-final-message
+const qrVersionRequiredRemainderBitsMap = {
+  1: 0,
+  2: 7,
+  3: 7,
+  4: 7,
+  5: 7,
+  6: 7,
+  7: 0,
+  8: 0,
+  9: 0,
+  10: 0,
+  11: 0,
+  12: 0,
+  13: 0,
+  14: 3,
+  15: 3,
+  16: 3,
+  17: 3,
+  18: 3,
+  19: 3,
+  20: 3,
+  21: 4,
+  22: 4,
+  23: 4,
+  24: 4,
+  25: 4,
+  26: 4,
+  27: 4,
+  28: 3,
+  29: 3,
+  30: 3,
+  31: 3,
+  32: 3,
+  33: 3,
+  34: 3,
+  35: 0,
+  36: 0,
+  37: 0,
+  38: 0,
+  39: 0,
+  40: 0,
+};
+
 // note: only caring about byte mode atm
 const versionCharCountIndicatorSizeMap = {
   1: 8, // version 1-9 -> 8 bits for representing the character count
@@ -2552,7 +2596,7 @@ function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock)
   return result;
 }
 
-function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks){
+function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVersion){
   // interleave all the data codewords first in dataWordBlocks
   const dataBlocks = {};
   let blockNum = 1;
@@ -2617,16 +2661,22 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks){
   //console.log(interleavedErrorCodewords);
   
   // put interleaved error correction codewords after the data codewords
-  const result = interleavedDataCodewords.join("") + interleavedErrorCodewords.join("");
+  let result = interleavedDataCodewords.join("") + interleavedErrorCodewords.join("");
   console.log(result);
   console.log(result.length);
   
-  // TODO: add remainder bits depending on QR version
+  // add remainder bits depending on QR version
+  const remainingBits = qrVersionRequiredRemainderBitsMap[qrVersion];
+  for(let i = 0; i < remainingBits; i++){
+    result += '0';
+  }
   
   return result;
 }
 
 function init(){
+  const inputStr = "http://www.google.com"; // TODO: pass in input from textbox
+  
   // create the canvas to draw the QR code in
   const canvas = document.createElement('canvas'); 
   const ctx = canvas.getContext('2d');
@@ -2643,19 +2693,18 @@ function init(){
   const errorCorrectionLevel = 'M';
   
   // figure out QR code version/size
-  const qrVersion = getSmallestQRVersion("TODO: pass input string here", errorCorrectionLevel);
+  const qrVersion = getSmallestQRVersion(inputStr, errorCorrectionLevel);
   
-  // TODO: how do we know how big the canvas should be?
-  // size of a QR code can be calculated with ((V - 1) * 4) + 21
-  // where V is the QR code version
+  // readjust canvas
+  adjustCanvasBasedOnQRVersion(qrVersion, canvas);
   
   // get character count indicator
-  const charCountIndicator = getCharacterCountIndicator("TODO: pass input string here", qrVersion);
+  const charCountIndicator = getCharacterCountIndicator(inputStr, qrVersion);
   
   // put charCountIndicator after mode
   
   // now encode the data into binary
-  let encodedData = getInputStrAsBinaryStr("TODO: pass input string here");
+  let encodedData = getInputStrAsBinaryStr(inputStr);
   
   // put encodedData after charCountIndicator
   
@@ -2680,11 +2729,19 @@ function init(){
   const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
   
   // structure the final message
-  // assuming we have to interleave the data and error codewords
+  const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
   
-  
-  drawFinderPatterns(ctx, canvas.width, canvas.height);
-  
+  // TODO: then draw the data
+  // TODO: set up the canvas with the right dimensions depending on QR version. use formula: (((V-1)*4)+21)
+  drawFinderPatternsAndSeparators(ctx, canvas.width, canvas.height);
+  // TODO: add the alignment patterns
+  // TODO: add the timing patterns
+  // TODO: add the dark module and reserved areas
+  // TODO: add the data (finally)
+  // TODO: data masking (get mask pattern with lowest penalty score)
+  // TODO: add version and data format info
+  // TODO: output final matrix
+  // TODO: add quiet zone (4-module wide area of light modules) around QR matrix
   document.body.appendChild(canvas);
 }
 
@@ -2751,7 +2808,15 @@ function xorNums(num1, num2){
   return intToBinary(result);
 }
 
-function drawFinderPatterns(ctx, width, height){
+function adjustCanvasBasedOnQRVersion(qrVersion, canvasElement){
+  // size of QR code can be calculated with the formula (((qrVersion-1)*4)+21)
+  const newSize = ((qrVersion - 1) * 4) + 21;
+  console.log(`adjusting canvas to be ${newSize} x ${newSize}`);
+  canvasElement.width = newSize;
+  canvasElement.height = newSize;
+}
+
+function drawFinderPatternsAndSeparators(ctx, width, height){
   // finder patterns are always 7 x 7
   // with an inner white square of 5 x 5
   // and a solid black square in the center that's 3 x 3
@@ -2870,7 +2935,7 @@ function test(){
   const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
   console.log(errorCorrectionCodewords);
   
-  interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords);
+  const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
 }
 
 test();
