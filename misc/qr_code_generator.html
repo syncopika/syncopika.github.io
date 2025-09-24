@@ -2220,6 +2220,50 @@ const qrVersionRequiredRemainderBitsMap = {
   40: 0,
 };
 
+// maps QR version to location of patterns
+// https://www.thonky.com/qr-code-tutorial/alignment-pattern-locations
+const alignmentPatternLocationsTable = {
+  2: [6, 18],
+  3: [6, 22],
+  4: [6, 26],
+  5: [6, 30],
+  6: [6, 34],
+  7: [6, 22, 38],
+  8: [6, 24, 42],
+  9: [6, 26, 46],
+  10: [6, 28, 50],
+  11: [6, 30, 54],
+  12: [6, 32, 58],
+  13: [6, 26, 46, 66],
+  14: [6, 26, 46, 66],
+  15: [6, 26, 48, 70],
+  16: [6, 26, 50, 74],
+  17: [6, 30, 54, 78],
+  18: [6, 30, 56, 82],
+  19: [6, 30, 58, 86],
+  20: [6, 34, 62, 90],
+  21: [6, 28, 50, 72, 94],
+  22: [6, 26, 50, 74, 98],
+  23: [6, 30, 54, 78, 102],
+  24: [6, 28, 54, 80, 106],
+  25: [6, 32, 58, 84, 110],
+  26: [6, 30, 58, 86, 114],
+  27: [6, 34, 62, 90, 118],
+  28: [6, 26, 50, 74, 98, 122],
+  29: [6, 30, 54, 78, 102, 126],
+  30: [6, 26, 52, 78, 104, 130],
+  31: [6, 30, 56, 82, 108, 134],
+  32: [6, 34, 60, 86, 112, 138],
+  33: [6, 30, 58, 86, 114, 142],
+  34: [6, 34, 62, 90, 118, 146],
+  35: [6, 30, 54, 78, 102, 126, 150],
+  36: [6, 24, 50, 76, 102, 128, 154],
+  37: [6, 28, 54, 80, 106, 132, 158],
+  38: [6, 32, 58, 84, 110, 136, 162],
+  39: [6, 26, 54, 82, 110, 138, 166],
+  40: [6, 30, 58, 86, 114, 142, 170],
+};
+
 // note: only caring about byte mode atm
 const versionCharCountIndicatorSizeMap = {
   1: 8, // version 1-9 -> 8 bits for representing the character count
@@ -2677,6 +2721,8 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
 function init(){
   const inputStr = "http://www.google.com"; // TODO: pass in input from textbox
   
+  let bitstring = '';
+  
   // create the canvas to draw the QR code in
   const canvas = document.createElement('canvas'); 
   const ctx = canvas.getContext('2d');
@@ -2687,6 +2733,7 @@ function init(){
   
   // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
   const mode = '0100'; // mode indicator (4 bits)
+  bitstring += mode;
   
   // let's default to level M for error correction (L - 7% data recovery, M - 15%, Q - 25%, H - 30%)
   // the higher the error correction level, the larger the QR code will be (b/c it takes more bytes)
@@ -2700,13 +2747,13 @@ function init(){
   
   // get character count indicator
   const charCountIndicator = getCharacterCountIndicator(inputStr, qrVersion);
-  
-  // put charCountIndicator after mode
+  bitstring += charCountIndicator;
   
   // now encode the data into binary
   let encodedData = getInputStrAsBinaryStr(inputStr);
   
   // put encodedData after charCountIndicator
+  encodedData = bitstring + encodedData;
   
   // determine required number of bits for this QR code
   const errorCorrection = errorCorrectionTable[`${qrVersion}M`];
@@ -2731,12 +2778,15 @@ function init(){
   // structure the final message
   const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
   
-  // TODO: then draw the data
-  // TODO: set up the canvas with the right dimensions depending on QR version. use formula: (((V-1)*4)+21)
+  // then draw the data
+  // set up the canvas with the right dimensions depending on QR version. use formula: (((qrVersion-1)*4)+21)
   drawFinderPatternsAndSeparators(ctx, canvas.width, canvas.height);
-  // TODO: add the alignment patterns
-  // TODO: add the timing patterns
+  // add the alignment patterns
+  addAlignmentPatterns(qrVersion, ctx);
+  // add the timing patterns
+  addTimingPatterns(qrVersion, ctx);
   // TODO: add the dark module and reserved areas
+  addDarkModuleAndReservedAreas(qrVersion, ctx);
   // TODO: add the data (finally)
   // TODO: data masking (get mask pattern with lowest penalty score)
   // TODO: add version and data format info
@@ -2866,18 +2916,163 @@ function drawFinderPatternsAndSeparators(ctx, width, height){
   ctx.fillRect(2, height - finderOuterDim + 2, finderInnerCenter, finderInnerCenter);  
 }
 
-function addAlignmentPatterns(){
-  // TODO
+// this is basically a version of the overlapping rectangle detection problem :D
+function checkIfAlignmentPatternIsValid(qrVersion, alignmentPatternCenterX, alignmentPatternCenterY){
+  // useful facts from https://www.thonky.com/qr-code-tutorial/module-placement-matrix#step-1-add-the-finder-patterns
+  // QR code size == ((qrVersion - 1) * 4) + 21
+  // finder patterns are always 7 x 7
+  // separators are always around the finder patterns and 1 module wide
+  // top-left finder pattern's top left corner is always 0,0
+  // top-right finder pattern's top left corner is always ((((qrVersion - 1) * 4) + 21) - 7, 0)
+  // bottom-left finder pattern's top left corner is always (0, (((qrVersion - 1) * 4) + 21) - 7)
+  // alignment patterns are 5 x 5
+  
+  // given the facts above, we should just see if the 5 x 5 block formed around (alignmentPatternCenterX, alignmentPatternCenterY) 
+  // falls within the 8 x 8 blocks (8 because including the separator) formed at the top-left corners of the finder patterns
+  
+  // determine max/min coords of alignment pattern to check
+  const alignmentPatternMinX = alignmentPatternCenterX - 2;
+  const alignmentPatternMaxX = alignmentPatternCenterX + 2;
+  const alignmentPatternMinY = alignmentPatternCenterY - 2;
+  const alignmentPatternMaxY = alignmentPatternCenterY + 2;
+  //console.log(`alignmentPatternMinX: ${alignmentPatternMinX}, alignmentPatternMaxX: ${alignmentPatternMaxX}, alignmentPatternMinY: ${alignmentPatternMinY}, alignmentPatternMaxY: ${alignmentPatternMaxY}`);
+  
+  // check top-left finder pattern + separator
+  const topLeftMinX = 0;
+  const topLeftMaxX = 8;
+  const topLeftMinY = 0;
+  const topLeftMaxY = 8;
+  
+  // if alignment pattern falls within the top-left finder pattern + separator, we can't draw it
+  if(alignmentPatternMinX >= topLeftMinX && 
+    alignmentPatternMaxX <= topLeftMaxX &&
+    alignmentPatternMinY >= topLeftMinY &&
+    alignmentPatternMaxY <= topLeftMaxY){
+    return false;
+  }
+  
+  // check top-right finder pattern + separator
+  const topRightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 1; // subtract 1 to account for the separator
+  const topRightMaxX = topRightMinX + 7;
+  const topRightMinY = 0;
+  const topRightMaxY = 8;
+  
+  //console.log(`topRightMinX: ${topRightMinX}, topRightMaxX: ${topRightMaxX}, topRightMinY: ${topRightMinY}, topRightMaxY: ${topRightMaxY}`);
+  
+  // we only need to see if the alignment pattern's right corner overlaps with the top right finder+separator pattern since it's static
+  // so we only care about comparing alignmentPatternMaxX and alignmentPatternMinY 
+  if(alignmentPatternMaxX >= topRightMinX && 
+    alignmentPatternMaxX <= topRightMaxX &&
+    alignmentPatternMinY >= topRightMinY &&
+    alignmentPatternMinY <= topRightMaxY){
+    return false;
+  }
+  
+  // check bottom-left finder pattern + separator
+  const bottomLeftMinX = 0;
+  const bottomLeftMaxX = 8;
+  const bottomLeftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 1; // subtract 1 to account for the separator
+  const bottomLeftMaxY = bottomLeftMinY + 7;
+  
+  // similar to above but we care about the bottom left corner of the alignment pattern overlapping with the bottom left finder/separator pattern
+  // so we only care about comparing alignmentPatternMinX and alignmentPatternMaxY
+  if(alignmentPatternMinX >= bottomLeftMinX && 
+    alignmentPatternMinX <= bottomLeftMaxX &&
+    alignmentPatternMaxY >= bottomLeftMinY &&
+    alignmentPatternMaxY <= bottomLeftMaxY){
+    return false;
+  }
+  
+  return true;
+}
+
+function drawAlignmentPattern(ctx, centerX, centerY){
+  // alignment patterns are 5 x 5
+  
+  // first draw a 5 x 5 black square
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(centerX - 2, centerY - 2, 5, 5);
+  
+  // then a 3 x 3 white square
+  ctx.fillStyle = 'rgb(255,255,255)';
+  ctx.fillRect(centerX - 1, centerY - 1, 3, 3);
+  
+  // then the center
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(centerX, centerY, 1, 1);
+}
+
+function addAlignmentPatterns(qrVersion, ctx){
   // QR codes that are >= version 2 are required to have alignment patterns
-  // an alignment pattern is a 5 x 5 black square with a 3 x 3 white square inside and a black squar e in the center
+  // an alignment pattern is a 5 x 5 black square with a 3 x 3 white square inside and a black square in the center
+  // alignment patterns must not overlap with the finder or separator patterns
+  const alignmentPatternLocations = alignmentPatternLocationsTable[qrVersion];
+  console.log(alignmentPatternLocations);
+  
+  // need to generate all (x,y) locations of the alignment patterns
+  const locationCoords = [];
+  for(let i = 0; i < alignmentPatternLocations.length; i++){
+    for(let j = 0; j < alignmentPatternLocations.length; j++){
+      locationCoords.push({
+        'x': alignmentPatternLocations[i],
+        'y': alignmentPatternLocations[j], 
+      });
+    }
+  }
+  
+  // remember each location coord is only the coord of the center module.
+  // we need to check if any part of the whole alignment pattern at a given coord falls within
+  // a finder/separator pattern. if it does, don't draw the alignment pattern.
+  locationCoords.forEach(coord => {
+    const canDrawAlignmentPattern = checkIfAlignmentPatternIsValid(qrVersion, coord.x, coord.y);
+    if(canDrawAlignmentPattern){
+      drawAlignmentPattern(ctx, coord.x, coord.y);
+    }
+  });
+  
+  console.log(locationCoords);
 }
 
-function addTimingPatterns(){
-  // TODO
+function addTimingPatterns(qrVersion, ctx){
+  // the horizontal timing pattern is placed on the 6th row of the QR code between the separators (remember rows and cols are 0-indexed)
+  let horzStartX = (((qrVersion - 1) * 4) + 21) - 7 - 2; // subtract 1 to account for the separator and 1 more to get to where we need to start
+  const horzStartY = 6;
+  const horzStopX = 7;
+  
+  let isBlack = true;
+  while(horzStartX > horzStopX){
+    if(isBlack){
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }else{
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }
+    ctx.fillRect(horzStartX, horzStartY, 1, 1);
+    isBlack = !isBlack;
+    horzStartX--;
+  }
+  
+  // the vertical timing pattern is placed on the 6th column of the QR code between the separators
+  let vertStartY = 8;
+  const vertStartX = 6;
+  const vertStopY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  
+  isBlack = true;
+  while(vertStartY < vertStopY){
+    if(isBlack){
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }else{
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }
+    ctx.fillRect(vertStartX, vertStartY, 1, 1);
+    isBlack = !isBlack;
+    vertStartY++;
+  }
 }
 
-function addDarkModuleAndReservedAreas(){
-  // TODO
+function addDarkModuleAndReservedAreas(qrVersion, ctx){
+  // the dark module is always located at the coordinate (8, (4 * qrVersion) + 9)
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(8, (4 * qrVersion) + 9, 1, 1)
 }
 
 function addData(){
