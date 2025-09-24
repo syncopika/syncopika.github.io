@@ -3079,11 +3079,64 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
   // - near the top-left finder pattern, add a one-module strip below and to the right of the separator
   // - near the top-right finder pattern. add a one-module strip below the separator
   // - near the bottom-left finder pattern, add a one-module strip to the right of the separator
+  ctx.fillStyle = 'rgb(0,0,255)'; // mark the spots as blue
   
+  const topLeftVertStartX = 8;
+  const topLeftVertStartY = 0;
+  const topLeftVertEndY = 8;
+  for(let y = topLeftVertStartY; y < topLeftVertEndY; y++){
+    if(y !== 6){
+      // make sure to skip the timing pattern @ y == 6
+      ctx.fillRect(topLeftVertStartX, y, 1, 1);
+    }
+  }
+  
+  const topLeftHorzStartX = 0;
+  const topLeftHorzStartY = 8;
+  const topLeftHorzEndX = 8;
+  for(let x = topLeftHorzStartX; x < topLeftHorzEndX; x++){
+    if(x !== 6){
+      // make sure to skip the timing pattern @ y == 6
+      ctx.fillRect(x, topLeftHorzStartY, 1, 1);
+    }
+  }
+  
+  const topRightHorzStartX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  const topRightHorzStartY = 8;
+  const topRightHorzEndX = topRightHorzStartX + 8;
+  for(let x = topRightHorzStartX; x < topRightHorzEndX; x++){
+    ctx.fillRect(x, topRightHorzStartY, 1, 1);
+  }
+  
+  const bottomLeftVertStartX = 8;
+  const bottomLeftVertStartY = (((qrVersion - 1) * 4) + 21) - 7;
+  const bottomLeftVertEndY = (((qrVersion - 1) * 4) + 21);
+  for(let y = bottomLeftVertStartY; y < bottomLeftVertEndY; y++){
+    ctx.fillRect(bottomLeftVertStartX, y, 1, 1);
+  }
   
   // version information areas (if QR code version >= 7)
   // - a 6 x 3 block above the bottom-left finder pattern
+  const leftMaxY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  const leftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+  const leftMinX = 0;
+  const leftMaxX = 6;
+  for(let i = leftMinX; i < leftMaxX; i++){
+    for(let j = leftMinY; j < leftMaxY; j++){
+      ctx.fillRect(i, j, 1, 1);
+    }
+  }
+  
   // - a 3 x 6 block to the left of the top-right finder pattern
+  const rightMaxY = 6;
+  const rightMinY = 0;
+  const rightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+  const rightMaxX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  for(let i = rightMinX; i < rightMaxX; i++){
+    for(let j = rightMinY; j < rightMaxY; j++){
+      ctx.fillRect(i, j, 1, 1);
+    }
+  }
 }
 
 function addData(){
