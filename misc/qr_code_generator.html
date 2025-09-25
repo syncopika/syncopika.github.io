@@ -3198,20 +3198,12 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
 
 function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   console.log(`width:${width}, height:${height}`);
-  // TODO
+  console.log(doNotTouchModules);
+  console.log(`data.length: ${data.length}`);
   // idea: what if we kept track of all the individual coordinates that we shouldn't touch and what
   // specific thing they belong to, e.g. a reserved area, a timing pattern, etc.
   // that way when we're traversing the matrix, we can easily look up whether a coordinate is ok to add data to or not?
-  
-  // deal with 2 columns at a time
-  // when we reach a point where we can't fill anymore consecutive modules, flip direction
-  // traverse right to left of the QR matrix
-  
-  // how do we know when to stop?
-  // if we hit the last empty modules. I think we can calculate this?
-  // e.g. above the separator of the bottom-left finder pattern
-  // or just use length of the data we're adding? if we can't fit the data that'd be a problem
-  
+
   // when going up, fill right, then left
   // when going down, fill right, then left
   
@@ -3220,10 +3212,22 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   let currY = height - 1;
   let direction = 'up';
   
-  // TODO: we should place 2 at a time? think 2-module column?
   for(let i = 0; i < data.length - 1; i += 2){    
-    // check if next module location is ok
-    // use doNotTouchModules
+    //console.log(`writing to: (${currX},${currY})`);
+    
+    if(direction === 'up' && currY < 0){
+      // start from top of next 2-module column to the left
+      currY = 0;
+      currX -= 2;
+      direction = 'down';
+      console.log('switching direction to down');
+    }else if (direction === 'down' && currY === height){
+      // start from bottom of next 2-module column to the left
+      currY = height - 1;
+      currX -= 2;
+      direction = 'up';
+      console.log('switching direction to up');
+    }
 
     // we should keep moving on until we find a suitable spot
     // TODO: need to keep in mind the vertical timing pattern
@@ -3246,17 +3250,14 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
       }else if(direction === 'down'){
         currY++;
       }
-      console.log('skipping module');
     }
     
-    console.log('placing data...');
-    
-    // TODO: if currX or currY out-of-bounds, raise error?
+    //console.log('placing data...');
     
     // we can place data
     [data[i], data[i+1]].forEach((d, idx) => {
       if(d === '0'){
-        ctx.fillStyle = 'rgb(255,255,255)';
+        ctx.fillStyle = 'rgb(115,115,255)';
       }else{
         ctx.fillStyle = 'rgb(0,0,0)';
       }
