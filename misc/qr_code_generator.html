@@ -2808,6 +2808,8 @@ function init(){
   });
   */
   
+  addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
+  
   // TODO: data masking (get mask pattern with lowest penalty score)
   // TODO: add version and data format info
   // TODO: output final matrix
@@ -3076,7 +3078,7 @@ function addAlignmentPatterns(qrVersion, ctx, doNotTouchModules){
     }
   });
   
-  console.log(locationCoords);
+  //console.log(locationCoords);
 }
 
 function addTimingPatterns(qrVersion, ctx, doNotTouchModules){
@@ -3195,6 +3197,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
 }
 
 function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
+  console.log(`width:${width}, height:${height}`);
   // TODO
   // idea: what if we kept track of all the individual coordinates that we shouldn't touch and what
   // specific thing they belong to, e.g. a reserved area, a timing pattern, etc.
@@ -3202,6 +3205,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   
   // deal with 2 columns at a time
   // when we reach a point where we can't fill anymore consecutive modules, flip direction
+  // traverse right to left of the QR matrix
   
   // how do we know when to stop?
   // if we hit the last empty modules. I think we can calculate this?
@@ -3212,30 +3216,61 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   // when going down, fill right, then left
   
   // start at bottom-right of matrix
-  let startX = width - 1;
-  let startY = height - 1;
+  let currX = width - 1;
+  let currY = height - 1;
   let direction = 'up';
-  for(let i = 0; i < data.length; i++){
-    if(data[i] === '0'){
-      ctx.fillStyle = 'rgb(255,255,255)';
-    }else{
-      ctx.fillStyle = 'rgb(0,0,0)';
-    }
-    
+  
+  // TODO: we should place 2 at a time? think 2-module column?
+  for(let i = 0; i < data.length - 1; i += 2){    
     // check if next module location is ok
     // use doNotTouchModules
-    if(!doNotTouchModules.has(`${startX},${startY}`)){
-      // we can place data
+
+    // we should keep moving on until we find a suitable spot
+    // TODO: need to keep in mind the vertical timing pattern
+    while(doNotTouchModules.has(`${currX},${currY}`) && currX > 0){
+      // try adjusting currX and currY
+      if(direction === 'up' && currY - 1 < 0){
+        // start from top of next 2-module column to the left
+        currY = 0;
+        currX -= 2;
+        direction = 'down';
+        console.log('switching direction to down');
+      }else if (direction === 'down' && currY + 1 === height){
+        // start from bottom of next 2-module column to the left
+        currY = height - 1;
+        currX -= 2;
+        direction = 'up';
+        console.log('switching direction to up');
+      }else if(direction === 'up'){
+        currY--;
+      }else if(direction === 'down'){
+        currY++;
+      }
+      console.log('skipping module');
     }
     
-    // if we hit 0 or height, switch direction
+    console.log('placing data...');
+    
+    // TODO: if currX or currY out-of-bounds, raise error?
+    
+    // we can place data
+    [data[i], data[i+1]].forEach((d, idx) => {
+      if(d === '0'){
+        ctx.fillStyle = 'rgb(255,255,255)';
+      }else{
+        ctx.fillStyle = 'rgb(0,0,0)';
+      }
+      ctx.fillRect(currX - idx, currY, 1, 1);
+    });
     
     if(direction === 'up'){
-      startY--; // remember that going up in canvas space means decreasing y coord
+      currY--; // remember that going up in canvas space means decreasing y coord
     }else{
-      startY++;
+      currY++;
     }
   }
+  
+  console.log('done');
 }
 
 
