@@ -2779,15 +2779,35 @@ function init(){
   const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
   
   // then draw the data
+  
+  // use a set to keep track of modules in the QR matrix we shouldn't touch
+  const doNotTouchModules = new Set();
+  
   // set up the canvas with the right dimensions depending on QR version. use formula: (((qrVersion-1)*4)+21)
-  drawFinderPatternsAndSeparators(ctx, canvas.width, canvas.height);
+  drawFinderPatternsAndSeparators(ctx, canvas.width, canvas.height, doNotTouchModules);
+  
   // add the alignment patterns
-  addAlignmentPatterns(qrVersion, ctx);
+  addAlignmentPatterns(qrVersion, ctx, doNotTouchModules);
+  
   // add the timing patterns
-  addTimingPatterns(qrVersion, ctx);
-  // TODO: add the dark module and reserved areas
-  addDarkModuleAndReservedAreas(qrVersion, ctx);
+  addTimingPatterns(qrVersion, ctx, doNotTouchModules);
+  
+  // add the dark module and reserved areas
+  addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules);
+  
   // TODO: add the data (finally)
+  
+  /* check doNotTouch areas
+  console.log(doNotTouchModules);
+  const coords = [...doNotTouchModules];
+  coords.forEach(c => {
+    const x = parseInt(c.split(',')[0]);
+    const y = parseInt(c.split(',')[1]);
+    ctx.fillStyle = 'rgb(255,0,0)';
+    ctx.fillRect(x, y, 1, 1);
+  });
+  */
+  
   // TODO: data masking (get mask pattern with lowest penalty score)
   // TODO: add version and data format info
   // TODO: output final matrix
@@ -2866,7 +2886,7 @@ function adjustCanvasBasedOnQRVersion(qrVersion, canvasElement){
   canvasElement.height = newSize;
 }
 
-function drawFinderPatternsAndSeparators(ctx, width, height){
+function drawFinderPatternsAndSeparators(ctx, width, height, doNotTouchModules){
   // finder patterns are always 7 x 7
   // with an inner white square of 5 x 5
   // and a solid black square in the center that's 3 x 3
@@ -2913,7 +2933,27 @@ function drawFinderPatternsAndSeparators(ctx, width, height){
   ctx.fillRect(1, height - finderOuterDim + 1, finderInnerDim, finderInnerDim);
   
   ctx.fillStyle = 'rgb(0,0,0)';
-  ctx.fillRect(2, height - finderOuterDim + 2, finderInnerCenter, finderInnerCenter);  
+  ctx.fillRect(2, height - finderOuterDim + 2, finderInnerCenter, finderInnerCenter);
+  
+  // TODO: record the coordinates that make up the patterns added
+  // so we know not to touch those modules when adding data
+  for(let i = 0; i < 8; i++){
+    for(let j = 0; j < 8; j++){
+      doNotTouchModules.add(`${i},${j}`);
+    }
+  }
+  
+  for(let i = width - finderOuterDim - 1; i < width; i++){
+    for(let j = 0; j < finderOuterDim + 2; j++){
+      doNotTouchModules.add(`${i},${j}`);
+    }
+  }
+  
+  for(let i = 0; i < 8; i++){
+    for(let j = height - finderOuterDim - 1; j < height; j++){
+      doNotTouchModules.add(`${i},${j}`);
+    }
+  }
 }
 
 // this is basically a version of the overlapping rectangle detection problem :D
@@ -2986,7 +3026,7 @@ function checkIfAlignmentPatternIsValid(qrVersion, alignmentPatternCenterX, alig
   return true;
 }
 
-function drawAlignmentPattern(ctx, centerX, centerY){
+function drawAlignmentPattern(ctx, centerX, centerY, doNotTouchModules){
   // alignment patterns are 5 x 5
   
   // first draw a 5 x 5 black square
@@ -3000,9 +3040,15 @@ function drawAlignmentPattern(ctx, centerX, centerY){
   // then the center
   ctx.fillStyle = 'rgb(0,0,0)';
   ctx.fillRect(centerX, centerY, 1, 1);
+  
+  for(let i = centerX - 2; i <= centerX + 2; i++){
+    for(let j = centerY - 2; j <= centerY + 2; j++){
+      doNotTouchModules.add(`${i},${j}`);
+    }
+  }
 }
 
-function addAlignmentPatterns(qrVersion, ctx){
+function addAlignmentPatterns(qrVersion, ctx, doNotTouchModules){
   // QR codes that are >= version 2 are required to have alignment patterns
   // an alignment pattern is a 5 x 5 black square with a 3 x 3 white square inside and a black square in the center
   // alignment patterns must not overlap with the finder or separator patterns
@@ -3026,14 +3072,14 @@ function addAlignmentPatterns(qrVersion, ctx){
   locationCoords.forEach(coord => {
     const canDrawAlignmentPattern = checkIfAlignmentPatternIsValid(qrVersion, coord.x, coord.y);
     if(canDrawAlignmentPattern){
-      drawAlignmentPattern(ctx, coord.x, coord.y);
+      drawAlignmentPattern(ctx, coord.x, coord.y, doNotTouchModules);
     }
   });
   
   console.log(locationCoords);
 }
 
-function addTimingPatterns(qrVersion, ctx){
+function addTimingPatterns(qrVersion, ctx, doNotTouchModules){
   // the horizontal timing pattern is placed on the 6th row of the QR code between the separators (remember rows and cols are 0-indexed)
   let horzStartX = (((qrVersion - 1) * 4) + 21) - 7 - 2; // subtract 1 to account for the separator and 1 more to get to where we need to start
   const horzStartY = 6;
@@ -3047,6 +3093,7 @@ function addTimingPatterns(qrVersion, ctx){
       ctx.fillStyle = 'rgb(255,255,255)';
     }
     ctx.fillRect(horzStartX, horzStartY, 1, 1);
+    doNotTouchModules.add(`${horzStartX},${horzStartY}`);
     isBlack = !isBlack;
     horzStartX--;
   }
@@ -3064,15 +3111,17 @@ function addTimingPatterns(qrVersion, ctx){
       ctx.fillStyle = 'rgb(255,255,255)';
     }
     ctx.fillRect(vertStartX, vertStartY, 1, 1);
+    doNotTouchModules.add(`${vertStartX},${vertStartY}`);
     isBlack = !isBlack;
     vertStartY++;
   }
 }
 
-function addDarkModuleAndReservedAreas(qrVersion, ctx){
+function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   // the dark module is always located at the coordinate (8, (4 * qrVersion) + 9)
   ctx.fillStyle = 'rgb(0,0,0)';
   ctx.fillRect(8, (4 * qrVersion) + 9, 1, 1)
+  doNotTouchModules.add(`8,${(4 * qrVersion) + 9}`);
   
   // add reserved data areas
   // format info areas:
@@ -3088,6 +3137,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
     if(y !== 6){
       // make sure to skip the timing pattern @ y == 6
       ctx.fillRect(topLeftVertStartX, y, 1, 1);
+      doNotTouchModules.add(`${topLeftVertStartX},${y}`);
     }
   }
   
@@ -3098,6 +3148,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
     if(x !== 6){
       // make sure to skip the timing pattern @ y == 6
       ctx.fillRect(x, topLeftHorzStartY, 1, 1);
+      doNotTouchModules.add(`${x},${topLeftHorzStartY}`);
     }
   }
   
@@ -3106,6 +3157,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
   const topRightHorzEndX = topRightHorzStartX + 8;
   for(let x = topRightHorzStartX; x < topRightHorzEndX; x++){
     ctx.fillRect(x, topRightHorzStartY, 1, 1);
+    doNotTouchModules.add(`${x},${topRightHorzStartY}`);
   }
   
   const bottomLeftVertStartX = 8;
@@ -3113,6 +3165,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
   const bottomLeftVertEndY = (((qrVersion - 1) * 4) + 21);
   for(let y = bottomLeftVertStartY; y < bottomLeftVertEndY; y++){
     ctx.fillRect(bottomLeftVertStartX, y, 1, 1);
+    doNotTouchModules.add(`${bottomLeftVertStartX},${y}`);
   }
   
   // version information areas (if QR code version >= 7)
@@ -3124,6 +3177,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
   for(let i = leftMinX; i < leftMaxX; i++){
     for(let j = leftMinY; j < leftMaxY; j++){
       ctx.fillRect(i, j, 1, 1);
+      doNotTouchModules.add(`${i},${j}`);
     }
   }
   
@@ -3135,15 +3189,53 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx){
   for(let i = rightMinX; i < rightMaxX; i++){
     for(let j = rightMinY; j < rightMaxY; j++){
       ctx.fillRect(i, j, 1, 1);
+      doNotTouchModules.add(`${i},${j}`);
     }
   }
 }
 
-function addData(){
+function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   // TODO
   // idea: what if we kept track of all the individual coordinates that we shouldn't touch and what
   // specific thing they belong to, e.g. a reserved area, a timing pattern, etc.
   // that way when we're traversing the matrix, we can easily look up whether a coordinate is ok to add data to or not?
+  
+  // deal with 2 columns at a time
+  // when we reach a point where we can't fill anymore consecutive modules, flip direction
+  
+  // how do we know when to stop?
+  // if we hit the last empty modules. I think we can calculate this?
+  // e.g. above the separator of the bottom-left finder pattern
+  // or just use length of the data we're adding? if we can't fit the data that'd be a problem
+  
+  // when going up, fill right, then left
+  // when going down, fill right, then left
+  
+  // start at bottom-right of matrix
+  let startX = width - 1;
+  let startY = height - 1;
+  let direction = 'up';
+  for(let i = 0; i < data.length; i++){
+    if(data[i] === '0'){
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }else{
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }
+    
+    // check if next module location is ok
+    // use doNotTouchModules
+    if(!doNotTouchModules.has(`${startX},${startY}`)){
+      // we can place data
+    }
+    
+    // if we hit 0 or height, switch direction
+    
+    if(direction === 'up'){
+      startY--; // remember that going up in canvas space means decreasing y coord
+    }else{
+      startY++;
+    }
+  }
 }
 
 
