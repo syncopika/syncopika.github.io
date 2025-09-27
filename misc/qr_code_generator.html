@@ -2271,6 +2271,25 @@ const versionCharCountIndicatorSizeMap = {
   27: 16, // versions 27 - 40 -> 16 bits
 };
 
+// https://www.thonky.com/qr-code-tutorial/format-version-information
+const errorCorrectionLevelBitsMap = {
+  'L': '01',
+  'M': '00',
+  'Q': '11',
+  'H': '10',
+};
+
+const maskPatternBitsMap = {
+  0: '000',
+  1: '001',
+  2: '010',
+  3: '011',
+  4: '100',
+  5: '101',
+  6: '110',
+  7: '111',
+};
+
 function getCharCountIndicatorSize(version){
   const keys = Array.from(Object.keys(versionCharCountIndicatorSizeMap)).reverse();
   for(let k of keys){
@@ -2730,6 +2749,20 @@ const maskPatternFormulae = [
   (x, y) => (((x + y) % 2) + ((x + y) % 3)) % 2 === 0,
 ];
 
+function correctReservedAreaColor(ctx, width, height){
+  // set reserved modules (in blue) to be white
+  const imgData = ctx.getImageData(0, 0, width, height);
+  for(let i = 0; i < imgData.data.length; i += 4){
+    const b = imgData.data[i + 2];
+    if(b === 255){
+      //console.log('found blue');
+      imgData.data[i] = 255;
+      imgData.data[i + 1] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
 function penaltyRule1(ctx, width, height){
   // penalty rule #1. find groups of 5 consecutive or more same-colored modules in a row or column
   let total = 0;
@@ -2738,9 +2771,12 @@ function penaltyRule1(ctx, width, height){
   for(let y = 0; y < height; y++){
     let horzTotal = 0;
     let consecutiveSeen = 1;
-    let lastColor = ctx.getImageData(x, y, 1, 1)[0];
+    
+    let lastColor = ctx.getImageData(0, y, 1, 1).data[0];
+    
     for(let x = 1; x < width; x++){
-      const currColor = ctx.getImageData(x, y, 1, 1)[0];
+      const currColor = ctx.getImageData(x, y, 1, 1).data[0];
+      
       if(currColor === lastColor){
         consecutiveSeen++;
         
@@ -2761,9 +2797,12 @@ function penaltyRule1(ctx, width, height){
   for(let x = 0; x < width; x++){
     let vertTotal = 0;
     let consecutiveSeen = 1;
-    let lastColor = ctx.getImageData(x, y, 1, 1)[0];
-    for(let y = 0; y < height; y++){
-      const currColor = ctx.getImageData(x, y, 1, 1)[0];
+    
+    let lastColor = ctx.getImageData(x, 0, 1, 1).data[0];
+    
+    for(let y = 1; y < height; y++){
+      const currColor = ctx.getImageData(x, y, 1, 1).data[0];
+      
       if(currColor === lastColor){
         consecutiveSeen++;
         
@@ -2791,11 +2830,11 @@ function penaltyRule2(ctx, width, height){
   for(let x = 0; x < width - 2; x++){
     for(let y = 0; y < height - 2; y++){
       // for each module, check if it's part of a 2x2 block where each block is the same color
-      const currColor = ctx.getImageData(x, y, 1, 1)[0];
+      const currColor = ctx.getImageData(x, y, 1, 1).data[0];
       let penalty = true;
       for(let i = x; i < x + 2; i++){
         for(let j = y; j < y + 2; j++){
-          if(ctx.getImageData(i, j, 1, 1)[0] !== currColor){
+          if(ctx.getImageData(i, j, 1, 1).data[0] !== currColor){
             penalty = false;
           }
         }
@@ -2809,10 +2848,94 @@ function penaltyRule2(ctx, width, height){
 
 function penaltyRule3(ctx, width, height){
   // penalty rule #3. find patterns that look similar to the finder patterns
+  // look for dark-light-dark-dark-dark-light-dark that have four light modules on either side
+  // that's 11 consecutive modules
+  const sequence = [0,255,0,0,0,255,0,255,255,255,255];
+  const sequenceReverse = sequence.toReversed();
+  
+  let total = 0;
+  
+  // look horizontally
+  for(let y = 0; y < height; y++){
+    for(let x = 0; x < width - sequence.length; x++){
+      let patternFound = true;
+      let patternFound2 = true;
+      for(let i = 0; i < sequence.length; i++){
+        const color = ctx.getImageData(x + i, y, 1, 1).data[0];
+        if(color !== sequence[i]){
+          patternFound = false;
+        }
+        if(color !== sequenceReverse[i]){
+          patternFound2 = false;
+        }
+      }
+      if(patternFound){
+        total += 40;
+      }
+      if(patternFound2){
+        total += 40;
+      }
+    }
+  }
+  
+  // look vertically
+  for(let x = 0; x < width; x++){
+    for(let y = 0; y < height - sequence.length; y++){
+      let patternFound = true;
+      let patternFound2 = true;
+      for(let i = 0; i < sequence.length; i++){
+        const color = ctx.getImageData(x, y + i, 1, 1).data[0];
+        if(color !== sequence[i]){
+          patternFound = false;
+        }
+        if(color !== sequenceReverse[i]){
+          patternFound2 = false;
+        }
+      }
+      if(patternFound){
+        total += 40;
+      }
+      if(patternFound2){
+        total += 40;
+      }
+    }
+  }
+  
+  return total;
 }
 
 function penaltyRule4(ctx, width, height){
   // penalty rule #4. find ratio of dark/light submodules
+  // count total number of modules in the matrix
+  // count how many dark modules there are
+  // calculate percent of modules that are dark
+  // determine the previous and next multiple of 5 of the percentage
+  // subtract 50 from each of these multiples of 5 and take the absolute value result
+  // divide each of these by 5
+  // take the min of the 2 and multiply it by 10
+  let totalModuleCount = 0;
+  let darkModuleCount = 0;
+  for(let y = 0; y < height; y++){
+    for(let x = 0; x < width; x++){
+      totalModuleCount++;
+      if(ctx.getImageData(x, y, 1, 1).data[0] === 0){
+        darkModuleCount++;
+      }
+    }
+  }
+  const percentDark = Math.round((darkModuleCount / totalModuleCount) * 100); // TODO: ok to round?
+  let prevMultipleOf5 = percentDark;
+  let nextMultipleOf5 = percentDark;
+  while(prevMultipleOf5 % 5 != 0){
+    prevMultipleOf5--;
+  }
+  while(nextMultipleOf5 % 5 != 0){
+    nextMultipleOf5++;
+  }
+  const absDiffPrevMultiple5 = Math.abs(prevMultipleOf5 - 50) / 50;
+  const absDiffNextMultiple5 = Math.abs(nextMultipleOf5 - 50) / 50;
+  const result = Math.min(absDiffNextMultiple5, absDiffNextMultiple5) * 10;
+  return result;
 }
 
 function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height){  
@@ -2831,7 +2954,7 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
       const coord = `${x},${y}`;
       // if not a reserved module and the coordinates satisfy the given formula, flip the color
       if(!doNotTouchModules.has(coord) && formula(x, y)){
-        const currColor = newCanvasCtx.getImageData(x, y, 1, 1);
+        const currColor = newCanvasCtx.getImageData(x, y, 1, 1).data;
         if(currColor[0] === 0){
           newCanvasCtx.fillStyle = 'rgb(255,255,255)';
         }else{
@@ -2842,19 +2965,27 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
     }
   }
   
+  // turn any blue modules to white
+  correctReservedAreaColor(newCanvasCtx, width, height);
+  
   document.body.appendChild(newCanvas);
   
   // now we have to evaluate the canvas ;_;
   
   // penalty rule #1. find groups of 5 or more same-colored modules in a row or column
+  const penalty1Score = penaltyRule1(newCanvasCtx, width, height);
   
   // penalty rule #2. find 2x2 areas of same-colored modules
+  const penalty2Score = penaltyRule2(newCanvasCtx, width, height);
   
   // penalty rule #3. find patterns that look similar to the finder patterns
+  const penalty3Score = penaltyRule3(newCanvasCtx, width, height);
   
   // penalty rule #4. find ratio of dark/light submodules
+  const penalty4Score = penaltyRule4(newCanvasCtx, width, height);
   
   // return score
+  return penalty1Score + penalty2Score + penalty3Score + penalty4Score;
 }
 
 function init(){
@@ -2949,10 +3080,27 @@ function init(){
   
   addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
   
-  // TODO: data masking (get mask pattern with lowest penalty score)
-  getDataMaskPatternResult(ctx, maskPatternFormulae[0], doNotTouchModules, canvas.width, canvas.height);
+  // data masking (get mask pattern with lowest penalty score)
+  const maskPatternScores = maskPatternFormulae.map(formula => {
+    return getDataMaskPatternResult(ctx, formula, doNotTouchModules, canvas.width, canvas.height);
+  })
+  console.log(maskPatternScores);
+  
+  let lowestScoringMaskPatternIdx = 0; //maskPatternScores[0];
+  maskPatternScores.forEach((s, idx) => {
+    if(s < maskPatternScores[lowestScoringMaskPatternIdx]){ 
+      lowestScoringMaskPatternIdx = idx;
+    }
+  });
+  console.log(`lowest score mask pattern: ${lowestScoringMaskPatternIdx}`);
   
   // TODO: add version and data format info
+  const errorCorrectionLevelBitString = errorCorrectionLevelBitsMap[errorCorrectionLevel];
+  const maskPatternBitString = maskPatternBitsMap[lowestScoringMaskPatternIdx];
+  const fiveBitFormatString = errorCorrectionLevelBitString + maskPatternBitString;
+  console.log(`five bit format string: ${fiveBitFormatString}`);
+  
+  
   // TODO: output final matrix
   // TODO: add quiet zone (4-module wide area of light modules) around QR matrix
   document.body.appendChild(canvas);
@@ -3389,18 +3537,18 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
       // I think we'd only reach the vertical timing pattern column when going from up to down
       // so we don't need to worry about hitting it from down to up?
       if(currX === 6){
-        console.error('hit the timing pattern');
+        //console.error('hit the timing pattern');
         currX--;
       }
       direction = 'down';
       lastMove = 0;
-      console.log('switching direction to down');
+      //console.log('switching direction to down');
     }else if (direction === 'down' && currY === height){
       currY = height - 1;
       currX -= 2;
       direction = 'up';
       lastMove = 0;
-      console.log('switching direction to up');
+      //console.log('switching direction to up');
     }
   }
   
@@ -3425,7 +3573,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
     }else{
       ctx.fillStyle = 'rgb(0,0,0)';
     }
-    console.log(`writing to: (${currX},${currY})`);
+    //console.log(`writing to: (${currX},${currY})`);
     ctx.fillRect(currX, currY, 1, 1);
     
     advance();
