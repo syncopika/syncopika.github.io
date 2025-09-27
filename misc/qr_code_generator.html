@@ -2718,6 +2718,145 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
   return result;
 }
 
+// https://www.thonky.com/qr-code-tutorial/mask-patterns
+const maskPatternFormulae = [
+  (x, y) => (x + y) % 2 === 0,
+  (x, y) => x % 2 === 0,
+  (x, y) => y % 3 === 0,
+  (x, y) => (x + y) % 3 === 0,
+  (x, y) => ((Math.floor(x / 2) + Math.floor(y / 3)) % 2) === 0,
+  (x, y) => ((x * y) % 2) + ((x * y) % 3) === 0,
+  (x, y) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0,
+  (x, y) => (((x + y) % 2) + ((x + y) % 3)) % 2 === 0,
+];
+
+function penaltyRule1(ctx, width, height){
+  // penalty rule #1. find groups of 5 consecutive or more same-colored modules in a row or column
+  let total = 0;
+  
+  // check each row
+  for(let y = 0; y < height; y++){
+    let horzTotal = 0;
+    let consecutiveSeen = 1;
+    let lastColor = ctx.getImageData(x, y, 1, 1)[0];
+    for(let x = 1; x < width; x++){
+      const currColor = ctx.getImageData(x, y, 1, 1)[0];
+      if(currColor === lastColor){
+        consecutiveSeen++;
+        
+        if(consecutiveSeen === 5){
+          horzTotal += 3;
+        }else if(consecutiveSeen > 5){
+          horzTotal++;
+        }
+      }else{
+        lastColor = currColor;
+        consecutiveSeen = 1;
+      }
+    }
+    total += horzTotal;
+  }
+  
+  // check each column
+  for(let x = 0; x < width; x++){
+    let vertTotal = 0;
+    let consecutiveSeen = 1;
+    let lastColor = ctx.getImageData(x, y, 1, 1)[0];
+    for(let y = 0; y < height; y++){
+      const currColor = ctx.getImageData(x, y, 1, 1)[0];
+      if(currColor === lastColor){
+        consecutiveSeen++;
+        
+        if(consecutiveSeen === 5){
+          vertTotal += 3;
+        }else if(consecutiveSeen > 5){
+          vertTotal++;
+        }
+      }else{
+        lastColor = currColor;
+        consecutiveSeen = 1;
+      }
+    }
+    total += vertTotal;
+  }
+  
+  return total;
+}
+
+function penaltyRule2(ctx, width, height){
+  // penalty rule #2. find 2x2 areas of same-colored modules
+  let total = 0;
+  
+  // check each row
+  for(let x = 0; x < width - 2; x++){
+    for(let y = 0; y < height - 2; y++){
+      // for each module, check if it's part of a 2x2 block where each block is the same color
+      const currColor = ctx.getImageData(x, y, 1, 1)[0];
+      let penalty = true;
+      for(let i = x; i < x + 2; i++){
+        for(let j = y; j < y + 2; j++){
+          if(ctx.getImageData(i, j, 1, 1)[0] !== currColor){
+            penalty = false;
+          }
+        }
+      }
+      if(penalty) total += 3;
+    }
+  }
+  
+  return total;
+}
+
+function penaltyRule3(ctx, width, height){
+  // penalty rule #3. find patterns that look similar to the finder patterns
+}
+
+function penaltyRule4(ctx, width, height){
+  // penalty rule #4. find ratio of dark/light submodules
+}
+
+function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height){  
+  // make a copy context to operate on so we don't mess with the original
+  const newCanvas = document.createElement('canvas');
+  newCanvas.width = width;
+  newCanvas.height = height;
+  
+  const newCanvasCtx = newCanvas.getContext('2d');
+  const imgData = ctx.getImageData(0, 0, width, height);
+  
+  newCanvasCtx.putImageData(imgData, 0, 0);
+  
+  for(let x = 0; x < width; x++){
+    for(let y = 0; y < height; y++){
+      const coord = `${x},${y}`;
+      // if not a reserved module and the coordinates satisfy the given formula, flip the color
+      if(!doNotTouchModules.has(coord) && formula(x, y)){
+        const currColor = newCanvasCtx.getImageData(x, y, 1, 1);
+        if(currColor[0] === 0){
+          newCanvasCtx.fillStyle = 'rgb(255,255,255)';
+        }else{
+          newCanvasCtx.fillStyle = 'rgb(0,0,0)';
+        }
+        newCanvasCtx.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+  
+  document.body.appendChild(newCanvas);
+  
+  // now we have to evaluate the canvas ;_;
+  
+  // penalty rule #1. find groups of 5 or more same-colored modules in a row or column
+  
+  // penalty rule #2. find 2x2 areas of same-colored modules
+  
+  // penalty rule #3. find patterns that look similar to the finder patterns
+  
+  // penalty rule #4. find ratio of dark/light submodules
+  
+  // return score
+}
+
 function init(){
   const inputStr = "http://www.google.com"; // TODO: pass in input from textbox
   
@@ -2795,7 +2934,7 @@ function init(){
   // add the dark module and reserved areas
   addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules);
   
-  // TODO: add the data (finally)
+  // add the data (finally)
   
   /* check doNotTouch areas
   console.log(doNotTouchModules);
@@ -2811,6 +2950,8 @@ function init(){
   addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
   
   // TODO: data masking (get mask pattern with lowest penalty score)
+  getDataMaskPatternResult(ctx, maskPatternFormulae[0], doNotTouchModules, canvas.width, canvas.height);
+  
   // TODO: add version and data format info
   // TODO: output final matrix
   // TODO: add quiet zone (4-module wide area of light modules) around QR matrix
@@ -3122,7 +3263,7 @@ function addTimingPatterns(qrVersion, ctx, doNotTouchModules){
 function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   // the dark module is always located at the coordinate (8, (4 * qrVersion) + 9)
   ctx.fillStyle = 'rgb(0,0,0)';
-  ctx.fillRect(8, (4 * qrVersion) + 9, 1, 1)
+  ctx.fillRect(8, (4 * qrVersion) + 9, 1, 1);
   doNotTouchModules.add(`8,${(4 * qrVersion) + 9}`);
   
   // add reserved data areas
@@ -3235,54 +3376,70 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
       }
     }
     
-    // TODO: if lastMove was 0, we're trying to zigzag to an out-of-bounds module
-    // so our currX value should be decreased by 2 (shift left by 2)
     // if we get out-of-bounds, we need to flip directions
+    // I think lastMove would always be 0 before going out-of-bounds
     if(direction === 'up' && currY < 0){
       currY = 0;
-      if(lastMove === 0){
-        currX -= 2;
-      }else{
-        currX--; // this is a problem
+      // if lastMove was 0, we're trying to zigzag to an out-of-bounds module
+      // so our currX value should be decreased by 2 (shift left by 2)
+      // if lastMove was 1, we'd just need to shift left by 1
+      currX -= 2;
+      // special note! for the vertical timing pattern that occurs @ column 6,
+      // we need to skip column 6 as well so we need to move over by 3 instead
+      // I think we'd only reach the vertical timing pattern column when going from up to down
+      // so we don't need to worry about hitting it from down to up?
+      if(currX === 6){
+        console.error('hit the timing pattern');
+        currX--;
       }
       direction = 'down';
       lastMove = 0;
       console.log('switching direction to down');
     }else if (direction === 'down' && currY === height){
       currY = height - 1;
-      if(lastMove === 0){
-        currX -= 2;
-      }else{
-        currX--; // this is a problem
-      }
+      currX -= 2;
       direction = 'up';
       lastMove = 0;
       console.log('switching direction to up');
     }
   }
   
+  const seen = new Set();
+  
   for(let i = 0; i < data.length; i++){
-    console.log(`writing to: (${currX},${currY})`);
+    const coord = `${currX},${currY}`;
+    if(seen.has(coord)){
+      console.error(`(${coord}) has been seen already!`);
+    }else{
+      seen.add(coord);
+    }
+    
+    if(currY >= height || currY < 0){
+      console.error('currY is out of bounds!');
+    }else if(currX >= width || currX < 0){
+      console.error('currX is out of bounds!');
+    }
     
     if(data[i] === '0'){
-      ctx.fillStyle = 'rgb(115,115,255)';
+      ctx.fillStyle = 'rgb(255,255,255)';
     }else{
       ctx.fillStyle = 'rgb(0,0,0)';
     }
+    console.log(`writing to: (${currX},${currY})`);
     ctx.fillRect(currX, currY, 1, 1);
     
     advance();
 
     // we should keep moving on until we find a suitable spot
-    // TODO: need to keep in mind the vertical timing pattern
     while(doNotTouchModules.has(`${currX},${currY}`) && currX > 0){
-      // try adjusting currX and currY
+      //console.error(`skipping (${currX},${currY}) because reserved module`);
       advance();
     }
     
-    console.log(`next module location: (${currX},${currY})`);
+    //console.log(`next module location: (${currX},${currY})`);
   }
   
+  console.log(seen.size);
   console.log('done');
 }
 
