@@ -2366,13 +2366,18 @@ function padEncodedData(encodedData, totalBitsRequired){
   if(encodedData.length + 4 < totalBitsRequired - 4){
     // if diff is greater than 4, add 4 0's max
     encodedData += '0000';
-  } else if(encodedData.length + 4 >= totalBitsRequired){
+  }else if(encodedData.length + 4 >= totalBitsRequired){
     // add remaining 0s if diff < 4
     let diff = totalBitsRequired - encodedData.length;
     while(diff > 0){
       encodedData += '0';
       diff--;
     }
+  }
+  
+  // then add more 0s to make the length of encoded data a multiple of 8
+  while(encodedData.length % 8 != 0){
+    encodedData += '0';
   }
   
   // add pad bytes if encoded data is still too short (e.g. a lot less than totalBitsRequired)
@@ -2677,6 +2682,7 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
   for(let block in dataBlocks){
     numCodewords += dataBlocks[block].length;
   }
+  //console.log(`num data codewords: ${numCodewords}`);
   
   // then interleave the words
   let currIdx = 0;
@@ -2690,6 +2696,7 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
     }
     currIdx++;
   }
+  //console.log(`num interleaved data codewords: ${interleavedDataCodewords.length}`);
   
   // then interleave the error codewords in errorWordBlocks
   const interleavedErrorCodewords = [];
@@ -2708,31 +2715,38 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
   for(let block in errorBlocks){
     numCodewords += errorBlocks[block].length;
   }
+  //console.log(`num error codewords: ${numCodewords}`);
   while(numCodewords > 0){
     for(let block in errorBlocks){
       const blockData = errorBlocks[block];
       if(currIdx < blockData.length){
         // convert error codewords into binary
-        interleavedErrorCodewords.push(intToBinary(blockData[currIdx]));
+        let errWordBinary = intToBinary(blockData[currIdx]);
+        // pad to length of 8 if needed
+        while(errWordBinary.length < 8){
+          errWordBinary = '0' + errWordBinary;
+        }
+        interleavedErrorCodewords.push(errWordBinary);
         numCodewords--;
       }
     }
     currIdx++;
   }
-  
+  //console.log(`num interleaved error codewords: ${interleavedErrorCodewords.length}`);
   //console.log(interleavedDataCodewords);
   //console.log(interleavedErrorCodewords);
   
   // put interleaved error correction codewords after the data codewords
   let result = interleavedDataCodewords.join("") + interleavedErrorCodewords.join("");
   console.log(result);
-  console.log(result.length);
   
   // add remainder bits depending on QR version
   const remainingBits = qrVersionRequiredRemainderBitsMap[qrVersion];
   for(let i = 0; i < remainingBits; i++){
     result += '0';
   }
+  
+  //console.log(`length of interleaved data and error words: ${result.length}`);
   
   return result;
 }
@@ -2989,7 +3003,7 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
 }
 
 function init(){
-  const inputStr = "http://www.google.com"; // TODO: pass in input from textbox
+  const inputStr = "wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
   
   let bitstring = '';
   
@@ -3029,8 +3043,10 @@ function init(){
   const errorCorrection = errorCorrectionTable[`${qrVersion}M`];
   const totalDataCodewords = errorCorrection.totalDataCodewords;
   const totalBitsRequired = totalDataCodewords * 8;
+  console.log(`total bits required: ${totalBitsRequired}`);
   
   encodedData = padEncodedData(encodedData, totalBitsRequired);
+  console.log(`encoded data length so far: ${encodedData.length}`);
   
   // if QR code version > 2, we need to break up the data codewords into smaller blocks
   const numGroup1Blocks = errorCorrection.numBlocksGroup1;
@@ -3041,9 +3057,11 @@ function init(){
   
   //  break up the data codewords into their respective groups and blocks
   const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block);
+  console.log(wordBlocks);
   
   // generate the error correction codewords for each block
   const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
+  console.log(errorCorrectionCodewords);
   
   // structure the final message
   const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
@@ -3226,7 +3244,7 @@ function drawFinderPatternsAndSeparators(ctx, width, height, doNotTouchModules){
   ctx.fillStyle = 'rgb(0,0,0)';
   ctx.fillRect(2, height - finderOuterDim + 2, finderInnerCenter, finderInnerCenter);
   
-  // TODO: record the coordinates that make up the patterns added
+  // record the coordinates that make up the patterns added
   // so we know not to touch those modules when adding data
   for(let i = 0; i < 8; i++){
     for(let j = 0; j < 8; j++){
@@ -3412,6 +3430,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   // the dark module is always located at the coordinate (8, (4 * qrVersion) + 9)
   ctx.fillStyle = 'rgb(0,0,0)';
   ctx.fillRect(8, (4 * qrVersion) + 9, 1, 1);
+  
   doNotTouchModules.add(`8,${(4 * qrVersion) + 9}`);
   
   // add reserved data areas
@@ -3424,7 +3443,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   const topLeftVertStartX = 8;
   const topLeftVertStartY = 0;
   const topLeftVertEndY = 8;
-  for(let y = topLeftVertStartY; y < topLeftVertEndY; y++){
+  for(let y = topLeftVertStartY; y <= topLeftVertEndY; y++){
     if(y !== 6){
       // make sure to skip the timing pattern @ y == 6
       ctx.fillRect(topLeftVertStartX, y, 1, 1);
@@ -3435,7 +3454,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   const topLeftHorzStartX = 0;
   const topLeftHorzStartY = 8;
   const topLeftHorzEndX = 8;
-  for(let x = topLeftHorzStartX; x < topLeftHorzEndX; x++){
+  for(let x = topLeftHorzStartX; x <= topLeftHorzEndX; x++){
     if(x !== 6){
       // make sure to skip the timing pattern @ y == 6
       ctx.fillRect(x, topLeftHorzStartY, 1, 1);
@@ -3454,7 +3473,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   const bottomLeftVertStartX = 8;
   const bottomLeftVertStartY = (((qrVersion - 1) * 4) + 21) - 7;
   const bottomLeftVertEndY = (((qrVersion - 1) * 4) + 21);
-  for(let y = bottomLeftVertStartY; y < bottomLeftVertEndY; y++){
+  for(let y = bottomLeftVertStartY; y <= bottomLeftVertEndY; y++){
     ctx.fillRect(bottomLeftVertStartX, y, 1, 1);
     doNotTouchModules.add(`${bottomLeftVertStartX},${y}`);
   }
@@ -3489,10 +3508,6 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   console.log(`width:${width}, height:${height}`);
   console.log(doNotTouchModules);
   console.log(`data.length: ${data.length}`);
-  // idea: what if we kept track of all the individual coordinates that we shouldn't touch and what
-  // specific thing they belong to, e.g. a reserved area, a timing pattern, etc.
-  // that way when we're traversing the matrix, we can easily look up whether a coordinate is ok to add data to or not?
-
   // when going up, fill right, then left
   // when going down, fill right, then left
   
@@ -3579,7 +3594,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
     advance();
 
     // we should keep moving on until we find a suitable spot
-    while(doNotTouchModules.has(`${currX},${currY}`) && currX > 0){
+    while(doNotTouchModules.has(`${currX},${currY}`)){
       //console.error(`skipping (${currX},${currY}) because reserved module`);
       advance();
     }
@@ -3598,7 +3613,7 @@ function test(){
   const mode = "0100";
   console.log(`mode: ${binaryToInt(mode)}`);
   const errorCorrectionLevel = "M";
-  const input = "http://www.google.com";
+  const input = "wow?&amp;hello*!"; //"http://www.google.com";
   
   const qrVersion = getSmallestQRVersion(input, errorCorrectionLevel);
   console.log(`QR version: ${qrVersion}`);
