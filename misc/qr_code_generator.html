@@ -2751,6 +2751,94 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
   return result;
 }
 
+function xorBinStrings(s1, s2){
+  if(s1.length !== s2.length){
+    console.error('s1.length !== s2.length');
+    return;
+  }
+  let xorResult = '';
+  for(let i = 0; i < s1.length; i++){
+    const res = s1[i] ^ s2[i];
+    xorResult += res;
+  }
+  return xorResult;
+}
+
+function generateErrorCorrectionBitsFormatString(formatStr){
+  // generator polynomial to use: 10100110111
+  
+  // calculate the error correction bits by dividing the format string bits by the generator polynomial
+  let initialString = `${formatStr}0000000000`; // formatStr should be of length 5, and we need a length of 15 so add 10 0s
+  // remove any 0s from the left side
+  initialString = initialString.slice(initialString.indexOf('1'));
+  
+  // do the division
+  while(initialString.length > 10){
+    let generatorPoly = '10100110111';
+    // get generator polynomial's length to equal initialString's length by padding it with 0s if needed
+    if(generatorPoly.length < initialString.length){
+      for(let i = generatorPoly.length; i < initialString.length; i++){
+        generatorPoly += '0';
+      }
+    }
+    // XOR the generator polynomial with initialString
+    const xorResult = xorBinStrings(initialString, generatorPoly);
+    
+    // remove 0s from the left side of the result
+    // and update initialString
+    initialString = xorResult.slice(xorResult.indexOf('1'));
+  }
+  
+  while(initialString.length < 10){
+    // pad with 0s to ensure length is 10
+    initialString = '0' + initialString;
+  }
+  
+  return initialString;
+}
+
+function qrVersionToBinStr(qrVersion){
+  let binStr = intToBinary(qrVersion);
+  while(binStr.length < 6){
+    binStr = '0' + binStr;
+  }
+  return binStr;
+}
+
+function generateErrorCorrectionBitsVersionString(versionStr){
+  // this one should return an 18 bit string - 6 bits for the QR version and 12 error correction bits
+  // generator polynomial to use: 1111100100101
+  
+  // calculate the error correction bits by dividing the format string bits by the generator polynomial
+  let initialString = `${versionStr}000000000000`; // versionStr should be of length 6, and we need a length of 18 so add 12 0s
+  // remove any 0s from the left side
+  initialString = initialString.slice(initialString.indexOf('1'));
+  
+  // do the division
+  while(initialString.length > 12){
+    let generatorPoly = '1111100100101';
+    // get generator polynomial's length to equal initialString's length by padding it with 0s if needed
+    if(generatorPoly.length < initialString.length){
+      for(let i = generatorPoly.length; i < initialString.length; i++){
+        generatorPoly += '0';
+      }
+    }
+    // XOR the generator polynomial with initialString
+    const xorResult = xorBinStrings(initialString, generatorPoly);
+    
+    // remove 0s from the left side of the result
+    // and update initialString
+    initialString = xorResult.slice(xorResult.indexOf('1'));
+  }
+  
+  while(initialString.length < 12){
+    // pad with 0s to ensure length is 12
+    initialString = '0' + initialString;
+  }
+  
+  return initialString;  
+}
+
 // https://www.thonky.com/qr-code-tutorial/mask-patterns
 const maskPatternFormulae = [
   (x, y) => (x + y) % 2 === 0,
@@ -3002,8 +3090,150 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
   return penalty1Score + penalty2Score + penalty3Score + penalty4Score;
 }
 
+function putFormatStringInQrCode(qrVersion, ctx, width, height, formatString){
+  // we know where the reserved modules should be so we can just hardcode coords
+  // around the top-left finder pattern (start w/ horizontal strip then vertical)
+  for(let i = 0; i <= 8; i++){
+    if(i === 6) continue; // this is the vertical timing pattern
+    if(formatString[i] === '0'){
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }else{
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }
+    ctx.fillRect(i, 8, 1, 1);
+  }
+  // vertical part
+  let vertModuleIdx = 7;
+  for(let i = 8; i < formatString.length; i++){
+    if(formatString[i] === '0'){
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }else{
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }
+    ctx.fillRect(8, vertModuleIdx--, 1, 1);
+    if(vertModuleIdx === 6){
+      vertModuleIdx--; // if we hit the horizontal timing pattern
+    }
+  }
+  
+  // around the top-right finder pattern (start @ index 7 of the format string from left to right)
+  //const topRightHorzStartX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  //const topRightHorzStartY = 8;
+  let horzModuleIdx = 7;
+  for(let i = (((qrVersion - 1) * 4) + 21) - 7 - 1; i < width; i++){
+    if(formatString[horzModuleIdx] === '0'){
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }else{
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }
+    ctx.fillRect(i, 8, 1, 1);
+    horzModuleIdx++;
+  }
+
+  // around the bottom-left finder pattern (index 0-6 of format string from bottom to up)
+  //const bottomLeftVertStartX = 8;
+  vertModuleIdx = 0;
+  for(let i = (((qrVersion - 1) * 4) + 21) - 7; i < height; i++){
+    if(formatString[vertModuleIdx] === '0'){
+      ctx.fillStyle = 'rgb(255,255,255)';
+    }else{
+      ctx.fillStyle = 'rgb(0,0,0)';
+    }
+    ctx.fillRect(8, i, 1, 1);
+    vertModuleIdx++;
+  }
+  
+  console.log('put format string in qr code');
+}
+
+function putVersionInfoInQrCode(qrVersion, ctx, versionStr){
+  // bottom-left version block
+  const leftMaxY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  const leftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+  const leftMinX = 0;
+  const leftMaxX = 6;
+  let versionStrIdx = 0;
+  for(let i = leftMinX; i < leftMaxX; i++){
+    for(let j = leftMinY; j < leftMaxY; j++){
+      if(versionStr[versionStrIdx++] === '0'){
+        ctx.fillStyle = 'rgb(255,255,255)';
+      }else{
+        ctx.fillStyle = 'rgb(0,0,0)';
+      }
+      ctx.fillRect(i, j, 1, 1);
+    }
+  }
+  
+  // - a 3 x 6 block to the left of the top-right finder pattern
+  versionStrIdx = 0;
+  const rightMaxY = 6;
+  const rightMinY = 0;
+  const rightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+  const rightMaxX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  for(let j = rightMinY; j < rightMaxY; j++){
+    for(let i = rightMinX; i < rightMaxX; i++){
+      if(versionStr[versionStrIdx++] === '0'){
+        ctx.fillStyle = 'rgb(255,255,255)';
+      }else{
+        ctx.fillStyle = 'rgb(0,0,0)';
+      }
+      ctx.fillRect(i, j, 1, 1);
+    }
+  }
+}
+
+function applyDataMaskPatternAndQuietZone(ctx, formula, width, height, doNotTouchModules){
+  console.log(`applying mask pattern formula: ${formula}`);
+  
+  // make a copy context to operate on so we don't mess with the original
+  const newCanvas = document.createElement('canvas');
+  newCanvas.width = width;
+  newCanvas.height = height;
+  
+  const newCanvasCtx = newCanvas.getContext('2d');
+  const imgData = ctx.getImageData(0, 0, width, height);
+  
+  newCanvasCtx.putImageData(imgData, 0, 0);
+  
+  for(let x = 0; x < width; x++){
+    for(let y = 0; y < height; y++){
+      const coord = `${x},${y}`;
+      // if a module coord satisfies the given formula, flip the color
+      if(!doNotTouchModules.has(coord) && formula(x, y)){
+        const currColor = newCanvasCtx.getImageData(x, y, 1, 1).data;
+        if(currColor[0] === 0){
+          newCanvasCtx.fillStyle = 'rgb(255,255,255)';
+        }else{
+          newCanvasCtx.fillStyle = 'rgb(0,0,0)';
+        }
+        newCanvasCtx.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+  
+  // add quiet zone
+  const newCanvas2 = document.createElement('canvas');
+  newCanvas2.width = width + 8; // 4 modules on both sides
+  newCanvas2.height = height + 8;
+  
+  const newCanvas2Ctx = newCanvas2.getContext('2d');
+  newCanvas2Ctx.fillStyle = 'rgba(255,255,255,255)';
+  newCanvas2Ctx.fillRect(0, 0, newCanvas2.width, newCanvas2.height);
+  
+  // now apply image data for QR code onto this new canvas
+  newCanvas2Ctx.putImageData(newCanvasCtx.getImageData(0, 0, width, height), 4, 4);
+  
+  // put the canvas in the doc
+  newCanvas2.style.border = '1px solid #000';
+  newCanvas2.style.width = `${3 * newCanvas2.width}px`;
+  newCanvas2.style.height = `${3 * newCanvas2.height}px`;
+  newCanvas2.style.imageRendering = 'pixelated';
+  document.body.appendChild(newCanvas2);
+}
+
 function init(){
-  const inputStr = "wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
+  const inputStr = "aaa"; //"wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
+  console.log(`input str: ${inputStr}`);
   
   let bitstring = '';
   
@@ -3084,7 +3314,6 @@ function init(){
   addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules);
   
   // add the data (finally)
-  
   /* check doNotTouch areas
   console.log(doNotTouchModules);
   const coords = [...doNotTouchModules];
@@ -3104,24 +3333,46 @@ function init(){
   })
   console.log(maskPatternScores);
   
-  let lowestScoringMaskPatternIdx = 0; //maskPatternScores[0];
+  let lowestScoringMaskPatternIdx = 0;
   maskPatternScores.forEach((s, idx) => {
     if(s < maskPatternScores[lowestScoringMaskPatternIdx]){ 
       lowestScoringMaskPatternIdx = idx;
     }
   });
-  console.log(`lowest score mask pattern: ${lowestScoringMaskPatternIdx}`);
+  console.log(`lowest score mask pattern index: ${lowestScoringMaskPatternIdx}`);
   
-  // TODO: add version and data format info
+  // add version and data format info
   const errorCorrectionLevelBitString = errorCorrectionLevelBitsMap[errorCorrectionLevel];
   const maskPatternBitString = maskPatternBitsMap[lowestScoringMaskPatternIdx];
   const fiveBitFormatString = errorCorrectionLevelBitString + maskPatternBitString;
   console.log(`five bit format string: ${fiveBitFormatString}`);
   
+  // generate error correction bits for format string
+  const errCorrectionBits = generateErrorCorrectionBitsFormatString(fiveBitFormatString);
+  console.log(`error correction bits: ${errCorrectionBits}`);
   
-  // TODO: output final matrix
-  // TODO: add quiet zone (4-module wide area of light modules) around QR matrix
+  const maskString = '101010000010010'; // https://www.thonky.com/qr-code-tutorial/format-version-information
+  const finalFormatString = xorBinStrings(fiveBitFormatString + errCorrectionBits, maskString);
+  console.log(`final format string: ${finalFormatString}`);
+  
+  // put the finalFormatString in the QR code
+  putFormatStringInQrCode(qrVersion, ctx, canvas.width, canvas.height, finalFormatString);
+  
+  // generate error correction bits for version string if needed
+  if(qrVersion >= 7){
+    // convert qr version to binary string of length 6
+    const versionStr = qrVersionToBinStr(qrVersion);
+    const finalVersionString = versionStr + generateErrorCorrectionBitsVersionString(versionStr);
+    console.log(`version final string: ${finalVersionString}`);
+    
+    // put the final version string in the QR code
+    putVersionInfoInQrCode(qrVersion, ctx, finalVersionString);
+  }
+  
   document.body.appendChild(canvas);
+  
+  // output final matrix
+  applyDataMaskPatternAndQuietZone(ctx, maskPatternFormulae[lowestScoringMaskPatternIdx], canvas.width, canvas.height, doNotTouchModules);
 }
 
 // TODO: needs tests
@@ -3480,26 +3731,28 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   
   // version information areas (if QR code version >= 7)
   // - a 6 x 3 block above the bottom-left finder pattern
-  const leftMaxY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
-  const leftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 4;
-  const leftMinX = 0;
-  const leftMaxX = 6;
-  for(let i = leftMinX; i < leftMaxX; i++){
-    for(let j = leftMinY; j < leftMaxY; j++){
-      ctx.fillRect(i, j, 1, 1);
-      doNotTouchModules.add(`${i},${j}`);
+  if(qrVersion >= 7){
+    const leftMaxY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+    const leftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+    const leftMinX = 0;
+    const leftMaxX = 6;
+    for(let i = leftMinX; i < leftMaxX; i++){
+      for(let j = leftMinY; j < leftMaxY; j++){
+        ctx.fillRect(i, j, 1, 1);
+        doNotTouchModules.add(`${i},${j}`);
+      }
     }
-  }
-  
-  // - a 3 x 6 block to the left of the top-right finder pattern
-  const rightMaxY = 6;
-  const rightMinY = 0;
-  const rightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 4;
-  const rightMaxX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
-  for(let i = rightMinX; i < rightMaxX; i++){
-    for(let j = rightMinY; j < rightMaxY; j++){
-      ctx.fillRect(i, j, 1, 1);
-      doNotTouchModules.add(`${i},${j}`);
+    
+    // - a 3 x 6 block to the left of the top-right finder pattern
+    const rightMaxY = 6;
+    const rightMinY = 0;
+    const rightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+    const rightMaxX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+    for(let i = rightMinX; i < rightMaxX; i++){
+      for(let j = rightMinY; j < rightMaxY; j++){
+        ctx.fillRect(i, j, 1, 1);
+        doNotTouchModules.add(`${i},${j}`);
+      }
     }
   }
 }
@@ -3570,18 +3823,20 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   const seen = new Set();
   
   for(let i = 0; i < data.length; i++){
+    /*
     const coord = `${currX},${currY}`;
     if(seen.has(coord)){
       console.error(`(${coord}) has been seen already!`);
     }else{
       seen.add(coord);
-    }
+    }*/
     
+    /*
     if(currY >= height || currY < 0){
       console.error('currY is out of bounds!');
     }else if(currX >= width || currX < 0){
       console.error('currX is out of bounds!');
-    }
+    }*/
     
     if(data[i] === '0'){
       ctx.fillStyle = 'rgb(255,255,255)';
@@ -3602,7 +3857,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
     //console.log(`next module location: (${currX},${currY})`);
   }
   
-  console.log(seen.size);
+  //console.log(seen.size);
   console.log('done');
 }
 
