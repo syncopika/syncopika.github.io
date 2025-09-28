@@ -2775,9 +2775,16 @@ function xorBinStrings(s1, s2){
 
 function generateErrorCorrectionBitsFormatString(formatStr){
   // generator polynomial to use: 10100110111
+  if(formatStr.length !== 5){
+    console.error('format string does not have a length of 5!');
+  }
   
   // calculate the error correction bits by dividing the format string bits by the generator polynomial
   let initialString = `${formatStr}0000000000`; // formatStr should be of length 5, and we need a length of 15 so add 10 0s
+  if(initialString.length !== 15){
+    console.error('intial string for generating format string err correction bits does not have a length of 15!');
+  }
+  
   // remove any 0s from the left side
   initialString = initialString.slice(initialString.indexOf('1'));
   
@@ -2790,6 +2797,11 @@ function generateErrorCorrectionBitsFormatString(formatStr){
         generatorPoly += '0';
       }
     }
+    
+    if(generatorPoly.length !== initialString.length){
+      console.error('generator polynomial length !== initial string length');
+    }
+    
     // XOR the generator polynomial with initialString
     const xorResult = xorBinStrings(initialString, generatorPoly);
     
@@ -3100,12 +3112,13 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
   return penalty1Score + penalty2Score + penalty3Score + penalty4Score;
 }
 
-function putFormatStringInQrCode(qrVersion, ctx, width, height, formatString){
+function putFormatStringInQrCode(ctx, width, height, formatString){
   // we know where the reserved modules should be so we can just hardcode coords
   // around the top-left finder pattern (start w/ horizontal strip then vertical)
+  let vertModuleIdx = 0;
   for(let i = 0; i <= 8; i++){
     if(i === 6) continue; // this is the vertical timing pattern
-    if(formatString[i] === '0'){
+    if(formatString[vertModuleIdx++] === '0'){
       ctx.fillStyle = 'rgb(255,255,255)';
     }else{
       ctx.fillStyle = 'rgb(0,0,0)';
@@ -3113,53 +3126,51 @@ function putFormatStringInQrCode(qrVersion, ctx, width, height, formatString){
     ctx.fillRect(i, 8, 1, 1);
   }
   // vertical part
-  let vertModuleIdx = 7;
-  for(let i = 8; i < formatString.length; i++){
-    if(formatString[i] === '0'){
+  for(let i = 8; i >= 0; i--){
+    if(i === 6) continue; // this is the horizontal timing pattern
+    if(formatString[vertModuleIdx++] === '0'){
       ctx.fillStyle = 'rgb(255,255,255)';
     }else{
       ctx.fillStyle = 'rgb(0,0,0)';
     }
-    ctx.fillRect(8, vertModuleIdx--, 1, 1);
-    if(vertModuleIdx === 6){
-      vertModuleIdx--; // if we hit the horizontal timing pattern
-    }
+    ctx.fillRect(8, i, 1, 1);
   }
   
   // around the top-right finder pattern (start @ index 7 of the format string from left to right)
   //const topRightHorzStartX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
   //const topRightHorzStartY = 8;
   let horzModuleIdx = 7;
-  for(let i = (((qrVersion - 1) * 4) + 21) - 7 - 1; i < width; i++){
-    if(formatString[horzModuleIdx] === '0'){
+  for(let i = width - 8; i < width; i++){
+    if(formatString[horzModuleIdx++] === '0'){
       ctx.fillStyle = 'rgb(255,255,255)';
     }else{
       ctx.fillStyle = 'rgb(0,0,0)';
     }
     ctx.fillRect(i, 8, 1, 1);
-    horzModuleIdx++;
   }
 
   // around the bottom-left finder pattern (index 0-6 of format string from bottom to up)
   //const bottomLeftVertStartX = 8;
-  vertModuleIdx = 0;
-  for(let i = (((qrVersion - 1) * 4) + 21) - 7; i < height; i++){
-    if(formatString[vertModuleIdx] === '0'){
+  vertModuleIdx = 6;
+  for(let i = height - 7; i < height; i++){
+    if(formatString[vertModuleIdx--] === '0'){
       ctx.fillStyle = 'rgb(255,255,255)';
     }else{
       ctx.fillStyle = 'rgb(0,0,0)';
     }
     ctx.fillRect(8, i, 1, 1);
-    vertModuleIdx++;
   }
   
   console.log('put format string in qr code');
 }
 
-function putVersionInfoInQrCode(qrVersion, ctx, versionStr){
+function putVersionInfoInQrCode(ctx, width, height, versionStr){
+  // note! the version string should be placed backwards (the least significant bits get placed first)
+  versionStr = versionStr.split('').reverse().join('');
+  
   // bottom-left version block
-  const leftMaxY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
-  const leftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 4;
+  const leftMaxY = height - 8;
+  const leftMinY = height - 11;
   const leftMinX = 0;
   const leftMaxX = 6;
   let versionStrIdx = 0;
@@ -3178,8 +3189,8 @@ function putVersionInfoInQrCode(qrVersion, ctx, versionStr){
   versionStrIdx = 0;
   const rightMaxY = 6;
   const rightMinY = 0;
-  const rightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 4;
-  const rightMaxX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  const rightMinX = width - 11;
+  const rightMaxX = width - 8;
   for(let j = rightMinY; j < rightMaxY; j++){
     for(let i = rightMinX; i < rightMaxX; i++){
       if(versionStr[versionStrIdx++] === '0'){
@@ -3366,7 +3377,7 @@ function init(){
   console.log(`final format string: ${finalFormatString}`);
   
   // put the finalFormatString in the QR code
-  putFormatStringInQrCode(qrVersion, ctx, canvas.width, canvas.height, finalFormatString);
+  putFormatStringInQrCode(ctx, canvas.width, canvas.height, finalFormatString);
   
   // generate error correction bits for version string if needed
   if(qrVersion >= 7){
@@ -3376,7 +3387,7 @@ function init(){
     console.log(`version final string: ${finalVersionString}`);
     
     // put the final version string in the QR code
-    putVersionInfoInQrCode(qrVersion, ctx, finalVersionString);
+    putVersionInfoInQrCode(ctx, canvas.width, canvas.height, finalVersionString);
   }
   
   canvas.style.border = '1px solid #ccc';
