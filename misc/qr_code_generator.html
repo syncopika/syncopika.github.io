@@ -2291,10 +2291,10 @@ const maskPatternBitsMap = {
 };
 
 function getCharCountIndicatorSize(version){
-  const keys = Array.from(Object.keys(versionCharCountIndicatorSizeMap)).reverse();
+  const keys = Array.from(Object.keys(versionCharCountIndicatorSizeMap)).toReversed().map(x => parseInt(x));
   for(let k of keys){
     if(version >= k){
-      return versionCharCountIndicatorSizeMap[k]; // e.g. if version is 20, we should get back 16
+      return versionCharCountIndicatorSizeMap[k]; // e.g. if version is 20, we should get back 16. if 9 we should get back 8.
     }
   }
   return null;
@@ -2362,12 +2362,19 @@ function getDataCodewordsFromEncodedString(inputStr){
 }
 
 function padEncodedData(encodedData, totalBitsRequired){
+  if(encodedData.length === totalBitsRequired){
+    // nothing to do
+    return encodedData;
+  }
+
   // add terminator bits (of 0) if needed
   if(encodedData.length + 4 < totalBitsRequired - 4){
     // if diff is greater than 4, add 4 0's max
     encodedData += '0000';
+    console.log('adding 4 0s for terminator');
   }else if(encodedData.length + 4 >= totalBitsRequired){
     // add remaining 0s if diff < 4
+    console.log(`adding ${diff} 0s to reach totalBitsRequired (${totalBitsRequired})`);
     let diff = totalBitsRequired - encodedData.length;
     while(diff > 0){
       encodedData += '0';
@@ -2377,6 +2384,7 @@ function padEncodedData(encodedData, totalBitsRequired){
   
   // then add more 0s to make the length of encoded data a multiple of 8
   while(encodedData.length % 8 != 0){
+    console.log('adding more 0s to reach a length that is a multiple of 8');
     encodedData += '0';
   }
   
@@ -2385,6 +2393,7 @@ function padEncodedData(encodedData, totalBitsRequired){
   let padBytesToAdd = bitsToPad / 8;
   let count = 0;
   while(padBytesToAdd > 0){
+    console.log(`still too short - now adding 236 and 17 alternating until totalBitsRequired is reached`);
     if(count % 2 === 0){
       // if count is even
       encodedData += '11101100';
@@ -2840,15 +2849,16 @@ function generateErrorCorrectionBitsVersionString(versionStr){
 }
 
 // https://www.thonky.com/qr-code-tutorial/mask-patterns
+// x = col, y = row
 const maskPatternFormulae = [
-  (x, y) => (x + y) % 2 === 0,
-  (x, y) => x % 2 === 0,
-  (x, y) => y % 3 === 0,
-  (x, y) => (x + y) % 3 === 0,
-  (x, y) => ((Math.floor(x / 2) + Math.floor(y / 3)) % 2) === 0,
-  (x, y) => ((x * y) % 2) + ((x * y) % 3) === 0,
-  (x, y) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0,
-  (x, y) => (((x + y) % 2) + ((x + y) % 3)) % 2 === 0,
+  (y, x) => (x + y) % 2 === 0,
+  (y, x) => y % 2 === 0,
+  (y, x) => x % 3 === 0,
+  (y, x) => (x + y) % 3 === 0,
+  (y, x) => ((Math.floor(y / 2) + Math.floor(x / 3)) % 2) === 0,
+  (y, x) => ((x * y) % 2) + ((x * y) % 3) === 0,
+  (y, x) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0,
+  (y, x) => (((x + y) % 2) + ((x + y) % 3)) % 2 === 0,
 ];
 
 function correctReservedAreaColor(ctx, width, height){
@@ -3055,7 +3065,7 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
     for(let y = 0; y < height; y++){
       const coord = `${x},${y}`;
       // if not a reserved module and the coordinates satisfy the given formula, flip the color
-      if(!doNotTouchModules.has(coord) && formula(x, y)){
+      if(!doNotTouchModules.has(coord) && formula(y, x)){
         const currColor = newCanvasCtx.getImageData(x, y, 1, 1).data;
         if(currColor[0] === 0){
           newCanvasCtx.fillStyle = 'rgb(255,255,255)';
@@ -3199,7 +3209,7 @@ function applyDataMaskPatternAndQuietZone(ctx, formula, width, height, doNotTouc
     for(let y = 0; y < height; y++){
       const coord = `${x},${y}`;
       // if a module coord satisfies the given formula, flip the color
-      if(!doNotTouchModules.has(coord) && formula(x, y)){
+      if(!doNotTouchModules.has(coord) && formula(y, x)){
         const currColor = newCanvasCtx.getImageData(x, y, 1, 1).data;
         if(currColor[0] === 0){
           newCanvasCtx.fillStyle = 'rgb(255,255,255)';
@@ -3232,7 +3242,7 @@ function applyDataMaskPatternAndQuietZone(ctx, formula, width, height, doNotTouc
 }
 
 function init(){
-  const inputStr = "aaa"; //"wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
+  const inputStr = "Hello world!"; //"wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
   console.log(`input str: ${inputStr}`);
   
   let bitstring = '';
@@ -3369,6 +3379,7 @@ function init(){
     putVersionInfoInQrCode(qrVersion, ctx, finalVersionString);
   }
   
+  canvas.style.border = '1px solid #ccc';
   document.body.appendChild(canvas);
   
   // output final matrix
@@ -3864,11 +3875,13 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
 
 function test(){
   // TODO
+  const input = "Hello world!"; //"http://www.google.com";
+  console.log(`input: ${input}`);
+  
   // assumptions: level M for error correction, byte mode only
   const mode = "0100";
   console.log(`mode: ${binaryToInt(mode)}`);
   const errorCorrectionLevel = "M";
-  const input = "wow?&amp;hello*!"; //"http://www.google.com";
   
   const qrVersion = getSmallestQRVersion(input, errorCorrectionLevel);
   console.log(`QR version: ${qrVersion}`);
@@ -3877,6 +3890,9 @@ function test(){
   const charCountIndicator = getCharacterCountIndicator(input, qrVersion);
   console.log(`character count indicator: ${charCountIndicator}`);
   // assertion for charCountIndicator
+  if(charCountIndicator.length !== 8){
+    console.error(`char count indicator should be 8 bits (assuming QR version 9, byte mode)`);
+  }
   
   const encodedInputStr = getInputStrAsBinaryStr(input);
   console.log(`encoded input str: ${encodedInputStr}`);
@@ -3887,9 +3903,13 @@ function test(){
   console.log(errorCorrection);
   
   const totalDataCodewords = errorCorrection.totalDataCodewords;
+  console.log(`total data codewords: ${totalDataCodewords}`);
+  
   const totalBitsRequired = totalDataCodewords * 8;
+  console.log(`total bits required: ${totalBitsRequired}`);
   
   const encodedData = padEncodedData(encodedInputStr, totalBitsRequired);
+  console.log(`encoded data length: ${encodedData.length}`);
   console.log(encodedData);
   
   const numGroup1Blocks = errorCorrection.numBlocksGroup1;
@@ -3913,6 +3933,7 @@ function test(){
   console.log(errorCorrectionCodewords);
   
   const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
+  console.log(`interleaved data + error codewords: ${data}, length: ${data.length}`);
 }
 
 test();
