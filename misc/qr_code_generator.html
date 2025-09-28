@@ -3077,6 +3077,7 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
     for(let y = 0; y < height; y++){
       const coord = `${x},${y}`;
       // if not a reserved module and the coordinates satisfy the given formula, flip the color
+      // slightly tricky: y = row and x = col -> order is important when passing to formula()
       if(!doNotTouchModules.has(coord) && formula(y, x)){
         const currColor = newCanvasCtx.getImageData(x, y, 1, 1).data;
         if(currColor[0] === 0){
@@ -3343,8 +3344,7 @@ function init(){
     const y = parseInt(c.split(',')[1]);
     ctx.fillStyle = 'rgb(255,0,0)';
     ctx.fillRect(x, y, 1, 1);
-  });
-  */
+  });*/
   
   addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
   
@@ -3525,14 +3525,14 @@ function drawFinderPatternsAndSeparators(ctx, width, height, doNotTouchModules){
     }
   }
   
-  for(let i = width - finderOuterDim - 1; i < width; i++){
-    for(let j = 0; j < finderOuterDim + 2; j++){
+  for(let i = width - 8; i < width; i++){
+    for(let j = 0; j < 8; j++){
       doNotTouchModules.add(`${i},${j}`);
     }
   }
   
   for(let i = 0; i < 8; i++){
-    for(let j = height - finderOuterDim - 1; j < height; j++){
+    for(let j = height - 8; j < height; j++){
       doNotTouchModules.add(`${i},${j}`);
     }
   }
@@ -3667,6 +3667,8 @@ function addTimingPatterns(qrVersion, ctx, doNotTouchModules){
   const horzStartY = 6;
   const horzStopX = 7;
   
+  //console.log(`horizontal timing pattern start x: ${horzStartX}. end x: ${horzStopX}`);
+  
   let isBlack = true;
   while(horzStartX > horzStopX){
     if(isBlack){
@@ -3684,6 +3686,8 @@ function addTimingPatterns(qrVersion, ctx, doNotTouchModules){
   let vertStartY = 8;
   const vertStartX = 6;
   const vertStopY = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+  
+  //console.log(`vertical timing pattern start x: ${vertStartY}. end y: ${vertStopY}`);
   
   isBlack = true;
   while(vertStartY < vertStopY){
@@ -3703,7 +3707,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   // the dark module is always located at the coordinate (8, (4 * qrVersion) + 9)
   ctx.fillStyle = 'rgb(0,0,0)';
   ctx.fillRect(8, (4 * qrVersion) + 9, 1, 1);
-  
+  //console.log(`adding dark module to doNotTouch: 8,${(4 * qrVersion) + 9}`);
   doNotTouchModules.add(`8,${(4 * qrVersion) + 9}`);
   
   // add reserved data areas
@@ -3727,7 +3731,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   const topLeftHorzStartX = 0;
   const topLeftHorzStartY = 8;
   const topLeftHorzEndX = 8;
-  for(let x = topLeftHorzStartX; x <= topLeftHorzEndX; x++){
+  for(let x = topLeftHorzStartX; x < topLeftHorzEndX; x++){
     if(x !== 6){
       // make sure to skip the timing pattern @ y == 6
       ctx.fillRect(x, topLeftHorzStartY, 1, 1);
@@ -3738,6 +3742,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   const topRightHorzStartX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
   const topRightHorzStartY = 8;
   const topRightHorzEndX = topRightHorzStartX + 8;
+  //console.log(`reserved area top right horz - start x: ${topRightHorzStartX}, end x: ${topRightHorzEndX}`);
   for(let x = topRightHorzStartX; x < topRightHorzEndX; x++){
     ctx.fillRect(x, topRightHorzStartY, 1, 1);
     doNotTouchModules.add(`${x},${topRightHorzStartY}`);
@@ -3746,7 +3751,8 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   const bottomLeftVertStartX = 8;
   const bottomLeftVertStartY = (((qrVersion - 1) * 4) + 21) - 7;
   const bottomLeftVertEndY = (((qrVersion - 1) * 4) + 21);
-  for(let y = bottomLeftVertStartY; y <= bottomLeftVertEndY; y++){
+  //console.log(`reserved area bottom left vert - start y: ${bottomLeftVertStartY}, end y: ${bottomLeftVertEndY}`);
+  for(let y = bottomLeftVertStartY; y < bottomLeftVertEndY; y++){
     ctx.fillRect(bottomLeftVertStartX, y, 1, 1);
     doNotTouchModules.add(`${bottomLeftVertStartX},${y}`);
   }
@@ -3758,6 +3764,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
     const leftMinY = (((qrVersion - 1) * 4) + 21) - 7 - 4;
     const leftMinX = 0;
     const leftMaxX = 6;
+    //console.log(`reserved area version bottom left - start y: ${leftMinY}, end y: ${leftMaxY}`);
     for(let i = leftMinX; i < leftMaxX; i++){
       for(let j = leftMinY; j < leftMaxY; j++){
         ctx.fillRect(i, j, 1, 1);
@@ -3770,6 +3777,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
     const rightMinY = 0;
     const rightMinX = (((qrVersion - 1) * 4) + 21) - 7 - 4;
     const rightMaxX = (((qrVersion - 1) * 4) + 21) - 7 - 1;
+    //console.log(`reserved area version top-right - start x: ${rightMinX}, end x: ${rightMaxX}`);
     for(let i = rightMinX; i < rightMaxX; i++){
       for(let j = rightMinY; j < rightMaxY; j++){
         ctx.fillRect(i, j, 1, 1);
@@ -3842,7 +3850,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
     }
   }
   
-  const seen = new Set();
+  //const seen = new Set();
   
   for(let i = 0; i < data.length; i++){
     /*
