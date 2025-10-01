@@ -2304,23 +2304,74 @@ function getInputStrAsBinaryStr(inputStr){
   // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encode
   // convert the input to 8-bit ints per TextEncoder.encode
   const textEncoder = new TextEncoder();
+  console.log(`textEncoder encoding: ${textEncoder.encoding}`);
   
   // .encode() returns a unint8 array, but we want to run map() on it to convert the ints to binary, so convert the result to a generic array
   const encodedStrArray = Array.from(textEncoder.encode(inputStr));
+  console.log(encodedStrArray);
   
   // convert each 8-bit int to binary
   const res = encodedStrArray.map((i) => {
     // convert to binary
     const binStr = intToBinary(i);
+    //console.log(binStr);
+    //console.log(`binStr to int: ${binaryToInt(binStr)}`);
     
     // pad as needed to match a length of 8
     const paddingAmount = 8 - binStr.length;
     //console.log(`int: ${i}, bin: ${binStr}`);
+    
     return zeroPadLeftStr(binStr, paddingAmount);
   });
+  console.log(res);
   
   // concat each binary
-  return res.join(""); // TODO: should there be a space?
+  return res.join("");
+}
+
+function intToHex(n){
+	const map = {
+		10: 'a',
+		11: 'b',
+		12: 'c',
+		13: 'd',
+		14: 'e',
+		15: 'f',
+	};
+  const hexStr = [];
+  
+  while(n > 0){
+    const rem = n % 16;
+    hexStr.unshift(rem);
+    n = Math.floor(n / 16);
+  }
+  
+  return hexStr.map(x => {
+    if(map[x]){
+      return map[x];
+    }else{
+      return x;
+    }
+  }).join("");
+}
+
+// https://github.com/syncopika/getYTAudio/blob/master/parse_weba_file/parse_weba.js#L173C1-L190C2
+function hexToBin(hexStr){
+	const map = {
+		'a': 10,
+		'b': 11,
+		'c': 12,
+		'd': 13,
+		'e': 14,
+		'f': 15
+	};
+	let total = "";
+	for(let i = hexStr.length - 1; i >= 0; i--){
+		// get binary 
+		let num = map[hexStr[i]] ? parseInt(map[hexStr[i]]) : parseInt(hexStr[i]);
+		total = intToBinary(num) + total;
+	}
+	return total;
 }
 
 function intToBinary(n){
@@ -2387,10 +2438,12 @@ function padEncodedData(encodedData, totalBitsRequired){
     console.log('adding more 0s to reach a length that is a multiple of 8');
     encodedData += '0';
   }
+  console.log(`encoded data length now: ${encodedData.length}`);
   
   // add pad bytes if encoded data is still too short (e.g. a lot less than totalBitsRequired)
   const bitsToPad = totalBitsRequired - encodedData.length;
   let padBytesToAdd = bitsToPad / 8;
+  console.log(`pad bytes to add: ${padBytesToAdd}`);
   let count = 0;
   while(padBytesToAdd > 0){
     console.log(`still too short - now adding 236 and 17 alternating until totalBitsRequired is reached`);
@@ -2416,6 +2469,7 @@ function divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, nu
   
   // add the codewords in from the result of getDataCodewordsFromEncodedString(encodedData) to wordBlocks
   const codewords = getDataCodewordsFromEncodedString(encodedData);
+  console.log(codewords);
   let codewordIndex = 0;
   
   // do group 1
@@ -2511,7 +2565,7 @@ function createGeneratorPolynomial(numErrorCorrectionCodewordsPerBlock){
     for(let term of prevPolynomial){
       for(let term2 of newPolynomialToMultiplyBy){
         polynomialMultiplicationResult.push({
-          'alpha': (term.alpha + term2.alpha) % 255, // alpha exponents shouldn't exceed 255
+          'alpha': (term.alpha + term2.alpha) > 255 ? (term.alpha + term2.alpha) % 255 : (term.alpha + term2.alpha), // alpha exponents shouldn't exceed 255
           'x': term.x + term2.x,
         });
       }
@@ -2556,16 +2610,21 @@ function createGeneratorPolynomial(numErrorCorrectionCodewordsPerBlock){
 function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, numErrorCodewordsPerBlock){
   // reverse generator polynomial because the leading term is actually at the end >_<
   genPoly.reverse();
+  
+  //console.log(JSON.stringify(msgPoly));
+  //console.log(JSON.stringify(genPoly));
 
   const errorCorrectionCodewords = [];
   
   let iteration = 0;
   let numIterations = msgPoly.length;
+  console.log(`need to divide ${numIterations} times for EC codewords`);
   let xorResult = JSON.parse(JSON.stringify(msgPoly));
   //console.log(xorResult);
   //console.log(JSON.parse(JSON.stringify(genPoly)));
   
   while(iteration < numIterations){
+    console.log(`-------------- iteration ${iteration} ------------------`);
     // This is where we can loop I think. 
     // the number of steps in the division must equal the number of terms in the message polynomial.
     // make a copy of the original generator polynomial for each iteration but adjust it accordingly since each iteration we chop off the leading term
@@ -2574,36 +2633,58 @@ function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, nu
       // if after the first iteration, adjust the generator polynomial exponents to align with the xorResult of the previous step
       genPolyCopy.forEach(t => t.x -= iteration);
     }
+    
+    console.log(JSON.stringify(genPolyCopy));
+    console.log(JSON.stringify(xorResult));
 
     // multiply generator polynomial by lead term of message polynomial
     const leadMsgPolyTerm = xorResult[0];
-    //console.log(leadMsgPolyTerm);
+    console.log(`lead msg poly term: ${JSON.stringify(leadMsgPolyTerm)}`);
     
     // convert coeff of lead term to alpha exponent
     const leadTermAlpha = findAlphaOfInteger(leadMsgPolyTerm.c);
     //console.log(leadTermAlpha);
     
     // multiply generator polynomial by leadTermAlpha
-    genPolyCopy.forEach(t => t.alpha = (t.alpha + leadTermAlpha) % 255); // don't forget to mod by 255 again to keep it below 256
+    genPolyCopy.forEach(t => {
+      if(t.alpha + leadTermAlpha > 255){
+        t.alpha = (t.alpha + leadTermAlpha) % 255;
+      }else{
+        t.alpha = t.alpha + leadTermAlpha;
+      }
+    }); // don't forget to mod by 255 again to keep it below 256
     
     // convert alphas to integer
     genPolyCopy.forEach(t => t.alpha = findIntegerOfAlpha(t.alpha));
     
     // then XOR the generator polynomial with the message polynomial
     let newXorRes = [];
-    genPolyCopy.forEach((term, idx) => {
+    let idx = 0;
+    genPolyCopy.forEach((term) => {
       if(idx < xorResult.length){
         newXorRes.push({
           'c': term.alpha ^ xorResult[idx].c, // this is in integer form. do we need to re-convert these back to alpha or no?
           'exp': term.x,
         });
-      }else{
-        newXorRes.push({
-          'c': term.alpha, // this is in integer form. do we need to re-convert these back to alpha or no?
-          'exp': term.x,
-        });
+        idx++;
       }
     });
+    
+    // add any remaining terms from xorResult to the new XOR result
+    while(idx < xorResult.length){
+      newXorRes.push(xorResult[idx]);
+      idx++;
+    }
+    
+    // add any remaining terms from gen poly. there's a point where 
+    // initially the msg polynomial has more terms but eventually gen poly could have more terms
+    while(idx < genPolyCopy.length){
+      newXorRes.push({
+        'c': genPolyCopy[idx].alpha,
+        'exp': genPolyCopy[idx].x,
+      });
+      idx++;
+    }
     
     //console.log(xorResult);
     if(newXorRes[0].c !== 0){
@@ -2618,8 +2699,7 @@ function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, nu
     
     iteration++;
   }
-  
-  //console.log(xorResult);
+
   return xorResult;
 }
 
@@ -2635,7 +2715,7 @@ function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock)
       // first generate message polynomial for the block using codewords in encodedData
       const blockCodewords = wordBlocks[group][block];
       const msgPolynomial = getMessagePolynomial(blockCodewords);
-      //console.log(msgPolynomial);
+      console.log(msgPolynomial.map(x => x.c));
       
       // generate the generator polynomial. we need to create a new one for each block because we manipulate it
       // can verify with: https://www.thonky.com/qr-code-tutorial/generator-polynomial-tool?degree=22
@@ -2743,11 +2823,11 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
   }
   //console.log(`num interleaved error codewords: ${interleavedErrorCodewords.length}`);
   //console.log(interleavedDataCodewords);
-  //console.log(interleavedErrorCodewords);
+  console.log(interleavedErrorCodewords);
   
   // put interleaved error correction codewords after the data codewords
   let result = interleavedDataCodewords.join("") + interleavedErrorCodewords.join("");
-  console.log(result);
+  console.log(`data and error codewords interleaved: ${result}`);
   
   // add remainder bits depending on QR version
   const remainingBits = qrVersionRequiredRemainderBitsMap[qrVersion];
@@ -2767,7 +2847,7 @@ function xorBinStrings(s1, s2){
   }
   let xorResult = '';
   for(let i = 0; i < s1.length; i++){
-    const res = s1[i] ^ s2[i];
+    const res = s1[i] ^ s2[i]; // the strings should get coerced to number
     xorResult += res;
   }
   return xorResult;
@@ -2870,7 +2950,7 @@ const maskPatternFormulae = [
   (y, x) => ((Math.floor(y / 2) + Math.floor(x / 3)) % 2) === 0,
   (y, x) => ((x * y) % 2) + ((x * y) % 3) === 0,
   (y, x) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0,
-  (y, x) => (((x + y) % 2) + ((x + y) % 3)) % 2 === 0,
+  (y, x) => (((x + y) % 2) + ((x * y) % 3)) % 2 === 0,
 ];
 
 function correctReservedAreaColor(ctx, width, height){
@@ -3254,7 +3334,8 @@ function applyDataMaskPatternAndQuietZone(ctx, formula, width, height, doNotTouc
 }
 
 function init(){
-  const inputStr = "Hello world!"; //"wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
+  console.log('--------------- init --------------');
+  const inputStr = "%hi%"; //"wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
   console.log(`input str: ${inputStr}`);
   
   let bitstring = '';
@@ -3277,18 +3358,22 @@ function init(){
   
   // figure out QR code version/size
   const qrVersion = getSmallestQRVersion(inputStr, errorCorrectionLevel);
+  console.log(`qr version: ${qrVersion}`);
   
   // readjust canvas
   adjustCanvasBasedOnQRVersion(qrVersion, canvas);
   
   // get character count indicator
   const charCountIndicator = getCharacterCountIndicator(inputStr, qrVersion);
+  console.log(`char count indicator: ${charCountIndicator}`);
   bitstring += charCountIndicator;
   
   // now encode the data into binary
   let encodedData = getInputStrAsBinaryStr(inputStr);
+  console.log(`input str as binary: ${encodedData}`);
   
   // put encodedData after charCountIndicator
+  console.log(`data so far: ${mode}, ${charCountIndicator}, ${encodedData}`);
   encodedData = bitstring + encodedData;
   
   // determine required number of bits for this QR code
@@ -3841,7 +3926,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
       direction = 'down';
       lastMove = 0;
       //console.log('switching direction to down');
-    }else if (direction === 'down' && currY === height){
+    }else if(direction === 'down' && currY === height){
       currY = height - 1;
       currX -= 2;
       direction = 'up';
@@ -3880,6 +3965,7 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
 
     // we should keep moving on until we find a suitable spot
     while(doNotTouchModules.has(`${currX},${currY}`)){
+      //console.warn('hit a do not touch module!');
       //console.error(`skipping (${currX},${currY}) because reserved module`);
       advance();
     }
@@ -3899,7 +3985,7 @@ function test(){
   
   // assumptions: level M for error correction, byte mode only
   const mode = "0100";
-  console.log(`mode: ${binaryToInt(mode)}`);
+  console.log(`mode: ${binaryToInt(mode)} (${mode})`);
   const errorCorrectionLevel = "M";
   
   const qrVersion = getSmallestQRVersion(input, errorCorrectionLevel);
