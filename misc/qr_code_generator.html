@@ -15,14 +15,19 @@
       margin: 20px auto;
       border: 1px solid #ccc;
     }
+    
+    #maskPatterns {
+      display: flex;
+    }
   </style>
 </head>
 
 <body>
-  <h1> QR code generator (WIP) </h1>
-  <p> hi, nothing to see here yet :) </p>
-  <input type='text' />
-  <button onclick="init()"> generate </button>
+  <h1> QR code generator </h1>
+  <p> thanks very much to Thonky's super helpful <a href='https://www.thonky.com/qr-code-tutorial/introduction'>tutorial</a>! </p>
+  <input id='inputToProcess' type='text' value='hello world!' />
+  <button onclick="generateQRCode()"> generate </button>
+  <div id='maskPatterns'></div>
 </body>
 
 <script>
@@ -2443,10 +2448,10 @@ function padEncodedData(encodedData, totalBitsRequired){
   // add pad bytes if encoded data is still too short (e.g. a lot less than totalBitsRequired)
   const bitsToPad = totalBitsRequired - encodedData.length;
   let padBytesToAdd = bitsToPad / 8;
-  console.log(`pad bytes to add: ${padBytesToAdd}`);
+  //console.log(`pad bytes to add: ${padBytesToAdd}`);
   let count = 0;
   while(padBytesToAdd > 0){
-    console.log(`still too short - now adding 236 and 17 alternating until totalBitsRequired is reached`);
+    //console.log(`still too short - now adding 236 and 17 alternating until totalBitsRequired is reached`);
     if(count % 2 === 0){
       // if count is even
       encodedData += '11101100';
@@ -2469,7 +2474,7 @@ function divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, nu
   
   // add the codewords in from the result of getDataCodewordsFromEncodedString(encodedData) to wordBlocks
   const codewords = getDataCodewordsFromEncodedString(encodedData);
-  console.log(codewords);
+  //console.log(codewords);
   let codewordIndex = 0;
   
   // do group 1
@@ -2610,21 +2615,18 @@ function createGeneratorPolynomial(numErrorCorrectionCodewordsPerBlock){
 function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, numErrorCodewordsPerBlock){
   // reverse generator polynomial because the leading term is actually at the end >_<
   genPoly.reverse();
-  
-  //console.log(JSON.stringify(msgPoly));
-  //console.log(JSON.stringify(genPoly));
 
   const errorCorrectionCodewords = [];
   
   let iteration = 0;
   let numIterations = msgPoly.length;
-  console.log(`need to divide ${numIterations} times for EC codewords`);
+  //console.log(`need to divide ${numIterations} times for EC codewords`);
   let xorResult = JSON.parse(JSON.stringify(msgPoly));
   //console.log(xorResult);
   //console.log(JSON.parse(JSON.stringify(genPoly)));
   
   while(iteration < numIterations){
-    console.log(`-------------- iteration ${iteration} ------------------`);
+    //console.log(`-------------- iteration ${iteration} ------------------`);
     // This is where we can loop I think. 
     // the number of steps in the division must equal the number of terms in the message polynomial.
     // make a copy of the original generator polynomial for each iteration but adjust it accordingly since each iteration we chop off the leading term
@@ -2634,12 +2636,12 @@ function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, nu
       genPolyCopy.forEach(t => t.x -= iteration);
     }
     
-    console.log(JSON.stringify(genPolyCopy));
-    console.log(JSON.stringify(xorResult));
+    //console.log(JSON.stringify(genPolyCopy));
+    //console.log(JSON.stringify(xorResult));
 
     // multiply generator polynomial by lead term of message polynomial
     const leadMsgPolyTerm = xorResult[0];
-    console.log(`lead msg poly term: ${JSON.stringify(leadMsgPolyTerm)}`);
+    //console.log(`lead msg poly term: ${JSON.stringify(leadMsgPolyTerm)}`);
     
     // convert coeff of lead term to alpha exponent
     const leadTermAlpha = findAlphaOfInteger(leadMsgPolyTerm.c);
@@ -2715,7 +2717,6 @@ function generateErrorCorrectionCodewords(wordBlocks, numErrorCodewordsPerBlock)
       // first generate message polynomial for the block using codewords in encodedData
       const blockCodewords = wordBlocks[group][block];
       const msgPolynomial = getMessagePolynomial(blockCodewords);
-      console.log(msgPolynomial.map(x => x.c));
       
       // generate the generator polynomial. we need to create a new one for each block because we manipulate it
       // can verify with: https://www.thonky.com/qr-code-tutorial/generator-polynomial-tool?degree=22
@@ -2823,11 +2824,11 @@ function interleaveDataAndErrorCodewords(dataWordBlocks, errorWordBlocks, qrVers
   }
   //console.log(`num interleaved error codewords: ${interleavedErrorCodewords.length}`);
   //console.log(interleavedDataCodewords);
-  console.log(interleavedErrorCodewords);
+  //console.log(interleavedErrorCodewords);
   
   // put interleaved error correction codewords after the data codewords
   let result = interleavedDataCodewords.join("") + interleavedErrorCodewords.join("");
-  console.log(`data and error codewords interleaved: ${result}`);
+  //console.log(`data and error codewords interleaved: ${result}`);
   
   // add remainder bits depending on QR version
   const remainingBits = qrVersionRequiredRemainderBitsMap[qrVersion];
@@ -3173,7 +3174,7 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
   // turn any blue modules to white
   correctReservedAreaColor(newCanvasCtx, width, height);
   
-  document.body.appendChild(newCanvas);
+  document.getElementById('maskPatterns').appendChild(newCanvas);
   
   // now we have to evaluate the canvas ;_;
   
@@ -3331,155 +3332,6 @@ function applyDataMaskPatternAndQuietZone(ctx, formula, width, height, doNotTouc
   newCanvas2.style.height = `${3 * newCanvas2.height}px`;
   newCanvas2.style.imageRendering = 'pixelated';
   document.body.appendChild(newCanvas2);
-}
-
-function init(){
-  console.log('--------------- init --------------');
-  const inputStr = "%hi%"; //"wow?&amp;hello*!"; //"http://www.google.com"; // TODO: pass in input from textbox
-  console.log(`input str: ${inputStr}`);
-  
-  let bitstring = '';
-  
-  // create the canvas to draw the QR code in
-  const canvas = document.createElement('canvas'); 
-  const ctx = canvas.getContext('2d');
-  
-  // set bg to black
-  ctx.fillStyle = 'rgb(0,0,0)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
-  const mode = '0100'; // mode indicator (4 bits)
-  bitstring += mode;
-  
-  // let's default to level M for error correction (L - 7% data recovery, M - 15%, Q - 25%, H - 30%)
-  // the higher the error correction level, the larger the QR code will be (b/c it takes more bytes)
-  const errorCorrectionLevel = 'M';
-  
-  // figure out QR code version/size
-  const qrVersion = getSmallestQRVersion(inputStr, errorCorrectionLevel);
-  console.log(`qr version: ${qrVersion}`);
-  
-  // readjust canvas
-  adjustCanvasBasedOnQRVersion(qrVersion, canvas);
-  
-  // get character count indicator
-  const charCountIndicator = getCharacterCountIndicator(inputStr, qrVersion);
-  console.log(`char count indicator: ${charCountIndicator}`);
-  bitstring += charCountIndicator;
-  
-  // now encode the data into binary
-  let encodedData = getInputStrAsBinaryStr(inputStr);
-  console.log(`input str as binary: ${encodedData}`);
-  
-  // put encodedData after charCountIndicator
-  console.log(`data so far: ${mode}, ${charCountIndicator}, ${encodedData}`);
-  encodedData = bitstring + encodedData;
-  
-  // determine required number of bits for this QR code
-  const errorCorrection = errorCorrectionTable[`${qrVersion}M`];
-  const totalDataCodewords = errorCorrection.totalDataCodewords;
-  const totalBitsRequired = totalDataCodewords * 8;
-  console.log(`total bits required: ${totalBitsRequired}`);
-  
-  encodedData = padEncodedData(encodedData, totalBitsRequired);
-  console.log(`encoded data length so far: ${encodedData.length}`);
-  
-  // if QR code version > 2, we need to break up the data codewords into smaller blocks
-  const numGroup1Blocks = errorCorrection.numBlocksGroup1;
-  const numCodewordsPerGroup1Block = errorCorrection.numDataCodewordsPerGroup1Block;
-  const numGroup2Blocks = errorCorrection.numBlocksGroup2;
-  const numCodewordsPerGroup2Block = errorCorrection.numDataCodewordsPerGroup2Block;
-  const numErrorCorrectionCodewordsPerBlock = errorCorrection.ecCodewordsPerBlock;
-  
-  //  break up the data codewords into their respective groups and blocks
-  const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block);
-  console.log(wordBlocks);
-  
-  // generate the error correction codewords for each block
-  const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
-  console.log(errorCorrectionCodewords);
-  
-  // structure the final message
-  const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
-  
-  // then draw the data
-  
-  // use a set to keep track of modules in the QR matrix we shouldn't touch
-  const doNotTouchModules = new Set();
-  
-  // set up the canvas with the right dimensions depending on QR version. use formula: (((qrVersion-1)*4)+21)
-  drawFinderPatternsAndSeparators(ctx, canvas.width, canvas.height, doNotTouchModules);
-  
-  // add the alignment patterns
-  addAlignmentPatterns(qrVersion, ctx, doNotTouchModules);
-  
-  // add the timing patterns
-  addTimingPatterns(qrVersion, ctx, doNotTouchModules);
-  
-  // add the dark module and reserved areas
-  addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules);
-  
-  // add the data (finally)
-  /* check doNotTouch areas
-  console.log(doNotTouchModules);
-  const coords = [...doNotTouchModules];
-  coords.forEach(c => {
-    const x = parseInt(c.split(',')[0]);
-    const y = parseInt(c.split(',')[1]);
-    ctx.fillStyle = 'rgb(255,0,0)';
-    ctx.fillRect(x, y, 1, 1);
-  });*/
-  
-  addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
-  
-  // data masking (get mask pattern with lowest penalty score)
-  const maskPatternScores = maskPatternFormulae.map(formula => {
-    return getDataMaskPatternResult(ctx, formula, doNotTouchModules, canvas.width, canvas.height);
-  })
-  console.log(maskPatternScores);
-  
-  let lowestScoringMaskPatternIdx = 0;
-  maskPatternScores.forEach((s, idx) => {
-    if(s < maskPatternScores[lowestScoringMaskPatternIdx]){ 
-      lowestScoringMaskPatternIdx = idx;
-    }
-  });
-  console.log(`lowest score mask pattern index: ${lowestScoringMaskPatternIdx}`);
-  
-  // add version and data format info
-  const errorCorrectionLevelBitString = errorCorrectionLevelBitsMap[errorCorrectionLevel];
-  const maskPatternBitString = maskPatternBitsMap[lowestScoringMaskPatternIdx];
-  const fiveBitFormatString = errorCorrectionLevelBitString + maskPatternBitString;
-  console.log(`five bit format string: ${fiveBitFormatString}`);
-  
-  // generate error correction bits for format string
-  const errCorrectionBits = generateErrorCorrectionBitsFormatString(fiveBitFormatString);
-  console.log(`error correction bits: ${errCorrectionBits}`);
-  
-  const maskString = '101010000010010'; // https://www.thonky.com/qr-code-tutorial/format-version-information
-  const finalFormatString = xorBinStrings(fiveBitFormatString + errCorrectionBits, maskString);
-  console.log(`final format string: ${finalFormatString}`);
-  
-  // put the finalFormatString in the QR code
-  putFormatStringInQrCode(ctx, canvas.width, canvas.height, finalFormatString);
-  
-  // generate error correction bits for version string if needed
-  if(qrVersion >= 7){
-    // convert qr version to binary string of length 6
-    const versionStr = qrVersionToBinStr(qrVersion);
-    const finalVersionString = versionStr + generateErrorCorrectionBitsVersionString(versionStr);
-    console.log(`version final string: ${finalVersionString}`);
-    
-    // put the final version string in the QR code
-    putVersionInfoInQrCode(ctx, canvas.width, canvas.height, finalVersionString);
-  }
-  
-  canvas.style.border = '1px solid #ccc';
-  document.body.appendChild(canvas);
-  
-  // output final matrix
-  applyDataMaskPatternAndQuietZone(ctx, maskPatternFormulae[lowestScoringMaskPatternIdx], canvas.width, canvas.height, doNotTouchModules);
 }
 
 // TODO: needs tests
@@ -3977,9 +3829,161 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   console.log('done');
 }
 
+function generateQRCode(){
+  const inputStr = document.getElementById('inputToProcess').value;
+  console.log(`input str: ${inputStr}`);
+  
+  if(inputStr === ''){
+    console.log('no input provided. nothing to do.');
+    return;
+  }
+  
+  let bitstring = '';
+  
+  // create the canvas to draw the QR code in
+  const canvas = document.createElement('canvas'); 
+  const ctx = canvas.getContext('2d');
+  
+  // set bg to black
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
+  const mode = '0100'; // mode indicator (4 bits)
+  bitstring += mode;
+  
+  // let's default to level M for error correction (L - 7% data recovery, M - 15%, Q - 25%, H - 30%)
+  // the higher the error correction level, the larger the QR code will be (b/c it takes more bytes)
+  const errorCorrectionLevel = 'M';
+  
+  // figure out QR code version/size
+  const qrVersion = getSmallestQRVersion(inputStr, errorCorrectionLevel);
+  console.log(`qr version: ${qrVersion}`);
+  
+  // readjust canvas
+  adjustCanvasBasedOnQRVersion(qrVersion, canvas);
+  
+  // get character count indicator
+  const charCountIndicator = getCharacterCountIndicator(inputStr, qrVersion);
+  console.log(`char count indicator: ${charCountIndicator}`);
+  bitstring += charCountIndicator;
+  
+  // now encode the data into binary
+  let encodedData = getInputStrAsBinaryStr(inputStr);
+  console.log(`input str as binary: ${encodedData}`);
+  
+  // put encodedData after charCountIndicator
+  console.log(`data so far: ${mode}, ${charCountIndicator}, ${encodedData}`);
+  encodedData = bitstring + encodedData;
+  
+  // determine required number of bits for this QR code
+  const errorCorrection = errorCorrectionTable[`${qrVersion}M`];
+  const totalDataCodewords = errorCorrection.totalDataCodewords;
+  const totalBitsRequired = totalDataCodewords * 8;
+  console.log(`total bits required: ${totalBitsRequired}`);
+  
+  encodedData = padEncodedData(encodedData, totalBitsRequired);
+  console.log(`encoded data length so far: ${encodedData.length}`);
+  
+  // if QR code version > 2, we need to break up the data codewords into smaller blocks
+  const numGroup1Blocks = errorCorrection.numBlocksGroup1;
+  const numCodewordsPerGroup1Block = errorCorrection.numDataCodewordsPerGroup1Block;
+  const numGroup2Blocks = errorCorrection.numBlocksGroup2;
+  const numCodewordsPerGroup2Block = errorCorrection.numDataCodewordsPerGroup2Block;
+  const numErrorCorrectionCodewordsPerBlock = errorCorrection.ecCodewordsPerBlock;
+  
+  //  break up the data codewords into their respective groups and blocks
+  const wordBlocks = divideDataCodewordsIntoGroupsAndBlocks(encodedData, numGroup1Blocks, numCodewordsPerGroup1Block, numGroup2Blocks, numCodewordsPerGroup2Block);
+  console.log(wordBlocks);
+  
+  // generate the error correction codewords for each block
+  const errorCorrectionCodewords = generateErrorCorrectionCodewords(wordBlocks, numErrorCorrectionCodewordsPerBlock);
+  console.log(errorCorrectionCodewords);
+  
+  // structure the final message
+  const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
+  
+  // then draw the data
+  
+  // use a set to keep track of modules in the QR matrix we shouldn't touch
+  const doNotTouchModules = new Set();
+  
+  // set up the canvas with the right dimensions depending on QR version. use formula: (((qrVersion-1)*4)+21)
+  drawFinderPatternsAndSeparators(ctx, canvas.width, canvas.height, doNotTouchModules);
+  
+  // add the alignment patterns
+  addAlignmentPatterns(qrVersion, ctx, doNotTouchModules);
+  
+  // add the timing patterns
+  addTimingPatterns(qrVersion, ctx, doNotTouchModules);
+  
+  // add the dark module and reserved areas
+  addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules);
+  
+  // add the data (finally)
+  /* check doNotTouch areas
+  console.log(doNotTouchModules);
+  const coords = [...doNotTouchModules];
+  coords.forEach(c => {
+    const x = parseInt(c.split(',')[0]);
+    const y = parseInt(c.split(',')[1]);
+    ctx.fillStyle = 'rgb(255,0,0)';
+    ctx.fillRect(x, y, 1, 1);
+  });*/
+  
+  addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
+  
+  // data masking (get mask pattern with lowest penalty score)
+  const maskPatternScores = maskPatternFormulae.map(formula => {
+    return getDataMaskPatternResult(ctx, formula, doNotTouchModules, canvas.width, canvas.height);
+  })
+  console.log(maskPatternScores);
+  
+  let lowestScoringMaskPatternIdx = 0;
+  maskPatternScores.forEach((s, idx) => {
+    if(s < maskPatternScores[lowestScoringMaskPatternIdx]){ 
+      lowestScoringMaskPatternIdx = idx;
+    }
+  });
+  console.log(`lowest score mask pattern index: ${lowestScoringMaskPatternIdx}`);
+  
+  // add version and data format info
+  const errorCorrectionLevelBitString = errorCorrectionLevelBitsMap[errorCorrectionLevel];
+  const maskPatternBitString = maskPatternBitsMap[lowestScoringMaskPatternIdx];
+  const fiveBitFormatString = errorCorrectionLevelBitString + maskPatternBitString;
+  console.log(`five bit format string: ${fiveBitFormatString}`);
+  
+  // generate error correction bits for format string
+  const errCorrectionBits = generateErrorCorrectionBitsFormatString(fiveBitFormatString);
+  console.log(`error correction bits: ${errCorrectionBits}`);
+  
+  const maskString = '101010000010010'; // https://www.thonky.com/qr-code-tutorial/format-version-information
+  const finalFormatString = xorBinStrings(fiveBitFormatString + errCorrectionBits, maskString);
+  console.log(`final format string: ${finalFormatString}`);
+  
+  // put the finalFormatString in the QR code
+  putFormatStringInQrCode(ctx, canvas.width, canvas.height, finalFormatString);
+  
+  // generate error correction bits for version string if needed
+  if(qrVersion >= 7){
+    // convert qr version to binary string of length 6
+    const versionStr = qrVersionToBinStr(qrVersion);
+    const finalVersionString = versionStr + generateErrorCorrectionBitsVersionString(versionStr);
+    console.log(`version final string: ${finalVersionString}`);
+    
+    // put the final version string in the QR code
+    putVersionInfoInQrCode(ctx, canvas.width, canvas.height, finalVersionString);
+  }
+  
+  canvas.style.border = '1px solid #ccc';
+  
+  // output final matrix
+  applyDataMaskPatternAndQuietZone(ctx, maskPatternFormulae[lowestScoringMaskPatternIdx], canvas.width, canvas.height, doNotTouchModules);
+}
 
 function test(){
   // TODO
+  console.log('---------- test -----------');
   const input = "Hello world!"; //"http://www.google.com";
   console.log(`input: ${input}`);
   
@@ -4039,6 +4043,7 @@ function test(){
   
   const data = interleaveDataAndErrorCodewords(wordBlocks, errorCorrectionCodewords, qrVersion);
   console.log(`interleaved data + error codewords: ${data}, length: ${data.length}`);
+  console.log('----------- end test -----------');
 }
 
 test();
