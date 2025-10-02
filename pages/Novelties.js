@@ -22,6 +22,7 @@ const Novelties = {
             <br />
             <h3> random small stuff </h3>
             <p><a href='misc/basicPdfEditor.html'> basic pdf editor (for merging, deleting and moving pages) </a></p>
+            <p><a href='misc/qr_code_generator.html'> QR code generator </a></p>
             <p><a href='misc/fireworkCursorExperiment.html'> canvas fireworks </a></p>
             <p><a href='misc/raycasting.html'> raycasting demo </a></p>
             <p><a href='misc/karaokeget.html'> karaoke-get </a></p>
