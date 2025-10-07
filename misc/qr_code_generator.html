@@ -3838,6 +3838,12 @@ function generateQRCode(){
     return;
   }
   
+  // clear any current canvases
+  console.log('clearing existing canvases...');
+  Array.from(document.querySelectorAll('canvas')).forEach(c => {
+    c.parentNode.removeChild(c);
+  });
+  
   let bitstring = '';
   
   // create the canvas to draw the QR code in
