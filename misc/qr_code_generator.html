@@ -4,7 +4,7 @@
 
 <head>
   <title> QR code generator (WIP) </title>
-  
+  <meta charset="UTF-8">
   <style>
     body {
       text-align: center;
@@ -25,12 +25,17 @@
 <body>
   <h1> QR code generator </h1>
   <p> thanks very much to Thonky's super helpful <a href='https://www.thonky.com/qr-code-tutorial/introduction'>tutorial</a>! </p>
+  <p> as well as Nayuki's <a href='https://www.nayuki.io/page/creating-a-qr-code-step-by-step'> step-by-step guide </a>! </p>
   <input id='inputToProcess' type='text' value='hello world!' />
   <button onclick="generateQRCode()"> generate </button>
   <div id='maskPatterns'></div>
 </body>
 
 <script>
+// TODO:
+// input length check to see if there's enough space in the QR matrix to support the input
+// download code as png image
+
 // https://www.thonky.com/qr-code-tutorial/introduction
 // https://www.qrcode.com/en/about/version.html
 
@@ -3355,7 +3360,10 @@ function getSmallestQRVersion(inputString, errorCorrectionLevel){
 }
 
 function getCharacterCountIndicator(inputString, qrVersion){
-  const numChars = inputString.length;
+  // note! since an input could contain Chinese characters, for example, which could be at least 3 bytes per character
+  // instead of 1 byte like for alphanumeric characters, don't depend on the length of the input string but rather the number of bytes
+  // of the string
+  const numChars = new TextEncoder().encode(inputString).length;
   
   // convert numChars to binary string
   let numCharsBinStr = intToBinary(numChars);
@@ -3856,6 +3864,15 @@ function generateQRCode(){
   
   // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
   const mode = '0100'; // mode indicator (4 bits)
+  
+  // add ECI segment for supporting Chinese characters
+  //https://www.reddit.com/r/programming/comments/9th8a7/creating_a_qr_code_step_by_step/
+  //https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/qrcode/encoder/Encoder.java - helpful?? looks like ECI segment comes first, then mode and everything else?
+  //https://stackoverflow.com/questions/51516612/choosing-a-character-encoding-for-qr-codes
+  //https://github.com/bwipp/postscriptbarcode/discussions/267
+  bitstring += '0111'; // ECI mode
+  bitstring += '00011010';
+  
   bitstring += mode;
   
   // let's default to level M for error correction (L - 7% data recovery, M - 15%, Q - 25%, H - 30%)
