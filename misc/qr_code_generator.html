@@ -5,6 +5,7 @@
 <head>
   <title> QR code generator (WIP) </title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       text-align: center;
@@ -16,8 +17,18 @@
       border: 1px solid #ccc;
     }
     
+    /*
+    https://stackoverflow.com/questions/73560947/justify-center-flexbox-items-without-cutting-off-overflow
+    */
+    #container {
+      display: flex;
+      justify-content: center;
+    }
+    
     #maskPatterns {
       display: flex;
+      gap: 4px;
+      overflow: auto;
     }
   </style>
 </head>
@@ -27,14 +38,16 @@
   <p> thanks very much to Thonky's super helpful <a href='https://www.thonky.com/qr-code-tutorial/introduction'>tutorial</a>! </p>
   <p> as well as Nayuki's <a href='https://www.nayuki.io/page/creating-a-qr-code-step-by-step'> step-by-step guide </a>! </p>
   <input id='inputToProcess' type='text' value='hello world!' />
-  <button onclick="generateQRCode()"> generate </button>
-  <div id='maskPatterns'></div>
+  <button onclick="qrCode()"> generate </button>
+  <p id='progressMsg'></p>
+  <div id='container'>
+    <div id='maskPatterns'></div>
+  </div>  
 </body>
 
 <script>
 // TODO:
 // input length check to see if there's enough space in the QR matrix to support the input
-// download code as png image
 
 // https://www.thonky.com/qr-code-tutorial/introduction
 // https://www.qrcode.com/en/about/version.html
@@ -3148,7 +3161,7 @@ function penaltyRule4(ctx, width, height){
   return result;
 }
 
-function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height){  
+function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height, formulaNum){  
   // make a copy context to operate on so we don't mess with the original
   const newCanvas = document.createElement('canvas');
   newCanvas.width = width;
@@ -3179,7 +3192,16 @@ function getDataMaskPatternResult(ctx, formula, doNotTouchModules, width, height
   // turn any blue modules to white
   correctReservedAreaColor(newCanvasCtx, width, height);
   
-  document.getElementById('maskPatterns').appendChild(newCanvas);
+  const newCanvasDiv = document.createElement('div');
+  newCanvasDiv.style.padding = '2px';
+  newCanvasDiv.style.textAlign = 'center';
+  newCanvasDiv.style.border = '1px solid #ccc';
+  const text = document.createElement('p');
+  text.textContent = `mask pattern ${formulaNum}`;
+  newCanvasDiv.appendChild(newCanvas);
+  newCanvasDiv.appendChild(text);
+  
+  document.getElementById('maskPatterns').appendChild(newCanvasDiv);
   
   // now we have to evaluate the canvas ;_;
   
@@ -3337,6 +3359,19 @@ function applyDataMaskPatternAndQuietZone(ctx, formula, width, height, doNotTouc
   newCanvas2.style.height = `${3 * newCanvas2.height}px`;
   newCanvas2.style.imageRendering = 'pixelated';
   document.body.appendChild(newCanvas2);
+  
+  // also add a button to copy QR code as image
+  // https://stackoverflow.com/questions/27863617/is-it-possible-to-copy-a-canvas-image-to-the-clipboard
+  const newBtn = document.createElement('button');
+  newBtn.id = 'copyQRcode';
+  newBtn.textContent = 'copy QR code';
+  newBtn.addEventListener('click', () => {
+    newCanvas2.toBlob((blob) => {
+      const b = new ClipboardItem({'image/png': blob});
+      navigator.clipboard.write([b]);
+    });
+  });
+  document.body.appendChild(newBtn);
 }
 
 // TODO: needs tests
@@ -3837,20 +3872,34 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   console.log('done');
 }
 
+function qrCode(){
+  document.getElementById('progressMsg').textContent = 'generating QR code...';
+  setTimeout(() => generateQRCode(), 10);
+}
+
 function generateQRCode(){
   const inputStr = document.getElementById('inputToProcess').value;
   console.log(`input str: ${inputStr}`);
   
   if(inputStr === ''){
     console.log('no input provided. nothing to do.');
+    document.getElementById('progressMsg').textContent = '';
     return;
   }
   
   // clear any current canvases
   console.log('clearing existing canvases...');
+  Array.from(document.getElementById('maskPatterns').children).forEach(c => {
+    c.parentNode.removeChild(c);
+  });
+  
   Array.from(document.querySelectorAll('canvas')).forEach(c => {
     c.parentNode.removeChild(c);
   });
+  
+  // clear copy button
+  const copyBtn = document.getElementById('copyQRcode');
+  if(copyBtn) copyBtn.parentNode.removeChild(copyBtn);
   
   let bitstring = '';
   
@@ -3957,8 +4006,8 @@ function generateQRCode(){
   addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
   
   // data masking (get mask pattern with lowest penalty score)
-  const maskPatternScores = maskPatternFormulae.map(formula => {
-    return getDataMaskPatternResult(ctx, formula, doNotTouchModules, canvas.width, canvas.height);
+  const maskPatternScores = maskPatternFormulae.map((formula, idx) => {
+    return getDataMaskPatternResult(ctx, formula, doNotTouchModules, canvas.width, canvas.height, idx+1);
   })
   console.log(maskPatternScores);
   
@@ -4002,6 +4051,11 @@ function generateQRCode(){
   
   // output final matrix
   applyDataMaskPatternAndQuietZone(ctx, maskPatternFormulae[lowestScoringMaskPatternIdx], canvas.width, canvas.height, doNotTouchModules);
+
+  setTimeout(() => {
+    document.getElementById('progressMsg').textContent = 'done!';
+    setTimeout(() => document.getElementById('progressMsg').textContent = '', 1000);
+  }, 10);
 }
 
 function test(){
