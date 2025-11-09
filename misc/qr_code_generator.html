@@ -2962,6 +2962,7 @@ function generateErrorCorrectionBitsVersionString(versionStr){
 // https://www.thonky.com/qr-code-tutorial/mask-patterns
 // x = col, y = row
 const maskPatternFormulae = [
+  //(y, x) => false,  // if we leave the data as is and don't flip any bits
   (y, x) => (x + y) % 2 === 0,
   (y, x) => y % 2 === 0,
   (y, x) => x % 3 === 0,
@@ -3767,7 +3768,7 @@ function addDarkModuleAndReservedAreas(qrVersion, ctx, doNotTouchModules){
   }
 }
 
-function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
+function addData(width, height, data, qrVersion, ctx, doNotTouchModules, dataIndexToStopAt=null){
   console.log(`width:${width}, height:${height}`);
   console.log(doNotTouchModules);
   console.log(`data.length: ${data.length}`);
@@ -3831,23 +3832,9 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
   }
   
   //const seen = new Set();
+  const stopAt = dataIndexToStopAt || data.length;
   
-  for(let i = 0; i < data.length; i++){
-    /*
-    const coord = `${currX},${currY}`;
-    if(seen.has(coord)){
-      console.error(`(${coord}) has been seen already!`);
-    }else{
-      seen.add(coord);
-    }*/
-    
-    /*
-    if(currY >= height || currY < 0){
-      console.error('currY is out of bounds!');
-    }else if(currX >= width || currX < 0){
-      console.error('currX is out of bounds!');
-    }*/
-    
+  for(let i = 0; i < stopAt; i++){
     if(data[i] === '0'){
       ctx.fillStyle = 'rgb(255,255,255)';
     }else{
@@ -3868,8 +3855,54 @@ function addData(width, height, data, qrVersion, ctx, doNotTouchModules){
     //console.log(`next module location: (${currX},${currY})`);
   }
   
-  //console.log(seen.size);
   console.log('done');
+}
+
+function addDataStepper(width, height, data, qrVersion, beforeAddingDataImgData, doNotTouchModules){
+  (function(){
+    // make a closure so we can have this variable stick around that will be used by the button click event functions (instead of having a global var)
+    let dataIndexCounterForStepper = 0;
+    const newCanvas = document.createElement('canvas');
+    newCanvas.style.width = '200px';
+    newCanvas.style.display = 'inline-block';
+    newCanvas.width = width;
+    newCanvas.height = height;
+    
+    const newCtx = newCanvas.getContext('2d');
+    newCtx.putImageData(beforeAddingDataImgData, 0, 0);
+    
+    newCanvas.style.border = 'solid 1px #000';
+    
+    const stepperDiv = document.createElement('div');
+    stepperDiv.id = 'stepper';
+    stepperDiv.style.border = 'solid 2px #ccc';
+    stepperDiv.style.margin = '20px auto';
+    
+    const stepForwardBtn = document.createElement('button');
+    stepForwardBtn.style.display = 'inline-block';
+    stepForwardBtn.textContent = '>>';
+    stepForwardBtn.addEventListener('click', () => {
+      newCtx.putImageData(beforeAddingDataImgData, 0, 0); // reset image
+      dataIndexCounterForStepper++;
+      if(dataIndexCounterForStepper > data.length) dataIndexCounterForStepper = 0;
+      addData(width, height, data, qrVersion, newCtx, doNotTouchModules, dataIndexCounterForStepper);
+    });
+    
+    const stepBackwardsBtn = document.createElement('button');
+    stepBackwardsBtn.style.display = 'inline-block';
+    stepBackwardsBtn.textContent = '<<';
+    stepBackwardsBtn.addEventListener('click', () => {
+      newCtx.putImageData(beforeAddingDataImgData, 0, 0); // reset image
+      dataIndexCounterForStepper--;
+      if(dataIndexCounterForStepper < 0) dataIndexCounterForStepper = data.length;
+      addData(width, height, data, qrVersion, newCtx, doNotTouchModules, dataIndexCounterForStepper);
+    });
+    
+    stepperDiv.appendChild(stepBackwardsBtn);
+    stepperDiv.appendChild(newCanvas);
+    stepperDiv.appendChild(stepForwardBtn);
+    document.body.appendChild(stepperDiv);
+  })();
 }
 
 function qrCode(){
@@ -3896,6 +3929,11 @@ function generateQRCode(){
   Array.from(document.querySelectorAll('canvas')).forEach(c => {
     c.parentNode.removeChild(c);
   });
+  
+  const stepper = document.getElementById('stepper');
+  if(stepper){
+    stepper.parentNode.removeChild(stepper);
+  }
   
   // clear copy button
   const copyBtn = document.getElementById('copyQRcode');
@@ -4003,6 +4041,9 @@ function generateQRCode(){
     ctx.fillRect(x, y, 1, 1);
   });*/
   
+  // capture ctx just before adding data so we can use it to explore how the data is added
+  const beforeAddingDataImgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  
   addData(canvas.width, canvas.height, data, qrVersion, ctx, doNotTouchModules);
   
   // data masking (get mask pattern with lowest penalty score)
@@ -4051,6 +4092,9 @@ function generateQRCode(){
   
   // output final matrix
   applyDataMaskPatternAndQuietZone(ctx, maskPatternFormulae[lowestScoringMaskPatternIdx], canvas.width, canvas.height, doNotTouchModules);
+
+  // add stepper
+  addDataStepper(canvas.width, canvas.height, data, qrVersion, beforeAddingDataImgData, doNotTouchModules);
 
   setTimeout(() => {
     document.getElementById('progressMsg').textContent = 'done!';
