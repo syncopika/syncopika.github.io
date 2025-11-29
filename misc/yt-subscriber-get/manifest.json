@@ -1,0 +1,24 @@
+{
+	"name": "yt-subscriber-get",
+	"version": "1.0",
+	"manifest_version": 3,
+	"minimum_chrome_version": "10.0",
+	"icons": {
+		"128": "icon128.png"
+	},
+	"action": {
+		"default_icon": "icon128.png",
+    "default_popup": "popup.html"
+	},
+	"permissions": [
+		"scripting",
+    "activeTab"
+	],
+ "content_scripts": [
+   {
+     "matches": ["https://studio.youtube.com/channel/*"],
+     "js": ["content.js"]
+   }
+ ],
+	"description": "get list of subscribers from YouTube"
+}
