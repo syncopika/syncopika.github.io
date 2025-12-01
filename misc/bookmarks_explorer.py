@@ -5,6 +5,7 @@ TODO:
 - and compare over time as well? see if my interests change over time?
 """
 from html.parser import HTMLParser
+from urllib.parse import urlparse
 
 class HtmlParser(HTMLParser):
     bookmark_count = 0
@@ -18,7 +19,7 @@ class HtmlParser(HTMLParser):
                 timestamp = attrs[1][1]
                 self.bookmarks[self.bookmark_count] = {
                     'url': url,
-                    'timestamp': timestamp,
+                    'timestamp': timestamp, #TODO: translate this timestamp into an understandable date format
                 }
         
     def handle_endtag(self, tag):
@@ -36,13 +37,26 @@ parser = HtmlParser()
 with open(bookmark_html_file_path, 'r') as bookmark_file:
     content = bookmark_file.read()
     parser.feed(content)
-    #print(parser.bookmarks)
     
+    unique_domains = {}
     youtube_count = 0
+    
     for key in parser.bookmarks:
-        # TODO: parse urls to find most common domains besides YouTube lol
-        if 'YouTube' in parser.bookmarks[key]['data']:
+        bookmark = parser.bookmarks[key]
+        
+        o = urlparse(bookmark['url'])
+        if o.hostname in unique_domains:
+            unique_domains[o.hostname].append(bookmark['url'])
+        else:
+            unique_domains[o.hostname] = [bookmark['url']]
+        
+        if 'YouTube' in bookmark['data']:
             youtube_count += 1
+    
+    # output
+    # TODO: put all the output in an html file for nicer presentation?
+    for k, v in unique_domains.items():
+        print(f"{k}, count: {len(v)}")
     
     print(f"Found {youtube_count} YouTube bookmarks.")
     print(f"Found {parser.bookmark_count} bookmarks.")

@@ -21,7 +21,8 @@ spotLight.shadow.mapSize.width = 1024;
 spotLight.shadow.mapSize.height = 1024;
 scene.add(spotLight);
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioCtx = new AudioContext();
+
 const analyser = audioCtx.createAnalyser();
 analyser.fftSize = 2048;
 const bufferLen = analyser.frequencyBinCount;
@@ -32,10 +33,21 @@ let audioFileUrl;
 let animationFrameReqId;
 let isPlaying = false;
 
+// create and attach gain node (we can use a single gain node since there should only 1 note playing at a time)
+const gainNode = new GainNode(audioCtx);
+gainNode.connect(audioCtx.destination);
+
+const noteBufferMap = {};
+let readyToPlay = false;
+
+// try to find beats?
 let lastLargestFreq = 0;
 const freqThreshold = 1.4; // how much of a delta needed between largest freq of now compared to the last one to consider the curr time a new beat
 
-// try to find beats?
+// gain node for making beat audible (helpful for debugging?)
+const beatGainNode = audioCtx.createGain();
+beatGainNode.connect(audioCtx.destination);
+
 function determineBeat(freqDataBuffer){
   let currLargestFreq = 0;
   freqDataBuffer.forEach(val => currLargestFreq = Math.max(currLargestFreq, Math.abs(val)));
@@ -56,30 +68,25 @@ function determineBeat(freqDataBuffer){
     const newNoteObj = createNoteObject('red');
     scene.add(newNoteObj);
     newNoteObj.position.set(xPos, yPos, zPos);
-    currentNoteObjects.push(newNoteObj);    
+    currentNoteObjects.push(newNoteObj);  
+
+    if(beatOscNode){
+      beatOscNode.frequency.setValueAtTime(600, audioCtx.currentTime); // set value to 0 to "turn off" beat oscillator
+    }
+  }else{
+    if(beatOscNode){
+      beatOscNode.frequency.setValueAtTime(0, audioCtx.currentTime);
+    }    
   }
   
   lastLargestFreq = currLargestFreq;
 }
-
-
-const audioContext = new AudioContext();
-audioContext.suspend();
-
-// create and attach gain node (we can use a single gain node since there should only 1 note playing at a time)
-const gainNode = new GainNode(audioContext);
-gainNode.connect(audioContext.destination);
-
-const noteBufferMap = {};
-let readyToPlay = false;
 
 let currentNoteObjects = [];
 function createNoteObject(color){
   const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
   const cubeMaterial = new THREE.MeshBasicMaterial({color: (color || 0x0000ff)});
   const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-  //scene.add(cube);
-  //cube.position.set(xPos, yPos, zPos);
   return cube;
 }
 
@@ -113,6 +120,7 @@ const newGainNode = audioCtx.createGain();
 newGainNode.connect(audioCtx.destination);
 
 let newOscNode;
+let beatOscNode;
 
 function playAudio(){
   if(!isPlaying && audioSource){
@@ -123,6 +131,7 @@ function playAudio(){
     if(playAutocorrelatedPitch && newGainNode){
       console.log('turning on gain node');
       newGainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      beatGainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
       
       // create a new osc node
       newOscNode = audioCtx.createOscillator();
@@ -130,6 +139,13 @@ function playAudio(){
       newOscNode.connect(newGainNode);
       newOscNode.frequency.setValueAtTime(0, audioCtx.currentTime);
       newOscNode.start();
+      
+      // create another osc node for beats
+      beatOscNode = audioCtx.createOscillator();
+      beatOscNode.type = "square";
+      beatOscNode.connect(beatGainNode);
+      beatOscNode.frequency.setValueAtTime(0, audioCtx.currentTime);
+      beatOscNode.start();
     }
     
     audioSource.start();
@@ -150,6 +166,10 @@ function stopAudio(){
       newGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
       newOscNode.stop();
       newOscNode = null;
+      
+      beatGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      beatOscNode.stop();
+      beatOscNode = null;
     }
     
     window.cancelAnimationFrame(animationFrameReqId);
