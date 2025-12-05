@@ -2683,7 +2683,7 @@ function doPolynomialDivisionAndGetErrorCorrectionCodewords(msgPoly, genPoly, nu
     genPolyCopy.forEach((term) => {
       if(idx < xorResult.length){
         newXorRes.push({
-          'c': term.alpha ^ xorResult[idx].c, // this is in integer form. do we need to re-convert these back to alpha or no?
+          'c': term.alpha ^ xorResult[idx].c, // this is in integer form.
           'exp': term.x,
         });
         idx++;
@@ -3952,13 +3952,13 @@ function generateQRCode(){
   // let's default to "byte mode" for now (that is, only support strings with characters from ISO-8859-1 character set)
   const mode = '0100'; // mode indicator (4 bits)
   
-  // add ECI segment for supporting Chinese characters
+  // add ECI segment for supporting Chinese characters - as of 12/4/25 this doesn't seem to be necessary anymore! at least when testing with my Pixel 6a (which had a system update this past Sept - maybe related?)
   //https://www.reddit.com/r/programming/comments/9th8a7/creating_a_qr_code_step_by_step/
   //https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/qrcode/encoder/Encoder.java - helpful?? looks like ECI segment comes first, then mode and everything else?
   //https://stackoverflow.com/questions/51516612/choosing-a-character-encoding-for-qr-codes
   //https://github.com/bwipp/postscriptbarcode/discussions/267
-  bitstring += '0111'; // ECI mode
-  bitstring += '00011010';
+  //bitstring += '0111'; // ECI mode
+  //bitstring += '00011010';
   
   bitstring += mode;
   
