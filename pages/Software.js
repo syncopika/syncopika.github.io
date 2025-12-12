@@ -75,7 +75,7 @@ const Software = {
                           class="screenshot">
                     </div>
                     <br>
-                    <p> JavaScript (three.js), Blender </p>
+                    <p> Three.js, Blender </p>
                     <p> This is a collection of small 3d projects with models I made in Blender. For each project I try to implement an idea that could be useful on its own as well as explore 3d graphics/threejs/algorithm-related ideas/concepts.</p>
                     <p> Shown above is my 'airshow' demo. </p>
                     <br>
