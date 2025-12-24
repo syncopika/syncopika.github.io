@@ -1,0 +1,77 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title> speech recognition api demo </title>
+  
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+    }
+  </style>
+</head>
+
+
+<body>
+  <h1> speech recognition demo </h1>
+  <h2 id='speechDetectionStatus'> now accepting audio for recognition... </h2> 
+  <div id='textDisplay'></div>
+</body>
+
+<script>
+  /*
+    idea:
+      - have a grammar to parse parts-of-speech for the transcription we get back so
+        we can determine if the user spoke some level of a comprehensible English sentence?
+        - then if we at least have some elementary grammar to determine some baseline of English ability,
+          we can use that maybe as a guide to facilitate basic English-speaking training in a common setting?
+          e.g. something like ordering at a fast food place lol
+  */
+  
+  // https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition
+  // https://github.com/mdn/dom-examples/blob/main/web-speech-api/speech-color-changer/script.js
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true; //false;
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  
+  recognition.start();
+  
+  recognition.onresult = function(evt){
+    console.log(evt);
+    
+    const textDisplay = document.getElementById('textDisplay');
+    while(textDisplay.firstChild){
+      textDisplay.removeChild(textDisplay.firstChild);
+    }
+    
+    let detectedSpeechSoFar = '';
+    const results = evt.results;
+    for(let result of results){
+      const detectedSpeech = result[0].transcript;
+      const confidence = result[0].confidence;
+      const newText = document.createElement('p');
+      newText.textContent = `result: ${detectedSpeech}, confidence: ${confidence}`;
+      textDisplay.appendChild(newText);
+    };
+  };
+  
+  recognition.onspeechend = function(){
+    console.log('stopping recognition');
+    document.getElementById('speechDetectionStatus').textContent = 'no longer accepting audio for recognition';
+    //recognition.stop();
+  };
+  
+  recognition.onnomatch = function(evt){
+    console.log('no match');
+  };
+  
+  recognition.onerror = function(evt){
+    console.log('error: ' + evt.error);
+  };
+</script>
+
+</html>
