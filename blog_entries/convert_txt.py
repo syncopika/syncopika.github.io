@@ -4,7 +4,6 @@ from PIL import Image
 
 def create_img_element(src, alt="", class_name=""):
 	src = src.strip()
-
 	with Image.open(f"../{src}") as img:
 		width, height = img.size
 		#print(f"{src} - height:{height}, width:{width}")
@@ -44,6 +43,7 @@ flags = {
 	"--h2": create_html_element("<h2>", "</h2>"),
 	"--h3": create_html_element("<h3>", "</h3>"),
 	"--p": create_html_element("<p>", "</p>"),
+	"--ul": create_html_element("<ul>", "</ul>"),
 	"--code": create_html_element("<pre><code>", "</code></pre>"),
 	"--endcode": None,
 	"--image": create_img_element,
@@ -73,11 +73,12 @@ for entry in txt_entries:
 		last_metadata_flag = None
 		last_flag = None
 		code_block = ""
+		nested_element_acc = [] # for holding elements that need to be nested, e.g. <ul><li>...</li></ul>
 		for line in lines:
-			if line.strip() == "" and last_flag != "--code":
+			if line.strip() == "" and not (last_flag == "--code" or last_flag == "--ul"):
 				last_flag = None
 				
-			elif line.strip() in style:
+			if line.strip() in style:
 				json_doc["content"] += style[line.strip()]
 				
 			elif line.strip() in metadata_flags and last_flag is None: # last_flag might be "--code"
@@ -107,6 +108,10 @@ for entry in txt_entries:
 					code_block = ""
 					last_flag = None
 				elif last_flag != "--code":
+					if last_flag == "--ul":
+						data = flags[last_flag]("".join(nested_element_acc))
+						json_doc["content"] += data
+						nested_element_acc = []  
 					last_flag = line.strip()
 				else:
 					code_block += line
@@ -116,6 +121,9 @@ for entry in txt_entries:
 					code_block += line
 				elif last_flag == "--font":
 					json_doc["fontFamily"] = line.strip()
+				elif last_flag == "--ul" and line.strip():
+					#print(line.strip())
+					nested_element_acc.append(f"<li>{line.strip()}</li>")
 				else:
 					#print(f"last flag: {last_flag}, line: {line}")
 					data = flags[last_flag](line)

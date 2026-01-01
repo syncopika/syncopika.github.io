@@ -1,0 +1,59 @@
+--date
+12/31/25
+
+--title
+personal project reflections for 2025
+
+--tags
+life, programming
+
+--content
+
+--h3
+some neat stuff I worked on this past year!
+
+--p
+- improved my flashcards Android app to use a view model to be able to fetch Chinese flashcard data from the internet asynchronously
+
+--p
+- improved various demos in threejs-projects
+
+--ul
+new shaders
+cat demo (and received positive feedback on it :D)
+
+--p
+- improved my 3d music visualizer web app
+
+--ul
+can now export recording at different video bitrates
+added some new visualizers, e.g. orbits, static image
+
+--p
+- added some new features to piano_roll_browser, such as a ripples visualizer and a .mmp file generator!
+
+--p
+- added new image filters to my imgui_image_editor desktop app
+
+--p
+- added a basic shader editor to my artstation desktop app
+
+--p
+- various small scripts looking at stuff like LMMS files (in my home repo /misc directory)
+
+--p
+- implemented a QR code generator
+
+--br
+
+--h3
+some future work I'd like to do
+
+--p
+- have my flashcards Android app to also fetch Japanese flashcard data asynchronously from an online source
+- improve my 3d cat model (featured in my threejs-projects cat demo) + more animations
+- make a new 3d demo using speech recognition API
+- improve my 3d music visualizer recording functionality to properly capture high resolution (using an offscreen canvas?)
+- improve funSketch (clean things up, see if I can delete code, use context for sharing data between components more easily?)
+- understand and implement Poisson image editing
+

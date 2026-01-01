@@ -1,0 +1,10 @@
+{
+    "filename": "12-31-25",
+    "date": "12/31/25",
+    "title": "personal project reflections for 2025",
+    "tags": [
+        "life",
+        "programming"
+    ],
+    "content": "<h3>some neat stuff I worked on this past year!\n</h3><p>- improved my flashcards Android app to use a view model to be able to fetch Chinese flashcard data from the internet asynchronously\n</p><p>- improved various demos in threejs-projects\n</p><ul>\n</ul><ul><li>new shaders</li><li>cat demo (and received positive feedback on it :D)</li></ul><p>- improved my 3d music visualizer web app\n</p><ul>\n</ul><ul><li>can now export recording at different video bitrates</li><li>added some new visualizers, e.g. orbits, static image</li></ul><p>- added some new features to piano_roll_browser, such as a ripples visualizer and a .mmp file generator!\n</p><p>- added new image filters to my imgui_image_editor desktop app\n</p><p>- added a basic shader editor to my artstation desktop app\n</p><p>- various small scripts looking at stuff like LMMS files (in my home repo /misc directory)\n</p><p>- implemented a QR code generator\n</p><br /><h3>some future work I'd like to do\n</h3><p>- have my flashcards Android app to also fetch Japanese flashcard data asynchronously from an online source\n</p><p>- improve my 3d cat model (featured in my threejs-projects cat demo) + more animations\n</p><p>- make a new 3d demo using speech recognition API\n</p><p>- improve my 3d music visualizer recording functionality to properly capture high resolution (using an offscreen canvas?)\n</p><p>- improve funSketch (clean things up, see if I can delete code, use context for sharing data between components more easily?)\n</p><p>- understand and implement Poisson image editing\n</p>"
+}
