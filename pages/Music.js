@@ -71,12 +71,14 @@ const Music = {
             <hr>
             <h3>arrangements</h3>
                 <p> I love creating arrangements! You can find my most recent work at my <a href='https://www.youtube.com/user/OrchestralPikachu' style='text-decoration: underline'>YouTube channel</a>. </p>
+                <p> additionally, I've posted some of my work <a href='https://syncopika.github.io/music_share/' style='text-decoration: underline'>here</a> for ideally better listening due to audio quality degradation when posting on YouTube :/.</p>
+                <p> You can find scores of some of my arrangements <a href='https://syncopika.github.io/music-score-viewer/' style='text-decoration: underline'>here</a>.</p>
                 <div id='soundcloud'>
                     <iframe id="gameSample" width="80%" height="102" scrolling="no" frameborder="no" v-bind:src="getSoundCloudLink(soundcloudSamples[soundcloudIndex])">
                     </iframe>
                 </div>
                 <button id='sc' type='button' class='btn btn-primary btn-sm' v-on:click="soundcloudIndex = (soundcloudIndex+1)%soundcloudSamples.length">next</button>
-                <p>archive of some arrangments (.wav): <b><a href='https://www.dropbox.com/sh/ac5s3aa1i9pueev/AACArNHLVBZr_xQp3ZcRfVRKa?dl=0'>here</a></b> and sheet music (score format, needs MuseScore): <b><a href='https://www.dropbox.com/sh/l39zcxbw3pns8q9/AABKSN3_DtIOiaku8CPNrd85a?dl=0'>here</a></b></p>
+                <!-- <p>archive of some arrangments (.wav): <b><a href='https://www.dropbox.com/sh/ac5s3aa1i9pueev/AACArNHLVBZr_xQp3ZcRfVRKa?dl=0'>here</a></b> and sheet music (score format, needs MuseScore): <b><a href='https://www.dropbox.com/sh/l39zcxbw3pns8q9/AABKSN3_DtIOiaku8CPNrd85a?dl=0'>here</a></b></p> -->
             <br>
             
             <hr>

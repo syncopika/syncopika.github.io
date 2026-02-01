@@ -23,7 +23,6 @@ const Novelties = {
             <br />
             
             <h3> web apps </h3>
-            <p><a href='https://syncopika.github.io/music-visualizer-web/'> recordable 3D music visualizer </a></p>
             <p><a href='https://syncopika.github.io/flashcards/'> flashcards </a></p>
             <p><a href='https://syncopika.github.io/visual_novel_maker/'> visual novel examples </a></p>
             
