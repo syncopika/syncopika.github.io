@@ -177,6 +177,10 @@ video{
     backface-visibility: hidden;
 }
 
+.hasQR:hover {
+  cursor: pointer;
+}
+
 /* FOR SMALLER MEDIA */
 @media screen and (max-width: 900px){
     body{

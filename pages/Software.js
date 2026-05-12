@@ -14,7 +14,7 @@ const Software = {
                         <img 
                           onclick="switchImgOnClick('/projectScreenshots/piano_roll_browser.png', '/pages/app_qr_codes/piano_roll_app.png')(event)" 
                           src="projectScreenshots/piano_roll_browser.png" 
-                          class="screenshot">
+                          class="screenshot hasQR">
                     </div>
                     <p> vanilla JavaScript, Web Audio API </p>
                     <p> This project lets you compose music in the browser! I also created an incomplete companion application called <span class='projectTitle'><a href='https://syncopika.github.io/soundmaker/'> soundmaker </a></span> to create custom instruments that you could import into the piano roll.</p>
@@ -26,7 +26,7 @@ const Software = {
                         <img 
                           onclick="switchImgOnClick('/projectScreenshots/fun_sketch.png', '/pages/app_qr_codes/fun_sketch.png')(event)" 
                           src="projectScreenshots/fun_sketch.png" 
-                          class="screenshot">
+                          class="screenshot hasQR">
                     </div>
                     <p> React, Canvas API </p>
                     <p> This is a web application for basic drawing and animating. There are different kinds of image filters and brushes to use, as well as onion-skin and layering.</p>
@@ -38,7 +38,7 @@ const Software = {
                         <img
                           onclick="switchImgOnClick('/projectScreenshots/trip_planner.png', '/pages/app_qr_codes/trip_planner.png')(event)" 
                           src="projectScreenshots/trip_planner.png" 
-                          class="screenshot">
+                          class="screenshot hasQR">
                     </div>
                     <p> Vue 3, TypeScript, PostgreSQL, MapBox API </p>
                     <p> This is an experimental idea I had for a trip planner. It has an interactive map in which the user can plot markers for trip destinations and provide extra information about each destination (notes, pictures, dates). </p>
@@ -50,7 +50,7 @@ const Software = {
                         <img 
                           onclick="switchImgOnClick('/projectScreenshots/music_score_viewer.png', '/pages/app_qr_codes/music_score_viewer.png')(event)" 
                           src="projectScreenshots/music_score_viewer.png" 
-                          class="screenshot">
+                          class="screenshot hasQR">
                     </div>
                     <p> React, pdf.js </p>
                     <p>This is a tool that allows you to sync music score page turning (a pdf score) with audio with some manual intervention in the form of JSON. </p>
@@ -63,7 +63,7 @@ const Software = {
                         <img 
                           onclick="switchImgOnClick('/projectScreenshots/airshow.png', '/pages/app_qr_codes/threejs_projects.png')(event)" 
                           src="projectScreenshots/airshow.png" 
-                          class="screenshot">
+                          class="screenshot hasQR">
                     </div>
                     <p> Three.js, Blender </p>
                     <p> This is a collection of small 3d projects with models I made in Blender. For each project I try to implement an idea that could be useful on its own as well as explore 3d graphics/threejs/algorithm-related ideas/concepts.</p>
@@ -76,7 +76,7 @@ const Software = {
                         <img 
                           onclick="switchImgOnClick('/projectScreenshots/music_visualizer_web.png', '/pages/app_qr_codes/music_visualizer_web.png')(event)" 
                           src="projectScreenshots/music_visualizer_web.png" 
-                          class="screenshot">
+                          class="screenshot hasQR">
                     </div>
                     <p> Three.js, TypeScript </p>
                     <p> This is a 3D music visualizer web app that also allows you to record the visualizations! </p>
