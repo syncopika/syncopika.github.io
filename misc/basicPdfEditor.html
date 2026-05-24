@@ -57,6 +57,11 @@
   <!--<button class="inlineBtn" id="exportPdf">export pdf</button>-->
 </div>
 
+<div id="currentPdfs">
+  <h2 id="currentPdfsHeader">current pdfs loaded:</h2>
+  <div id="currentlyLoadedPdfs"></div>
+</div>
+
 <div>
   <h2> delete page </h2>
   <label for="deletePageSelect"> page to delete: </label>
@@ -101,6 +106,7 @@ async function getPdf(file){
   if(pdfDoc === null){
     pdfDoc = await PDFDocument.load(pdfBytes);
   }else{
+    // append pdf to current
     const newPdf = await PDFDocument.load(pdfBytes);
     const pages = newPdf.getPageIndices();
     const copiedPages = await pdfDoc.copyPages(newPdf, pages);
@@ -109,6 +115,14 @@ async function getPdf(file){
   
   const pdfDataUri = await pdfDoc.saveAsBase64({dataUri: true});
   iframe.src = pdfDataUri;
+  
+  const filename = file.name;
+  const currLoadedPdfsDiv = document.getElementById("currentlyLoadedPdfs");
+  if(currLoadedPdfsDiv){
+    const newPdfName = document.createElement("p");
+    newPdfName.textContent = filename;
+    currLoadedPdfsDiv.appendChild(newPdfName);
+  }
   
   updatePageSelect();
 }
