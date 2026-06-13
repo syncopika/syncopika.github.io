@@ -1,0 +1,185 @@
+--date 
+6/13/26
+
+--title
+solo trip to London
+
+--tags
+life, travel
+
+--content
+
+--p
+I went to London for the first time for about a week from 6/5 - 6/12! I stayed in the Earl's Court area, which is a great location for being directly connected to Heathrow airport while still being close enough to central London and all the attractions!
+
+--p
+I took British Airways for the first time from IAD <-> LHR. I flew on a 777-200 and the flight time was ~7.5 hours going there and ~8 hours on the way back.
+
+--p
+Overall British Airways was not bad - service was fine, food was fine, seats were fine. IFE was just ok though. It didn't seem like you could toggle subtitles for movies - not sure if intentional or if not, isn't that an accessibility issue? On the return flight, the 777 I flew on had an even older IFE system I think, with the old remote and non-touch screen monitor lol.
+
+--p
+On the way to London, I had butter chicken with okra as the main for the meal. On the way back I had pasta.
+
+--p
+Some airplane pics:
+
+--image
+blog_entries/images/london trip 2026/20260605_195112.webp
+blog_entries/images/london trip 2026/20260605_234243.webp
+blog_entries/images/london trip 2026/20260612_151539.webp
+blog_entries/images/london trip 2026/20260612_191316.webp
+blog_entries/images/london trip 2026/20260605_164250.webp
+blog_entries/images/london trip 2026/20260605_171439.webp
+blog_entries/images/london trip 2026/20260612_132714.webp
+
+--br
+
+--p
+The weather in London was ok! I experienced mostly cloudiness with some rain sprinkled in, as well as with some sunshine too so it was not too bad overall in my opinion. It was pretty windy at times but not too cold so you could still wear shorts a lot of the time :). I definitely needed a jacket though and an umbrella.
+
+--p
+British food was fine - not terrible, not bad, but I guess nothing much to write home about lol. For sure the flavors weren't particularly exotic but they weren't as bad I think as some people make it out to be. I also tried some UK-specific fast food items like the Wagyu burger (which came in a nice box) and halloumi cheese fries from Burger King.
+
+--p 
+below:
+- a chicken bake + Ribena from Greggs
+- fish and chips (I chose hake as the fish) from The Mayfair Chippy on Knightsbridge
+- Sunday Roast (beef rump) with Yorkshire pudding from the Museum Tavern (across from the British Museum)
+- pie and mash and jellied eels from M. Manze on Tower Bridge Rd.
+--image
+blog_entries/images/london trip 2026/20260606_082927.webp
+blog_entries/images/london trip 2026/20260606_114727.webp
+blog_entries/images/london trip 2026/20260607_135641.webp
+blog_entries/images/london trip 2026/20260609_111224.webp
+blog_entries/images/london trip 2026/20260609_111236.webp
+blog_entries/images/london trip 2026/20260611_164713.webp
+blog_entries/images/london trip 2026/20260611_164749.webp
+
+--br
+
+--p
+The most important thing though was the sights and museums! There's so much art and history to see and take in in London :D. All the museums are free, but some sights like the Tower of London and St. Paul's Cathedral charge an admission fee, which is a bit steep but worth it in my opinion. And of course everywhere throughout the city is old, historic architecture which is really cool. Below are some of the neat places I visited.
+
+--h3
+Victoria & Albert (V&A) Museum
+--p 
+At this museum there were many exhibits featuring pieces from different places and time periods around the world.
+--image
+blog_entries/images/london trip 2026/20260606_101540.webp
+blog_entries/images/london trip 2026/20260606_101736.webp
+blog_entries/images/london trip 2026/20260606_103236.webp
+blog_entries/images/london trip 2026/20260606_104517.webp
+blog_entries/images/london trip 2026/20260606_104522.webp
+blog_entries/images/london trip 2026/20260606_150623.webp
+blog_entries/images/london trip 2026/20260606_153117.webp
+
+--h3
+The British Museum
+--p 
+There was a cool exhibit featuring early Netherlandish sketches.
+--image
+blog_entries/images/london trip 2026/20260607_113341.webp
+blog_entries/images/london trip 2026/20260607_115447.webp
+blog_entries/images/london trip 2026/20260607_110009.webp
+blog_entries/images/london trip 2026/20260607_110437.webp
+blog_entries/images/london trip 2026/20260607_110731.webp
+blog_entries/images/london trip 2026/20260607_120037.webp
+blog_entries/images/london trip 2026/20260607_115812.webp
+blog_entries/images/london trip 2026/20260607_124433.webp
+blog_entries/images/london trip 2026/20260607_121351.webp
+
+--h3
+St. Paul's Cathedral
+--p 
+There was a nice view that required going up 528 steps (most were very small, narrow steps in very tight spaces which made it not an easy hike!) but it was worth it, even though it was raining. The highest point is called the Golden Galley. There was also a crypt that featured the tombs of some notable people (and also conveniently contained the gift shop, cafe and exit).
+--image
+blog_entries/images/london trip 2026/20260608_090022.webp
+blog_entries/images/london trip 2026/20260608_090534.webp
+blog_entries/images/london trip 2026/20260608_090512.webp
+blog_entries/images/london trip 2026/20260608_090804.webp
+blog_entries/images/london trip 2026/20260608_091102.webp
+blog_entries/images/london trip 2026/20260608_093215.webp
+blog_entries/images/london trip 2026/20260608_095541.webp
+blog_entries/images/london trip 2026/20260608_095726.webp
+blog_entries/images/london trip 2026/20260608_095741.webp
+blog_entries/images/london trip 2026/20260608_095910.webp
+
+--h3
+The British Library
+--p 
+There was a collection of some pretty valuable pieces of the British Library on display, which included some sketches by Leonardo Da Vinci, one of the four surviving copies of the Magna Carta and some kid's homework from ~2000 years ago.
+--image
+blog_entries/images/london trip 2026/20260608_133155.webp
+blog_entries/images/london trip 2026/20260608_134531.webp
+blog_entries/images/london trip 2026/20260608_133922.webp
+blog_entries/images/london trip 2026/20260608_133859.webp
+
+--h3
+Buckingham Palace, Big Ben/Parliament, Westminster Abbey
+--image
+blog_entries/images/london trip 2026/20260607_154338.webp
+blog_entries/images/london trip 2026/20260607_162831.webp
+blog_entries/images/london trip 2026/20260607_162419.webp
+blog_entries/images/london trip 2026/20260607_163036.webp
+blog_entries/images/london trip 2026/20260607_164818.webp
+
+--h3
+Tower of London
+--p
+Felt like a mini theme park! Lots of different buildings with their own exhibits and lots to see. There were also some resident ravens :O.
+--image
+blog_entries/images/london trip 2026/20260610_091523.webp
+blog_entries/images/london trip 2026/20260610_092037.webp
+blog_entries/images/london trip 2026/20260610_093046.webp
+blog_entries/images/london trip 2026/20260610_093150.webp
+blog_entries/images/london trip 2026/20260610_093344.webp
+blog_entries/images/london trip 2026/20260610_093519.webp
+blog_entries/images/london trip 2026/20260610_093600.webp
+blog_entries/images/london trip 2026/20260610_093745.webp
+blog_entries/images/london trip 2026/20260610_094201.webp
+blog_entries/images/london trip 2026/20260610_094900.webp
+blog_entries/images/london trip 2026/20260610_100210.webp
+blog_entries/images/london trip 2026/20260610_100402.webp
+blog_entries/images/london trip 2026/20260610_100742.webp
+blog_entries/images/london trip 2026/20260610_102402.webp
+blog_entries/images/london trip 2026/20260610_103605.webp
+blog_entries/images/london trip 2026/20260610_105921.webp
+blog_entries/images/london trip 2026/20260610_105330.webp
+blog_entries/images/london trip 2026/20260610_105845.webp
+
+--br
+--br
+
+--p
+There were also so many, many nice cars of course :D
+--image
+blog_entries/images/london trip 2026/20260607_070146.webp
+blog_entries/images/london trip 2026/20260607_070149.webp
+blog_entries/images/london trip 2026/20260606_112844.webp
+blog_entries/images/london trip 2026/20260607_105020.webp
+blog_entries/images/london trip 2026/20260607_183022.webp
+blog_entries/images/london trip 2026/20260607_184352.webp
+blog_entries/images/london trip 2026/20260607_184607.webp
+blog_entries/images/london trip 2026/20260609_150848.webp
+blog_entries/images/london trip 2026/20260607_173359.webp
+blog_entries/images/london trip 2026/20260608_165343.webp
+blog_entries/images/london trip 2026/20260610_143229.webp
+blog_entries/images/london trip 2026/20260610_154214.webp
+blog_entries/images/london trip 2026/20260610_154440.webp
+blog_entries/images/london trip 2026/20260609_151156_edited.webp
+blog_entries/images/london trip 2026/20260611_130358.webp
+
+--br
+
+--h3
+Other pics:
+--image
+blog_entries/images/london trip 2026/20260610_090517.webp
+blog_entries/images/london trip 2026/20260610_125154.webp
+blog_entries/images/london trip 2026/20260610_125234.webp
+blog_entries/images/london trip 2026/20260610_125245.webp
+blog_entries/images/london trip 2026/20260612_060607.webp
+blog_entries/images/london trip 2026/20260612_060959.webp
+blog_entries/images/london trip 2026/20260610_110635.webp
+blog_entries/images/london trip 2026/20260610_123538.webp
