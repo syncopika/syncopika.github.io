@@ -10,7 +10,7 @@ life, travel
 --content
 
 --p
-I went to London for the first time for about a week from 6/5 - 6/12! I stayed in the Earl's Court area, which is a great location for being directly connected to Heathrow airport while still being close enough to central London and all the attractions!
+I went to London, England for the first time for about a week from 6/5 - 6/12! I stayed in the Earl's Court area, which is a great location for being directly connected to Heathrow airport while still being close enough to central London and all the attractions!
 
 --p
 I took British Airways for the first time from IAD <-> LHR. I flew on a 777-200 and the flight time was ~7.5 hours going there and ~8 hours on the way back.
@@ -36,7 +36,7 @@ blog_entries/images/london trip 2026/20260612_132714.webp
 --br
 
 --p
-The weather in London was ok! I experienced mostly cloudiness with some rain sprinkled in, as well as with some sunshine too so it was not too bad overall in my opinion. It was pretty windy at times but not too cold so you could still wear shorts a lot of the time :). I definitely needed a jacket though and an umbrella.
+The weather in London was ok! I experienced mostly cloudiness with some rain sprinkled in, as well as with some sunshine too so it was not too bad overall in my opinion. It was pretty windy at times but not too cold so you could still wear shorts a lot of the time :). The temperature was pretty consistently around the 50s to low 60s (Fahrenheit). I definitely needed a jacket though and an umbrella.
 
 --p
 British food was fine - not terrible, not bad, but I guess nothing much to write home about lol. For sure the flavors weren't particularly exotic but they weren't as bad I think as some people make it out to be. I also tried some UK-specific fast food items like the Wagyu burger (which came in a nice box) and halloumi cheese fries from Burger King.
@@ -92,7 +92,7 @@ blog_entries/images/london trip 2026/20260607_121351.webp
 --h3
 St. Paul's Cathedral
 --p 
-There was a nice view that required going up 528 steps (most were very small, narrow steps in very tight spaces which made it not an easy hike!) but it was worth it, even though it was raining. The highest point is called the Golden Galley. There was also a crypt that featured the tombs of some notable people (and also conveniently contained the gift shop, cafe and exit).
+There was a nice view that required going up 528 steps (most were very small, steep and narrow steps in very tight spaces which made it not an easy hike!) but it was worth it, even though it was raining. The highest point is called the Golden Galley. There is also a crypt that featured the tombs of some notable people (and also conveniently contained the gift shop, cafe and exit).
 --image
 blog_entries/images/london trip 2026/20260608_090022.webp
 blog_entries/images/london trip 2026/20260608_090534.webp
@@ -119,10 +119,10 @@ blog_entries/images/london trip 2026/20260608_133859.webp
 Buckingham Palace, Big Ben/Parliament, Westminster Abbey
 --image
 blog_entries/images/london trip 2026/20260607_154338.webp
+blog_entries/images/london trip 2026/20260607_164818.webp
 blog_entries/images/london trip 2026/20260607_162831.webp
 blog_entries/images/london trip 2026/20260607_162419.webp
 blog_entries/images/london trip 2026/20260607_163036.webp
-blog_entries/images/london trip 2026/20260607_164818.webp
 
 --h3
 Tower of London
