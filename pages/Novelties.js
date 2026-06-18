@@ -13,12 +13,11 @@ const Novelties = {
             <p><a href='https://github.com/syncopika/epub_reader_idea'> basic epub reader </a></p>
             <p><a href='https://github.com/syncopika/artstation'> artstation </a></p>
             
-            \<br />
+            <br />
             
             <h3> mobile apps (Android) </h3>
             <p><a href='https://github.com/syncopika/digital-ink-recognition-android'>Chinese character recognition app</a></p>
-            <p><a href='https://github.com/syncopika/flashcard-android-app'>flashcard app (featuring Chinese vocab)</a></p>
-            <p><a href='https://github.com/syncopika/mobile-qr-code-scanner'>QR code scanner</a></p>
+            <p><a href='https://github.com/syncopika/flashcard-android-app'>flashcards (featuring Chinese vocab)</a></p>
             
             <br />
             
