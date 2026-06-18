@@ -9,7 +9,8 @@ const Blog = {
             'currIndex': 0,
             'currTag': '',
             'currPosts': [], // the currently shown posts (so that we can filter on all the posts)
-            'sliceSize': 3   // show 3 blog posts at a time.
+            'sliceSize': 3,   // show 3 blog posts at a time.
+            'showQRCode': false,
         };
     },
     
@@ -41,13 +42,12 @@ const Blog = {
     
     beforeMount: function(){
         // retrieve the list of blog entries and return them as a list
-        let list = [];
-        let listOfEntries = fetch('../blog_entries/entry_list.txt', {'method': 'GET'});
+        const listOfEntries = fetch('../blog_entries/entry_list.txt', {'method': 'GET'});
         listOfEntries.then((res) => res.text()).then((text) => {
-            let entryList = text.split('\n');
+            const entryList = text.split('\n');
             
             // get the json files 
-            let promiseList = [];
+            const promiseList = [];
             for(let i = 0; i < entryList.length; i++){
                 promiseList.push(new Promise((resolve, err) => {
                     resolve(fetch('../blog_entries/json_entries/'+entryList[i], {'method': 'GET'}).then((res)=>res.json()));
@@ -64,6 +64,7 @@ const Blog = {
     },
     
     updated: function(){
+      this.showQRCode = true;
     },
     
     template:
@@ -104,7 +105,12 @@ const Blog = {
             </div>
             -->
             
-            <br>
+            <div v-if="showQRCode" style="margin:5px">
+              <p> QR code link to this blog :) </p>
+              <img loading="lazy" src="/pages/app_qr_codes/blog.png">
+            </div>
+            
+            <br />
             
         </div>`
 }
