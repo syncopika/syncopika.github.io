@@ -6,7 +6,7 @@ const About = {
             <br>
             <p>I really enjoy music composition/arrangement and programming! I'm particularly interested in developing applications for artistic endeavors. I'm also an avid trumpet player. </p>
             <br>
-            <p> I've been using 'syncopika' as my username in various places. It's a combination of <span class='aboutBold'>synco</span>pation (I like syncopated rhythms) and '<span class='aboutBold'>pika</span>pika' (Japanese onomatopoeia for something sparkly). Not the best name, but easy to find and kinda unique, I think. :D</p>
+            <p> I've been using 'syncopika' as my username in various places. It's a combination of <span class='aboutBold'>synco</span>pation (I like syncopated rhythms) and '<span class='aboutBold'>pika</span>pika' (Japanese onomatopoeia for something sparkly). Not a great name, but easy to find and kinda unique at least, I think? :D</p>
             <br>
             <p> other places I'm at: </p>
             <ul id='links'>

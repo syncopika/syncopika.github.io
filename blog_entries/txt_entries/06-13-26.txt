@@ -44,9 +44,10 @@ British food was fine - not terrible, not bad, but I guess nothing much to write
 --p 
 below:
 - a chicken bake + Ribena from Greggs
-- fish and chips (I chose hake as the fish) from The Mayfair Chippy on Knightsbridge
+- a very generous portion of fish and chips (I chose hake as the fish) from The Mayfair Chippy on Knightsbridge
 - Sunday Roast (beef rump) with Yorkshire pudding from the Museum Tavern (across from the British Museum)
 - pie and mash and jellied eels from M. Manze on Tower Bridge Rd.
+- "The Wagyu" burger and halloumi fries from Burger King
 --image
 blog_entries/images/london trip 2026/20260606_082927.webp
 blog_entries/images/london trip 2026/20260606_114727.webp
@@ -64,7 +65,7 @@ The most important thing though was the sights and museums! There's so much art 
 --h3
 Victoria & Albert (V&A) Museum
 --p 
-At this museum there were many exhibits featuring pieces from different places and time periods around the world.
+At this museum there are many exhibits featuring pieces from different places and time periods around the world.
 --image
 blog_entries/images/london trip 2026/20260606_101540.webp
 blog_entries/images/london trip 2026/20260606_101736.webp
@@ -90,9 +91,22 @@ blog_entries/images/london trip 2026/20260607_124433.webp
 blog_entries/images/london trip 2026/20260607_121351.webp
 
 --h3
+The Wallace Collection
+--p 
+There's a very impressive collection of armour and arms here!
+--image
+blog_entries/images/london trip 2026/20260608_152853.webp
+blog_entries/images/london trip 2026/20260608_152936.webp
+blog_entries/images/london trip 2026/20260608_153100.webp
+blog_entries/images/london trip 2026/20260608_153619.webp
+blog_entries/images/london trip 2026/20260608_153718.webp
+blog_entries/images/london trip 2026/20260608_153727.webp
+blog_entries/images/london trip 2026/20260608_154649.webp
+
+--h3
 St. Paul's Cathedral
 --p 
-There was a nice view that required going up 528 steps (most were very small, steep and narrow steps in very tight spaces which made it not an easy hike!) but it was worth it, even though it was raining. The highest point is called the Golden Galley. There is also a crypt that featured the tombs of some notable people (and also conveniently contained the gift shop, cafe and exit).
+There is a super nice view that requires going up 528 steps (most were very small, steep and narrow steps in very tight spaces which made it not an easy hike!) but it was worth it, even though it was raining. The highest point is called the Golden Galley. There is also a crypt that featured the tombs of some notable people (and also conveniently contained the gift shop, cafe and exit).
 --image
 blog_entries/images/london trip 2026/20260608_090022.webp
 blog_entries/images/london trip 2026/20260608_090534.webp
@@ -120,7 +134,6 @@ Buckingham Palace, Big Ben/Parliament, Westminster Abbey
 --image
 blog_entries/images/london trip 2026/20260607_154338.webp
 blog_entries/images/london trip 2026/20260607_164818.webp
-blog_entries/images/london trip 2026/20260607_162831.webp
 blog_entries/images/london trip 2026/20260607_162419.webp
 blog_entries/images/london trip 2026/20260607_163036.webp
 
@@ -130,7 +143,6 @@ Tower of London
 Felt like a mini theme park! Lots of different buildings with their own exhibits and lots to see. There were also some resident ravens :O.
 --image
 blog_entries/images/london trip 2026/20260610_091523.webp
-blog_entries/images/london trip 2026/20260610_092037.webp
 blog_entries/images/london trip 2026/20260610_093046.webp
 blog_entries/images/london trip 2026/20260610_093150.webp
 blog_entries/images/london trip 2026/20260610_093344.webp
@@ -168,7 +180,6 @@ blog_entries/images/london trip 2026/20260610_143229.webp
 blog_entries/images/london trip 2026/20260610_154214.webp
 blog_entries/images/london trip 2026/20260610_154440.webp
 blog_entries/images/london trip 2026/20260609_151156_edited.webp
-blog_entries/images/london trip 2026/20260611_130358.webp
 
 --br
 
@@ -180,6 +191,5 @@ blog_entries/images/london trip 2026/20260610_125154.webp
 blog_entries/images/london trip 2026/20260610_125234.webp
 blog_entries/images/london trip 2026/20260610_125245.webp
 blog_entries/images/london trip 2026/20260612_060607.webp
-blog_entries/images/london trip 2026/20260612_060959.webp
 blog_entries/images/london trip 2026/20260610_110635.webp
 blog_entries/images/london trip 2026/20260610_123538.webp
