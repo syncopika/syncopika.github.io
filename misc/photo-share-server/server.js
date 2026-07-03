@@ -31,8 +31,8 @@ function getNextImage(currImage){
       break;
     }
   }
-  if(currIdx > currListOfImages.length){
-    currIdx = 0;
+  if(currIdx >= currListOfImages.length){
+    currIdx = currListOfImages.length - 1;
   }
   return currListOfImages[currIdx];
 }
@@ -126,6 +126,9 @@ app.get('/image', (req, res) => {
           //console.log('${nextImg}');
           window.location.href = '/image?imgPath=${nextImgPath}';
         }
-      })(event)">${htmlImage}</div>`);
+      })(event)">
+        <h2><a href="/images/?dir=${path.basename(imageDirPath)}">back to image directory</a></h2>
+        ${htmlImage}
+      </div>`);
   });
 });
