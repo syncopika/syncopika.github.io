@@ -29,12 +29,12 @@ const Novelties = {
             
             <h3> random small stuff </h3>
             <p><a href='misc/qr_code_generator.html'> QR code generator </a></p>
-            <p><a href='misc/basicPdfEditor.html'> basic pdf editor (for merging, deleting and moving pages) </a></p>
-            <p><a href='misc/fireworkCursorExperiment.html'> canvas fireworks </a></p>
+            <p><a href='misc/basic_pdf_editor.html'> basic pdf editor (for merging, deleting and moving pages) </a></p>
+            <p><a href='misc/firework_cursor_experiment.html'> canvas fireworks </a></p>
             <p><a href='misc/raycasting.html'> raycasting demo </a></p>
-            <p><a href='misc/karaokeget.html'> karaoke-get </a></p>
-            <p><a href='misc/playbackAutomation.html'> audio playback rate automation track </a></p>
-            <p><a href='misc/slot-machine.html'> vtuber slot machine </a></p>
+            <p><a href='misc/karaoke_get.html'> karaoke-get </a></p>
+            <p><a href='misc/playback_automation.html'> audio playback rate automation track </a></p>
+            <p><a href='misc/slot_machine.html'> vtuber slot machine </a></p>
         </div>`
 }
 
