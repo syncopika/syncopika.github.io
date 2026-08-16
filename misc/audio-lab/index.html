@@ -5,23 +5,21 @@
 <head>
 	<meta charset='UTF-8'>
 	<title> audio lab </title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 
 <style>
-#header, #about {
+body {
+	font-family: sans-serif;
+}
+
+#header {
+  text-align: center;
+}
+
+#player, #options, #automation {
 	text-align: center;
-	font-family: 'sans-serif';
-}
-
-p, button {
-	font-family: 'sans-serif';
-}
-
-#player, #options {
-	text-align:center;
-	margin-top:50px;
-	border: #EEEFFF solid 2px;
+	margin-top: 30px;
+	border: #eeefff solid 2px;
 	padding: 8px;
 }
 
@@ -29,24 +27,37 @@ button:hover {
 	background-color: #d0d0d0;
 }
 
-.features {
-	margin-top: 25px;
-}
-
-#automationTrackLabel {
-  margin-top: 15px;
-  margin-left: 6%;
-  text-align: left;
+#automation {
+  text-align: center;
 }
 
 #automationTrack {
   width: 90%;
   height: 100px;
-  border: 1px solid #000;
+  border: 1px solid #ccc;
+  display: block;
+  margin: 15px auto;
 }
 
 #playbackRateControl {
   display: none;
+}
+
+#waveformCanvas {
+  border: 1px solid #ccc;
+  margin: 8px auto;
+  width: 90%;
+  height: 100px;
+  display: block;
+  margin: 15px auto;
+}
+
+.sectionTitle {
+  font-weight: bold;
+}
+
+.checkbox {
+  vertical-align: bottom;
 }
 </style>
 
@@ -56,8 +67,6 @@ button:hover {
 	
 	<div id='header'>
 		<h2> audio lab </h2>
-    <p> draw in the playback automation track canvas below to dictate when and how much playback rate should be changed on audio play. </p>
-    <p> drawing downwards will decrease the playback rate while drawing upward will increase the playback rate. </p>
 	</div>
 
 	<div id='player' class='row'>
@@ -66,20 +75,27 @@ button:hover {
 		<p id='audioName'></p>
 		<p id='audioLength'></p>
 		
-		<button id='play' class='btn'>play audio file</button>
-		<button id='stop' class='btn'>stop audio file</button>
+		<button id='play' class='btn'>play</button>
+    <button id='pause' class='btn'>pause</button>
+		<button id='stop' class='btn'>stop</button>
 		<button class='btn' onclick='openFile(handleFile)'>import audio file</button>
 		<input type='file' id='inputFile' style="display:none;">
+    
+    <div id='waveformVisualization'>
+      <canvas id='waveformCanvas'></canvas>
+    </div>
 	</div>
   
   <div id='options'>
-    <p> options: </p>
-    <label for='reverse'>reverse: </label><input type='checkbox' id='reverse'>
-    <label for='removeVocal'>remove vocal: </label><input type='checkbox' id='removeVocal'>
+    <p class='sectionTitle'> options </p>
+    <label for='reverse'>reverse: <input type='checkbox' id='reverse' class='checkbox'></label>
+    <label for='removeVocal'>remove vocal: <input type='checkbox' id='removeVocal' class='checkbox'></label>
   </div>
   
   <div id='automation'>
-    <p id='automationTrackLabel'> playback automation track (max: 2.0, min: 0.0): </p>
+    <p class='sectionTitle'> playback automation track (max: 2.0, min: 0.0) </p>
+    <p> draw in the playback automation track canvas below to dictate when and how much playback rate should be changed on audio play. </p>
+    <p> drawing downwards will decrease the playback rate while drawing upward will increase the playback rate. </p>
     <canvas id='automationTrack'></canvas>
     <button id='clearCanvas'>clear canvas</button>
     <input id="playbackRateControl" type="range" min="0.25" max="3" step="0.05" value="1">
@@ -92,11 +108,11 @@ button:hover {
 /*
   TODO:
   - gain node
-  - scrubber
+  - scrubber to traverse audio
   - record/save audio playback
-  - pause
   - marker(s) on automation canvas
-  - filters
+  - filters (e.g. lowpass, highpass)
+  - phase vocoder for pitch shifting/time stretching
 */
 
 let progBarCanvasCanvas;
@@ -104,11 +120,15 @@ let progBarCanvasCtx;
 let playBar;
 const audioName = document.getElementById('audioName');
 const audioLength = document.getElementById('audioLength');
-let isPlaying;
+let isPlaying = false;
+let isPaused = false;
 let audioLoaded = false;
 
 // for audio data
 const audioCtx = new AudioContext();
+const analyser = audioCtx.createAnalyser();
+analyser.fftSize = 2048;
+let waveformVisualizationAnimationId = null;
 let buf;
 let fileURL;
 let bufSource;
@@ -131,6 +151,50 @@ document.getElementById('clearCanvas').addEventListener('click', () => {
 function init(){
 	bufSource = audioCtx.createBufferSource();
 	loadFile();
+}
+
+function doWaveformVisualization(){
+  const waveformCanvas = document.getElementById('waveformCanvas');
+  if(!waveformCanvas || (!isPlaying && !isPaused)){
+    console.log('canceling request animation frame for waveform visualization');
+    cancelAnimationFrame(waveformVisualizationAnimationId);
+    return;
+  }
+  
+  const canvasCtx = waveformCanvas.getContext('2d');
+  const width = waveformCanvas.width;
+  const height = waveformCanvas.height;
+  const bufferLen = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLen);
+  
+  if(canvasCtx){
+    analyser.getByteTimeDomainData(dataArray);
+    
+    // gray background
+    canvasCtx.fillStyle = 'rgb(240, 240, 240)';
+    canvasCtx.fillRect(0, 0, width, height);
+    
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+    canvasCtx.beginPath();
+    
+    const sliceWidth = width / bufferLen;
+    let xPos = 0;
+    for(let i = 0; i < bufferLen; i++){
+      const dataVal = dataArray[i] / 128.0;
+      const yPos = dataVal * (height / 2);
+      if(i === 0){
+        canvasCtx.moveTo(xPos, yPos);
+      }else{
+        canvasCtx.lineTo(xPos, yPos);
+      }
+      xPos += sliceWidth;
+    }
+    
+    canvasCtx.stroke();
+    
+    waveformVisualizationAnimationId = requestAnimationFrame(doWaveformVisualization);
+  }
 }
 
 function makeNewBuffer(){
@@ -192,7 +256,7 @@ function loadFile(){
 			duration = buffer.duration;
 			audioLength.innerHTML = buffer.duration + " seconds";
 			audioLoaded = true;
-			
+      
 			// add a progress bar
 			const div = document.getElementById('progressBar');
 			div.innerHTML = '<canvas id=\'progBarCanvas\' height=\'30px\' width=\'' + Math.floor(duration) + 'px\'>' + '</canvas>';	
@@ -208,12 +272,13 @@ function loadFile(){
 // increment progress bar 1px every second. 	
 let counter = 0;
 function timer(){
-	counter += 1 * playbackControl.value;
+	counter += 1 * bufSource.playbackRate.value; //playbackControl.value;
 	progBarCanvasCtx.fillStyle = 'green';
   progBarCanvasCtx.fillRect(0, 0, counter, 100);
+  
   processAutomationTrack();
 	
-	if(counter >= progBarCanvas.width){
+	if(counter > progBarCanvas.width){
 		isPlaying = false;
 		clearInterval(playBar);
 		bufSource.stop(0);
@@ -222,72 +287,84 @@ function timer(){
 	}
 }
 
-const play = document.getElementById('play');
-play.onclick = function(){
+// play button
+// TODO: make play button disabled until imported audio is fully loaded
+document.getElementById('play').addEventListener('click', async () => {
   if(isPlaying || !audioLoaded){
-		// prevent dom exceptions
 		return;
-	}else if(isPlaying === false){
+	}
+  
+  if(!isPlaying && !isPaused){
 		// clear the player 
 		// i.e. this is if the player's reached the end and user presses play again
 		if(progBarCanvasCtx) progBarCanvasCtx.clearRect(0,0, Math.floor(duration), 30);
 	}
   
-  // before any modifications are applied to audio data, we should make a copy of the original audio data
-  let bufToProcess = buf;
-  
-  // apply reversal if enabled
-  if(document.getElementById('reverse').checked){
-    const reversedBuffer = audioCtx.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
-    for(let i = 0; i < buf.numberOfChannels; i++){
-      const chanDataReversed = buf.getChannelData(i).toReversed();
-      reversedBuffer.copyToChannel(chanDataReversed, i);
-    }
-    bufToProcess = reversedBuffer;
-  }
-  
-  // apply vocal removal if enabled
-  if(document.getElementById('removeVocal').checked){
-    const numChannels = bufToProcess.numberOfChannels;
-    if(numChannels == 2){
-      const audioData = [];
-      const leftChan = bufToProcess.getChannelData(0);
-      const rightChan = bufToProcess.getChannelData(1);
-      
-      for(i = 0; i < leftChan.length; i++){
-        const currentSample = (leftChan[i] - rightChan[i]) / 2; //this is what causes the vocal removal
-        audioData.push(currentSample);
+  if(isPaused){
+    isPaused = false;
+    isPlaying = true;
+    await audioCtx.resume();
+    timer();
+    playBar = setInterval(timer, 1000);
+  }else{
+    let bufToProcess = buf;
+    
+    // apply reversal if enabled
+    if(document.getElementById('reverse').checked){
+      const reversedBuffer = audioCtx.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+      for(let i = 0; i < buf.numberOfChannels; i++){
+        const chanDataReversed = buf.getChannelData(i).toReversed();
+        reversedBuffer.copyToChannel(chanDataReversed, i);
       }
-      
-      const vocalRemovedBuffer = audioCtx.createBuffer(1, bufToProcess.length, bufToProcess.sampleRate);
-      vocalRemovedBuffer.getChannelData(0).set(audioData);
-      
-      bufToProcess = vocalRemovedBuffer;
-    }else{
-      console.log("could not remove vocals because imported audio data doesn't have 2 channels");
+      bufToProcess = reversedBuffer;
     }
-  }
-  
-  if(!bufSource.buffer){
-    if(buf !== bufToProcess){
-      bufSource.buffer = bufToProcess;
-    }else{
-      bufSource.buffer = buf;
+    
+    // apply vocal removal if enabled
+    if(document.getElementById('removeVocal').checked){
+      const numChannels = bufToProcess.numberOfChannels;
+      if(numChannels == 2){
+        const audioData = [];
+        const leftChan = bufToProcess.getChannelData(0);
+        const rightChan = bufToProcess.getChannelData(1);
+        
+        for(i = 0; i < leftChan.length; i++){
+          const currentSample = (leftChan[i] - rightChan[i]) / 2; //this is what causes the vocal removal
+          audioData.push(currentSample);
+        }
+        
+        const vocalRemovedBuffer = audioCtx.createBuffer(1, bufToProcess.length, bufToProcess.sampleRate);
+        vocalRemovedBuffer.getChannelData(0).set(audioData);
+        
+        bufToProcess = vocalRemovedBuffer;
+      }else{
+        console.warn("could not remove vocals because imported audio data doesn't have 2 channels");
+      }
     }
+    
+    if(!bufSource.buffer){
+      if(buf !== bufToProcess){
+        bufSource.buffer = bufToProcess;
+      }else{
+        bufSource.buffer = buf;
+      }
+    }
+    
+    bufSource.connect(analyser);
+    bufSource.connect(audioCtx.destination);
+    
+    bufSource.start(0);
+    
+    timer();
+    playBar = setInterval(timer, 1000); // TODO: use requestAnimationFrame instead without using interval?
+    isPlaying = true;
+    startTime = Date.now();
+    
+    doWaveformVisualization();
   }
-  
-  bufSource.connect(audioCtx.destination);
-  
-  bufSource.start(0);
-  
-  playBar = setInterval(timer, 1000);
-  isPlaying = true;
-  startTime = Date.now();
-}
+});
 
 //stop track play button
-const stop = document.getElementById('stop');
-  stop.onclick = function(){
+document.getElementById('stop').addEventListener('click', () => {
   if(!audioLoaded || !isPlaying){
     return;
   }
@@ -297,8 +374,16 @@ const stop = document.getElementById('stop');
   progBarCanvasCtx.clearRect(0,0, Math.floor(duration), 30);
   counter = 0;
   isPlaying = false;
+  isPaused = false;
   makeNewBuffer();
-}
+});
+
+document.getElementById('pause').addEventListener('click', () => {
+  isPaused = true;
+  isPlaying = false;
+  clearInterval(playBar);
+  audioCtx.suspend();
+});
 
 function getClickCoords(evt){
   const canvas = evt.target.getBoundingClientRect();
@@ -360,12 +445,13 @@ setupAutomationTrackCanvas();
 function processAutomationTrack(){
   // find where in the automation track we should be (x-position-wise) each second
   // take into account time elapsed, width of the canvas, length of the audio
+  // TODO: this doesn't work well with playing from a paused state. is there a way to calculate the elasped time based on where we last were in the audio?
   const audioDuration = buf.duration;
   const canvas = document.getElementById('automationTrack');
   const canvasHeight = canvas.height;
   const canvasWidth = canvas.width;
   const timeElapsed = (Date.now() - startTime) / 1000; // in seconds
-  const xPos = (timeElapsed / audioDuration) * canvasWidth;
+  const xPos = (timeElapsed / audioDuration) * canvasWidth || 0; // when playinh starts, (timeElapsed / audioDuration) could result in NaN
   
   // given x position, check y-position where pixel is not white from 0 -> height of canvas
   const imgData = automationTrackCtx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -388,11 +474,11 @@ function processAutomationTrack(){
       // subtract yPos from automationTrackHeight because height increases going from top to bottom of the canvas - this way drawing downwards will mean a decrease in playback rate (more intuitive I think?)
       const newPlaybackRate = ((automationTrackHeight - yPos) / automationTrackHeight) * (maxPlaybackRate - minPlaybackRate);
       //console.log(newPlaybackRate);
-      console.log(`yPos: ${yPos}, xPos: ${xPos}, new playback rate: ${newPlaybackRate}`);
+      console.log(`yPos: ${yPos}, xPos: ${xPos}, new playback rate: ${newPlaybackRate}, r: ${r}, g: ${g}`);
       
-      if(bufSource !== undefined){
+      if(bufSource){
         bufSource.playbackRate.value = newPlaybackRate;
-        playbackControl.value = newPlaybackRate;
+        playbackControl.value = newPlaybackRate; // why do we need to do this? isn't setting the playback rate on the buffer source enough?
       }
       
       break;
@@ -411,8 +497,8 @@ https://blogs.msdn.microsoft.com/dawate/2009/06/23/intro-to-audio-programming-pa
 
 *****/
 function encodeWAV(samples) {
-	let tempBuffer = new ArrayBuffer(44 + samples.length * 2);
-	let view = new DataView(tempBuffer); //dataview needs an arraybuffer (not audiobuffer)
+	const tempBuffer = new ArrayBuffer(44 + samples.length * 2);
+	const view = new DataView(tempBuffer);
 
 	/*
 		the following steps sets up the metadata chunk for the wav file. 
@@ -435,7 +521,7 @@ function encodeWAV(samples) {
 	/* sample rate */
 	view.setUint32(24, samples.sampleRate, true);
 	/* byte rate (sample rate * block align) */
-	view.setUint32(28, samples.sampleRate * 2, true); //multiply by 2 because of 1 channel only for this implementation!
+	view.setUint32(28, samples.sampleRate * 2, true);
 	/* block align (channel count * bytes per sample) */
 	view.setUint16(32, samples.numberOfChannels * 2, true);
 	/* bits per sample */
@@ -445,7 +531,7 @@ function encodeWAV(samples) {
 	/* data chunk length */
 	view.setUint32(40, samples.length * 2, true); 
 
-	floatTo16BitPCM(view, 44, samples.getChannelData(0)); //getChannelData() gets the audio data as Float32Array
+	floatTo16BitPCM(view, 44, samples.getChannelData(0));
 
 	return view;
 }
@@ -456,7 +542,6 @@ function writeString(view, offset, string) {
 	}
 }
 
-//input should be the data (in an array) from audioToKaraoke, so use audioToKaraoke.getChannelData()
 function floatTo16BitPCM(output, offset, input) {
 	for (let i = 0; i < input.length; i++, offset += 2) {
 		let s = Math.max(-1, Math.min(1, input[i]));
