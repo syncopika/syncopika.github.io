@@ -83,6 +83,7 @@ button:hover {
     
     <div id='waveformVisualization'>
       <canvas id='waveformCanvas'></canvas>
+      <label for='toggleSolidWaveform'>solid waveform: <input type='checkbox' id='toggleSolidWaveform'></label> 
     </div>
 	</div>
   
@@ -98,6 +99,8 @@ button:hover {
     <p> drawing downwards will decrease the playback rate while drawing upward will increase the playback rate. </p>
     <canvas id='automationTrack'></canvas>
     <button id='clearCanvas'>clear canvas</button>
+    <p>current playback rate: <span id='currPlaybackRate'></span></p>
+    <p>current x position in canvas: <span id='currXPos'></span></p>
     <input id="playbackRateControl" type="range" min="0.25" max="3" step="0.05" value="1">
   </div>
 	
@@ -183,11 +186,17 @@ function doWaveformVisualization(){
     for(let i = 0; i < bufferLen; i++){
       const dataVal = dataArray[i] / 128.0;
       const yPos = dataVal * (height / 2);
-      if(i === 0){
+      if(document.getElementById('toggleSolidWaveform')?.checked){
         canvasCtx.moveTo(xPos, yPos);
+        canvasCtx.lineTo(xPos, 0);
       }else{
-        canvasCtx.lineTo(xPos, yPos);
+        if(i === 0){
+          canvasCtx.moveTo(xPos, yPos);
+        }else{
+          canvasCtx.lineTo(xPos, yPos);
+        }
       }
+
       xPos += sliceWidth;
     }
     
@@ -448,13 +457,18 @@ function processAutomationTrack(){
   // TODO: this doesn't work well with playing from a paused state. is there a way to calculate the elasped time based on where we last were in the audio?
   const audioDuration = buf.duration;
   const canvas = document.getElementById('automationTrack');
+  const automationTrackCtx = canvas.getContext('2d');
   const canvasHeight = canvas.height;
   const canvasWidth = canvas.width;
   const timeElapsed = (Date.now() - startTime) / 1000; // in seconds
-  const xPos = (timeElapsed / audioDuration) * canvasWidth || 0; // when playinh starts, (timeElapsed / audioDuration) could result in NaN
+  const xPos = (timeElapsed / audioDuration) * canvasWidth || 0; // when playing starts, (timeElapsed / audioDuration) could result in NaN
   
   // given x position, check y-position where pixel is not white from 0 -> height of canvas
   const imgData = automationTrackCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+  
+  automationTrackCtx.lineJoin = 'round';
+  automationTrackCtx.lineWidth = 0.2;
+  automationTrackCtx.strokeStyle = 'rgba(1, 0, 0, 1)';
   
   for(let row = 0; row < canvas.height; row++){
     // check column corresponding to xPos
@@ -475,6 +489,17 @@ function processAutomationTrack(){
       const newPlaybackRate = ((automationTrackHeight - yPos) / automationTrackHeight) * (maxPlaybackRate - minPlaybackRate);
       //console.log(newPlaybackRate);
       console.log(`yPos: ${yPos}, xPos: ${xPos}, new playback rate: ${newPlaybackRate}, r: ${r}, g: ${g}`);
+      
+      const currPlaybackRate = document.getElementById('currPlaybackRate');
+      const currXPos = document.getElementById('currXPos');
+      currPlaybackRate.textContent = newPlaybackRate;
+      currXPos.textContent = xPos;
+      
+      automationTrackCtx.beginPath();
+      automationTrackCtx.moveTo(xPos, yPos);
+      automationTrackCtx.lineTo(xPos, 0);
+      automationTrackCtx.closePath();
+      automationTrackCtx.stroke();
       
       if(bufSource){
         bufSource.playbackRate.value = newPlaybackRate;
