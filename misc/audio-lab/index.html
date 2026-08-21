@@ -145,10 +145,12 @@ let isDrawing = false;
 let lastClickX;
 let lastClickY;
 let startTime;
+let currAutomationTrackLineCoords = [];
 
 document.getElementById('clearCanvas').addEventListener('click', () => {
 	automationTrackCtx.fillStyle = '#ffffff';
   automationTrackCtx.fillRect(0, 0, automationTrackCanvas.width, automationTrackCanvas.height);
+  currAutomationTrackLineCoords = [];
 });
 
 function init(){
@@ -188,7 +190,7 @@ function doWaveformVisualization(){
       const yPos = dataVal * (height / 2);
       if(document.getElementById('toggleSolidWaveform')?.checked){
         canvasCtx.moveTo(xPos, yPos);
-        canvasCtx.lineTo(xPos, 0);
+        canvasCtx.lineTo(xPos, height);
       }else{
         if(i === 0){
           canvasCtx.moveTo(xPos, yPos);
@@ -363,10 +365,11 @@ document.getElementById('play').addEventListener('click', async () => {
     
     bufSource.start(0);
     
-    timer();
     playBar = setInterval(timer, 1000); // TODO: use requestAnimationFrame instead without using interval?
     isPlaying = true;
     startTime = Date.now();
+    
+    timer(); // TODO: rename this
     
     doWaveformVisualization();
   }
@@ -374,6 +377,10 @@ document.getElementById('play').addEventListener('click', async () => {
 
 //stop track play button
 document.getElementById('stop').addEventListener('click', () => {
+  // redraw the automation track if needed
+  console.log('redrawing autmation track curve');
+  redrawAutomationTrack();
+  
   if(!audioLoaded || !isPlaying){
     return;
   }
@@ -406,12 +413,13 @@ function getClickCoords(evt){
   return [x, y];
 }
 
+
 function setupAutomationTrackCanvas(){
   const canvas = document.getElementById('automationTrack');
   const ctx = automationTrackCtx;
   automationTrackCtx.lineJoin = 'round';
   automationTrackCtx.lineWidth = 0.5;
-  automationTrackCtx.strokeStyle = 'rgba(0, 0, 0, 1)';
+  automationTrackCtx.strokeStyle = 'rgb(0, 0, 0)';
   automationTrackCtx.fillStyle = 'rgb(255, 255, 255)';
   automationTrackCtx.fillRect(0, 0, canvas.width, canvas.height);
   
@@ -426,11 +434,12 @@ function setupAutomationTrackCanvas(){
   
   canvas.addEventListener('pointermove', (evt) => {
     if(isDrawing){
-      //console.log('pointer moving!');
-      
       const [x, y] = getClickCoords(evt);
       //console.log(`x: ${x}, y: ${y}`);
       
+      automationTrackCtx.lineJoin = 'round';
+      automationTrackCtx.lineWidth = 0.5;
+      automationTrackCtx.strokeStyle = 'rgb(0, 0, 0)';
       automationTrackCtx.beginPath();
       automationTrackCtx.moveTo(lastClickX, lastClickY);
       automationTrackCtx.lineTo(x, y);
@@ -439,6 +448,10 @@ function setupAutomationTrackCanvas(){
       
       lastClickX = x;
       lastClickY = y;
+
+      // store this coordinate info so we can redraw the automation track after stopping playback and replaying
+      // because we'd like to remove the red marks to show where current playback is and so it might be easiest to clear everything and redraw      
+      currAutomationTrackLineCoords.push({x, y});
     }
   });
   
@@ -450,11 +463,37 @@ function setupAutomationTrackCanvas(){
 
 setupAutomationTrackCanvas();
 
+function redrawAutomationTrack(){
+  const automationTrack = document.getElementById('automationTrack');
+  const trackCtx = automationTrack.getContext('2d');
+  
+  // clear the canvas first
+  trackCtx.fillStyle = 'rgb(255, 255, 255)';
+  trackCtx.fillRect(0, 0, automationTrack.width, automationTrack.height);
+  
+  // then redraw
+  if(currAutomationTrackLineCoords.length > 0){
+    for(let i = 1; i < currAutomationTrackLineCoords.length - 1; i++){
+      const prev = currAutomationTrackLineCoords[i-1];
+      const curr = currAutomationTrackLineCoords[i];
+      trackCtx.lineJoin = 'round';
+      trackCtx.lineWidth = 0.5;
+      trackCtx.strokeStyle = 'rgb(0, 0, 0)';
+      trackCtx.beginPath();
+      trackCtx.moveTo(prev.x, prev.y);
+      trackCtx.lineTo(curr.x, curr.y);
+      trackCtx.closePath();
+      trackCtx.stroke();
+    }
+  }
+}
+
 
 function processAutomationTrack(){
   // find where in the automation track we should be (x-position-wise) each second
   // take into account time elapsed, width of the canvas, length of the audio
   // TODO: this doesn't work well with playing from a paused state. is there a way to calculate the elasped time based on where we last were in the audio?
+  // also playing from a stopped state starts at the wrong part of the automation track initially
   const audioDuration = buf.duration;
   const canvas = document.getElementById('automationTrack');
   const automationTrackCtx = canvas.getContext('2d');
@@ -464,24 +503,26 @@ function processAutomationTrack(){
   const xPos = (timeElapsed / audioDuration) * canvasWidth || 0; // when playing starts, (timeElapsed / audioDuration) could result in NaN
   
   // given x position, check y-position where pixel is not white from 0 -> height of canvas
-  const imgData = automationTrackCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+  const imgData = automationTrackCtx.getImageData(0, 0, canvasWidth, canvasHeight).data;
   
   automationTrackCtx.lineJoin = 'round';
-  automationTrackCtx.lineWidth = 0.2;
-  automationTrackCtx.strokeStyle = 'rgba(1, 0, 0, 1)';
+  automationTrackCtx.lineWidth = 0.5;
+  automationTrackCtx.strokeStyle = 'rgb(255, 0, 0)';
   
-  for(let row = 0; row < canvas.height; row++){
+  let hasTrack = false;
+  
+  for(let row = 0; row < canvasHeight; row++){
     // check column corresponding to xPos
-    const idx = (4 * Math.max(row - 1, 0) * canvas.width) + (4 * Math.floor(xPos));
+    const idx = (4 * Math.max(row - 1, 0) * canvasWidth) + (4 * Math.floor(xPos));
     const r = imgData[idx];
     const g = imgData[idx + 1];
     
     // checking 2 channels is enough probably?
-    if(r !== 255 && g !== 255){
+    if(r !== 255 && g !== 255 && !hasTrack){
       // we got a y-pos that's not #fff so we need to adjust playback rate 
       const yPos = row;
       
-      const automationTrackHeight = canvas.height;
+      const automationTrackHeight = canvasHeight;
       const minPlaybackRate = 0.0;
       const maxPlaybackRate = 2.0;
       
@@ -495,6 +536,7 @@ function processAutomationTrack(){
       currPlaybackRate.textContent = newPlaybackRate;
       currXPos.textContent = xPos;
       
+      // draw a line down from the top of the canvas to the waveform so we can see where playback is at
       automationTrackCtx.beginPath();
       automationTrackCtx.moveTo(xPos, yPos);
       automationTrackCtx.lineTo(xPos, 0);
@@ -506,8 +548,17 @@ function processAutomationTrack(){
         playbackControl.value = newPlaybackRate; // why do we need to do this? isn't setting the playback rate on the buffer source enough?
       }
       
-      break;
+      hasTrack = true;
     }
+  }
+  
+  if(!hasTrack){
+    // just draw a line straight down to show where we're at if this vertical column of the canvas is not part of the track
+    automationTrackCtx.beginPath();
+    automationTrackCtx.moveTo(xPos, 0);
+    automationTrackCtx.lineTo(xPos, canvasHeight);
+    automationTrackCtx.closePath();
+    automationTrackCtx.stroke();
   }
 }
 
