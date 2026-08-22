@@ -32,7 +32,6 @@ button:hover {
 }
 
 #automationTrack {
-  width: 90%;
   height: 100px;
   border: 1px solid #ccc;
   display: block;
@@ -95,7 +94,7 @@ button:hover {
   
   <div id='automation'>
     <p class='sectionTitle'> playback automation track (max: 2.0, min: 0.0) </p>
-    <p> draw in the playback automation track canvas below to dictate when and how much playback rate should be changed on audio play. </p>
+    <p> draw in the playback automation track canvas below to dictate when and how much playback rate (sample rate) should be changed on audio play. </p>
     <p> drawing downwards will decrease the playback rate while drawing upward will increase the playback rate. </p>
     <canvas id='automationTrack'></canvas>
     <button id='clearCanvas'>clear canvas</button>
@@ -115,6 +114,7 @@ button:hover {
   - record/save audio playback
   - marker(s) on automation canvas
   - filters (e.g. lowpass, highpass)
+  - white noise generation
   - phase vocoder for pitch shifting/time stretching
 */
 
@@ -137,6 +137,7 @@ let fileURL;
 let bufSource;
 const playbackControl = document.getElementById('playbackRateControl');
 let duration;
+let lastPausedTimeElapsed = 0; // amount of elapsed time in the audio when last paused in seconds
 
 // for automation track functionality
 const automationTrackCanvas = document.getElementById('automationTrack');
@@ -215,14 +216,14 @@ function makeNewBuffer(){
 
 const openFile = (function(){
   return function(handle){
-    const fileInput = document.getElementById("inputFile");
+    const fileInput = document.getElementById('inputFile');
 
     function onFileChange(e){
       const files = e.target.files;
       if(files && files.length > 0)
          handle(files)
     }
-		fileInput.addEventListener("change", onFileChange, false);
+		fileInput.addEventListener('change', onFileChange, false);
 		fileInput.click(); 
 	}
 })();
@@ -256,8 +257,10 @@ function handleFile(files){
 
 
 function loadFile(){
+  audioLoaded = false;
+  
 	const request = new XMLHttpRequest();
-	request.open("GET", fileURL, true);
+	request.open('GET', fileURL, true);
 	request.responseType = 'arraybuffer';
 	
 	request.onload = function(){
@@ -265,7 +268,7 @@ function loadFile(){
 		audioCtx.decodeAudioData(request.response, function(buffer){
 			buf = buffer;
 			duration = buffer.duration;
-			audioLength.innerHTML = buffer.duration + " seconds";
+			audioLength.innerHTML = buffer.duration + ' seconds';
 			audioLoaded = true;
       
 			// add a progress bar
@@ -299,7 +302,6 @@ function timer(){
 }
 
 // play button
-// TODO: make play button disabled until imported audio is fully loaded
 document.getElementById('play').addEventListener('click', async () => {
   if(isPlaying || !audioLoaded){
 		return;
@@ -315,8 +317,9 @@ document.getElementById('play').addEventListener('click', async () => {
     isPaused = false;
     isPlaying = true;
     await audioCtx.resume();
-    timer();
+    startTime = Date.now();
     playBar = setInterval(timer, 1000);
+    timer();
   }else{
     let bufToProcess = buf;
     
@@ -343,8 +346,11 @@ document.getElementById('play').addEventListener('click', async () => {
           audioData.push(currentSample);
         }
         
-        const vocalRemovedBuffer = audioCtx.createBuffer(1, bufToProcess.length, bufToProcess.sampleRate);
+        const vocalRemovedBuffer = audioCtx.createBuffer(2, bufToProcess.length, bufToProcess.sampleRate);
+        
+        // make it stereo (2 channels) by setting the vocal-removed data to both channels
         vocalRemovedBuffer.getChannelData(0).set(audioData);
+        vocalRemovedBuffer.getChannelData(1).set(audioData);
         
         bufToProcess = vocalRemovedBuffer;
       }else{
@@ -365,14 +371,14 @@ document.getElementById('play').addEventListener('click', async () => {
     
     bufSource.start(0);
     
-    playBar = setInterval(timer, 1000); // TODO: use requestAnimationFrame instead without using interval?
     isPlaying = true;
+    
     startTime = Date.now();
-    
+    playBar = setInterval(timer, 1000); // TODO: use requestAnimationFrame instead without using interval?    
     timer(); // TODO: rename this
-    
-    doWaveformVisualization();
   }
+  
+  doWaveformVisualization();
 });
 
 //stop track play button
@@ -391,12 +397,14 @@ document.getElementById('stop').addEventListener('click', () => {
   counter = 0;
   isPlaying = false;
   isPaused = false;
+  lastPausedTimeElapsed = 0;
   makeNewBuffer();
 });
 
 document.getElementById('pause').addEventListener('click', () => {
   isPaused = true;
   isPlaying = false;
+  lastPausedTimeElapsed += (Date.now() - startTime) / 1000; // in seconds. also note we're adding via += because each time we pause, we reset startTime
   clearInterval(playBar);
   audioCtx.suspend();
 });
@@ -418,7 +426,7 @@ function setupAutomationTrackCanvas(){
   const canvas = document.getElementById('automationTrack');
   const ctx = automationTrackCtx;
   automationTrackCtx.lineJoin = 'round';
-  automationTrackCtx.lineWidth = 0.5;
+  automationTrackCtx.lineWidth = 1.0;
   automationTrackCtx.strokeStyle = 'rgb(0, 0, 0)';
   automationTrackCtx.fillStyle = 'rgb(255, 255, 255)';
   automationTrackCtx.fillRect(0, 0, canvas.width, canvas.height);
@@ -438,7 +446,7 @@ function setupAutomationTrackCanvas(){
       //console.log(`x: ${x}, y: ${y}`);
       
       automationTrackCtx.lineJoin = 'round';
-      automationTrackCtx.lineWidth = 0.5;
+      automationTrackCtx.lineWidth = 1.0;
       automationTrackCtx.strokeStyle = 'rgb(0, 0, 0)';
       automationTrackCtx.beginPath();
       automationTrackCtx.moveTo(lastClickX, lastClickY);
@@ -477,7 +485,7 @@ function redrawAutomationTrack(){
       const prev = currAutomationTrackLineCoords[i-1];
       const curr = currAutomationTrackLineCoords[i];
       trackCtx.lineJoin = 'round';
-      trackCtx.lineWidth = 0.5;
+      trackCtx.lineWidth = 1.0;
       trackCtx.strokeStyle = 'rgb(0, 0, 0)';
       trackCtx.beginPath();
       trackCtx.moveTo(prev.x, prev.y);
@@ -492,24 +500,25 @@ function redrawAutomationTrack(){
 function processAutomationTrack(){
   // find where in the automation track we should be (x-position-wise) each second
   // take into account time elapsed, width of the canvas, length of the audio
-  // TODO: this doesn't work well with playing from a paused state. is there a way to calculate the elasped time based on where we last were in the audio?
-  // also playing from a stopped state starts at the wrong part of the automation track initially
   const audioDuration = buf.duration;
   const canvas = document.getElementById('automationTrack');
   const automationTrackCtx = canvas.getContext('2d');
   const canvasHeight = canvas.height;
   const canvasWidth = canvas.width;
-  const timeElapsed = (Date.now() - startTime) / 1000; // in seconds
+  
+  // make sure to take into account any pauses by the user
+  const timeElapsed = ((Date.now() - startTime) / 1000) + lastPausedTimeElapsed; // in seconds
+  
   const xPos = (timeElapsed / audioDuration) * canvasWidth || 0; // when playing starts, (timeElapsed / audioDuration) could result in NaN
   
   // given x position, check y-position where pixel is not white from 0 -> height of canvas
   const imgData = automationTrackCtx.getImageData(0, 0, canvasWidth, canvasHeight).data;
   
+  let hasTrack = false;
+  
   automationTrackCtx.lineJoin = 'round';
   automationTrackCtx.lineWidth = 0.5;
   automationTrackCtx.strokeStyle = 'rgb(255, 0, 0)';
-  
-  let hasTrack = false;
   
   for(let row = 0; row < canvasHeight; row++){
     // check column corresponding to xPos
@@ -549,6 +558,7 @@ function processAutomationTrack(){
       }
       
       hasTrack = true;
+      break;
     }
   }
   
