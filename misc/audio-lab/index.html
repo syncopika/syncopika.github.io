@@ -90,6 +90,7 @@ button:hover {
     <p class='sectionTitle'> options </p>
     <label for='reverse'>reverse: <input type='checkbox' id='reverse' class='checkbox'></label>
     <label for='removeVocal'>remove vocal: <input type='checkbox' id='removeVocal' class='checkbox'></label>
+    <label for='volume'>volume: <input type='range' id='volume' value='1' min='0' max='2' step='0.1' />
   </div>
   
   <div id='automation'>
@@ -100,7 +101,7 @@ button:hover {
     <button id='clearCanvas'>clear canvas</button>
     <p>current playback rate: <span id='currPlaybackRate'></span></p>
     <p>current x position in canvas: <span id='currXPos'></span></p>
-    <input id="playbackRateControl" type="range" min="0.25" max="3" step="0.05" value="1">
+    <input id="playbackRateControl" type='range' min='0.25' max='3' step='0.05' value='1'>
   </div>
 	
 </div>
@@ -108,11 +109,13 @@ button:hover {
 
 <script>
 /*
+  trying to make a web version of https://github.com/syncopika/basicWAVplayer
+  but with more features hopefully :D
+  
   TODO:
-  - gain node
   - scrubber to traverse audio
   - record/save audio playback
-  - marker(s) on automation canvas
+  - marker(s) on automation canvas showing x and y axes values
   - filters (e.g. lowpass, highpass)
   - white noise generation
   - phase vocoder for pitch shifting/time stretching
@@ -130,6 +133,10 @@ let audioLoaded = false;
 // for audio data
 const audioCtx = new AudioContext();
 const analyser = audioCtx.createAnalyser();
+
+const gainNode = audioCtx.createGain();
+gainNode.connect(audioCtx.destination);
+
 analyser.fftSize = 2048;
 let waveformVisualizationAnimationId = null;
 let buf;
@@ -367,7 +374,7 @@ document.getElementById('play').addEventListener('click', async () => {
     }
     
     bufSource.connect(analyser);
-    bufSource.connect(audioCtx.destination);
+    bufSource.connect(gainNode);//audioCtx.destination);
     
     bufSource.start(0);
     
@@ -571,6 +578,25 @@ function processAutomationTrack(){
     automationTrackCtx.stroke();
   }
 }
+
+document.getElementById('volume').addEventListener('change', (evt) => {
+  //console.log(parseFloat(evt.target.value));
+  gainNode.gain.value = parseFloat(evt.target.value);
+});
+
+async function loadSampleAudio(){
+  const sampleFileName = '012526pianobgmidea(inspiredby022824bgmidea).ogg';
+  const resp = await fetch(sampleFileName);
+  const fileBlob = await resp.blob();
+  fileBlob.name = sampleFileName
+  handleFile([fileBlob]);
+}
+
+///////// initial set up stuff /////////////
+
+// load in sample audio file
+loadSampleAudio();
+
 
 
 /****
