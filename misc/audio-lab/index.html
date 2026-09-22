@@ -51,6 +51,10 @@ button:hover {
   margin: 15px auto;
 }
 
+#noiseControl {
+  margin: 12px;
+}
+
 .sectionTitle {
   font-weight: bold;
 }
@@ -87,10 +91,17 @@ button:hover {
 	</div>
   
   <div id='options'>
-    <p class='sectionTitle'> options </p>
+    <h2 class='sectionTitle'> options </h2>
+    
     <label for='reverse'>reverse: <input type='checkbox' id='reverse' class='checkbox'></label>
     <label for='removeVocal'>remove vocal: <input type='checkbox' id='removeVocal' class='checkbox'></label>
     <label for='volume'>volume: <input type='range' id='volume' value='1' min='0' max='2' step='0.1' />
+  
+    <div id='noiseControl'>
+      <label for='enableNoise'>enable noise: <input type='checkbox' id='enableNoise' class='checkbox'></label>
+      <label for='noiseVolume'>noise volume: <input type='range' id='noiseVolume' value='0.1' min='0' max='0.3' step='0.01' />
+    </div>
+  
   </div>
   
   <div id='automation'>
@@ -134,8 +145,25 @@ let audioLoaded = false;
 const audioCtx = new AudioContext();
 const analyser = audioCtx.createAnalyser();
 
+// main gain node for imported audio buffer
 const gainNode = audioCtx.createGain();
 gainNode.connect(audioCtx.destination);
+
+// gain node for noise
+const noiseGainNode = audioCtx.createGain();
+noiseGainNode.connect(audioCtx.destination);
+
+// buffer node for noise
+const noiseBufferSize = audioCtx.sampleRate * 2;
+const noiseBuffer = audioCtx.createBuffer(1, noiseBufferSize, audioCtx.sampleRate);
+const noiseData = noiseBuffer.getChannelData(0);
+for(let i = 0; i < noiseBufferSize; i++){
+  noiseData[i] = Math.random() * 0.5 - 0.5;
+}
+const noise = audioCtx.createBufferSource();
+noise.buffer = noiseBuffer;
+noise.loop = true;
+noise.start();
 
 analyser.fftSize = 2048;
 let waveformVisualizationAnimationId = null;
@@ -582,6 +610,21 @@ function processAutomationTrack(){
 document.getElementById('volume').addEventListener('change', (evt) => {
   //console.log(parseFloat(evt.target.value));
   gainNode.gain.value = parseFloat(evt.target.value);
+});
+
+document.getElementById('enableNoise').addEventListener('change', (evt) => {
+  if(evt.target.checked){
+    console.log('connecting noise gain node');
+    noise.connect(noiseGainNode);
+  }else{
+    console.log('disconnecting noise gain node');
+    noise.disconnect(noiseGainNode);
+  }
+});
+
+document.getElementById('noiseVolume').addEventListener('change', (evt) => {
+  noiseGainNode.gain.value = parseFloat(evt.target.value);
+  console.log(`noise gain: ${noiseGainNode.gain.value}`);
 });
 
 async function loadSampleAudio(){
