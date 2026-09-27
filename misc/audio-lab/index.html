@@ -101,6 +101,8 @@ button:hover {
       <label for='enableNoise'>enable noise: <input type='checkbox' id='enableNoise' class='checkbox'></label>
       <label for='noiseVolume'>noise volume: <input type='range' id='noiseVolume' value='0.1' min='0' max='0.3' step='0.01' />
     </div>
+    
+    <label for='record'>record: <input type='checkbox' id='record' class='checkbox'></label>
   
   </div>
   
@@ -151,6 +153,7 @@ gainNode.connect(audioCtx.destination);
 
 // gain node for noise
 const noiseGainNode = audioCtx.createGain();
+noiseGainNode.gain.value = 0.1;
 noiseGainNode.connect(audioCtx.destination);
 
 // buffer node for noise
@@ -164,6 +167,14 @@ const noise = audioCtx.createBufferSource();
 noise.buffer = noiseBuffer;
 noise.loop = true;
 noise.start();
+
+// media stream destination for recording audio
+const mediaStreamDest = audioCtx.createMediaStreamDestination();
+noiseGainNode.connect(mediaStreamDest);
+gainNode.connect(mediaStreamDest);
+
+let mediaRecorder = null;
+let capturedAudioChunks = [];
 
 analyser.fftSize = 2048;
 let waveformVisualizationAnimationId = null;
@@ -402,7 +413,7 @@ document.getElementById('play').addEventListener('click', async () => {
     }
     
     bufSource.connect(analyser);
-    bufSource.connect(gainNode);//audioCtx.destination);
+    bufSource.connect(gainNode);
     
     bufSource.start(0);
     
@@ -411,6 +422,12 @@ document.getElementById('play').addEventListener('click', async () => {
     startTime = Date.now();
     playBar = setInterval(timer, 1000); // TODO: use requestAnimationFrame instead without using interval?    
     timer(); // TODO: rename this
+  }
+  
+  // TODO: automatically end the media recorder if the track reaches the end
+  const recordOn = document.getElementById('record').checked;
+  if(recordOn){
+    recordAudio();
   }
   
   doWaveformVisualization();
@@ -434,6 +451,11 @@ document.getElementById('stop').addEventListener('click', () => {
   isPaused = false;
   lastPausedTimeElapsed = 0;
   makeNewBuffer();
+  
+  if(mediaRecorder){
+    mediaRecorder.stop();
+    mediaRecorder = null;
+  }
 });
 
 document.getElementById('pause').addEventListener('click', () => {
@@ -530,7 +552,6 @@ function redrawAutomationTrack(){
     }
   }
 }
-
 
 function processAutomationTrack(){
   // find where in the automation track we should be (x-position-wise) each second
@@ -633,6 +654,29 @@ async function loadSampleAudio(){
   const fileBlob = await resp.blob();
   fileBlob.name = sampleFileName
   handleFile([fileBlob]);
+}
+
+// for audio recording
+function recordAudio(){  
+  mediaRecorder = new MediaRecorder(mediaStreamDest.stream);
+  
+  mediaRecorder.ondataavailable = (e) => {
+    capturedAudioChunks.push(e.data);
+  };
+  
+  mediaRecorder.onstop = () => {
+    const blob = new Blob(capturedAudioChunks, {type: 'audio/webm'});
+    const recordedVideoUrl = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.download = `${new Date()}_recording.webm`;
+    downloadLink.href = recordedVideoUrl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    
+    capturedAudioChunks = [];
+  };
+  
+  mediaRecorder.start();
 }
 
 ///////// initial set up stuff /////////////
