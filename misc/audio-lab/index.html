@@ -339,11 +339,18 @@ function timer(){
   processAutomationTrack();
 	
 	if(counter > progBarCanvas.width){
+    // we've reached the end of the audio 
+    // TODO: this sometimes seems to end a bit early?
 		isPlaying = false;
 		clearInterval(playBar);
 		bufSource.stop(0);
 		counter = 0;
 		makeNewBuffer();
+    
+    if(mediaRecorder){
+      mediaRecorder.stop();
+      mediaRecorder = null;
+    }
 	}
 }
 
@@ -464,6 +471,10 @@ document.getElementById('pause').addEventListener('click', () => {
   lastPausedTimeElapsed += (Date.now() - startTime) / 1000; // in seconds. also note we're adding via += because each time we pause, we reset startTime
   clearInterval(playBar);
   audioCtx.suspend();
+  if(mediaRecorder){
+    mediaRecorder.stop();
+    mediaRecorder = null;
+  }
 });
 
 function getClickCoords(evt){
