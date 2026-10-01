@@ -42,7 +42,9 @@
   <p id='progressMsg'></p>
   <div id='container'>
     <div id='maskPatterns'></div>
-  </div>  
+  </div>
+  <div id='timeStats'>
+  </div>
 </body>
 
 <script>
@@ -3920,6 +3922,8 @@ function generateQRCode(){
     return;
   }
   
+  const startTime = Date.now();
+  
   // clear any current canvases
   console.log('clearing existing canvases...');
   Array.from(document.getElementById('maskPatterns').children).forEach(c => {
@@ -4092,6 +4096,32 @@ function generateQRCode(){
   
   // output final matrix
   applyDataMaskPatternAndQuietZone(ctx, maskPatternFormulae[lowestScoringMaskPatternIdx], canvas.width, canvas.height, doNotTouchModules);
+  
+  const endTime = Date.now();
+  
+  //console.log(`duration: ${endTime - startTime} ms, startTime: ${startTime}, endTime: ${endTime}`);
+  
+  const timeStats = document.getElementById('timeStats');
+  if(timeStats){
+    Array.from(timeStats.children).forEach(c => c.remove());
+    
+    const start = document.createElement('p');
+    start.textContent = `start: ${new Date(startTime)}`;
+    
+    const end = document.createElement('p');
+    end.textContent = `end: ${new Date(endTime)}`;
+    
+    const duration = document.createElement('p');
+    duration.textContent = `duration: ${endTime - startTime} ms`;
+    
+    const header = document.createElement('h2');
+    header.textContent = 'time stats';
+    
+    timeStats.appendChild(header);
+    timeStats.appendChild(start);
+    timeStats.appendChild(end);
+    timeStats.appendChild(duration);
+  }
 
   // add stepper
   addDataStepper(canvas.width, canvas.height, data, qrVersion, beforeAddingDataImgData, doNotTouchModules);
@@ -4167,7 +4197,7 @@ function test(){
   console.log('----------- end test -----------');
 }
 
-test();
+//test();
 
 </script>
 
