@@ -81,7 +81,21 @@ function calculatePointwiseMutualInformation(candidateString, substringFreqTable
     return Math.log2(probCandidate / (probX * probY));
     
   }else if(candidateString.length > 2){
-    // TODO
+    // need to split the candidate string if more than 2 characters
+    // there should be length - 1 split points
+    const pmiScores = [];
+    const probCandidate = (substringFreqTable[candidateString] || 0) / totalWordsInCorpus;
+    for(let i = 1; i < candidateString.length; i++){
+      const substr = candidateString.slice(0, i);
+      const remaining = candidateString.slice(i, candidateString.length);
+      const substrProb = (substringFreqTable[substr] || 0) / totalWordsInCorpus;
+      const remProb = (substringFreqTable[remaining] || 0) / totalWordsInCorpus;
+      pmiScores.push(Math.log2(probCandidate / (substrProb * remProb)));
+      //console.log(`substr: ${substr}, remaining: ${remaining}`);
+    }
+    
+    // get min of PMI scores
+    return Math.min(...pmiScores);
   }
  
   return 0;
@@ -198,7 +212,7 @@ function wordDiscovery(){
     
     // sort by internal cohesion score in descending order
     const sortedPotentialRealWordsScores = new Map([...potentialRealWordsScores.entries()].sort((a, b) => b[1] - a[1]));
-    console.log(sortedPotentialRealWordsScores);
+    //console.log(sortedPotentialRealWordsScores);
 
     // sort in descending frequency
     const sortedByFreq = new Map([...frequencyMap.entries()].sort((a, b) => b[1] - a[1]));
@@ -212,8 +226,8 @@ function wordDiscovery(){
     // TODO: at this point we should check each word in frequencyMap for their PMI score in potentialRealWordsScores and only collect the words that exceed a certain score
 
     let outputData = '';
-    for(const [k, v] of sortedByFreq){
-      outputData += `${k}, ${v}\n`;
+    for(const [k, v] of sortedPotentialRealWordsScores){
+      outputData += `${k}, ${sortedByFreq.get(k)}, ${v}\n`;
     }
 
     // write extracted words and their frequencies to a file
