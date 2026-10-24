@@ -1,12 +1,11 @@
 const Music = {
     data: function(){
-        
-        let getSoundCloudLink = function(trackId){
+        const getSoundCloudLink = function(trackId){
             return "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/" + trackId + "&amp;color=0066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false";
         };
         
         // track ids 
-        let soundcloud = [
+        const soundcloud = [
             276332169,
             481490157,
             209110662,
@@ -17,7 +16,7 @@ const Music = {
             337453719
         ];
 
-        let bandcamp = [
+        const bandcamp = [
             {
                 "style": "border: 0; width: 80%; height: 282px;",
                 "src": "https://bandcamp.com/EmbeddedPlayer/album=2349212220/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=true/artwork=small/transparent=true/", 
@@ -50,9 +49,10 @@ const Music = {
             }
         ];
         
-        let gameMusicSample = [
-        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false",
-        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/961667977&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false"]
+        const gameMusicSample = [
+            "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/89302627&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false",
+            "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/961667977&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false"
+        ];
         
         return ({
             'getSoundCloudLink': getSoundCloudLink,

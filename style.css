@@ -9,12 +9,12 @@
     --font-type: 'PT Sans', sans-serif;
 }
 
-#aboutContent{
+#aboutContent {
     margin-top: 10%;
     width: 70%;
 }
 
-html, body{
+html, body {
     height: 100%;
 }
 
@@ -23,77 +23,77 @@ html, body{
     font-size: 1.1em;
 }
 
-.router-link-active:not(#homelink){
+.router-link-active:not(#homelink) {
     text-decoration: underline;
 }
 
-.aboutBold{
+.aboutBold {
     font-weight: bold;
 }
 
-.tag{
+.tag {
     color: var(--grey);
     margin-left: 1%;
     cursor: pointer;
 }
 
-.tag:hover{
+.tag:hover {
     text-decoration: underline;
 }
 
-h2.title{
+h2.title {
     text-align: center;
     font-family: var(--font-type);
 }
 
-p.title{
+p.title {
     text-align: center;
     font-family: var(--font-type);
     font-size: 14px;
 }
 
-a{
+a {
     color: #000;
     text-decoration: none;
 }
 
-a:hover{
+a:hover {
     text-decoration: none;
     color: var(--grey);
 }
 
-a:focus{
+a:focus {
     color: #000;
 }
 
-video{
+video {
   margin: 0px 5px 0px 5px;
 }
 
-#home{
+#home {
     margin-top: 10%;
 }
 
-#homelink:focus{
+#homelink:focus {
     text-decoration: none;
 }
 
-#sidebar{
+#sidebar {
     height: 100%;
     color: #000; /*#fff;*/
     background-color: #fff; /*#36414f;*/
 }
 
-#content{
+#content {
     height: 100%;
     margin-left: 3%;
 }
 
-#footerTag2{
+#footerTag2 {
     display: none;
 }
 
-#index li{
+#index li {
     list-style-type: none;
     font-family: var(--font-type);
     font-size: 26px;
@@ -101,35 +101,35 @@ video{
     color: var(--dark-purple);
 }
 
-#browserTools, #desktopTools, #clients h3{
+#browserTools, #desktopTools, #clients h3 {
     text-decoration: underline;
 }
 
-#clearTagSearch{
+#clearTagSearch {
     margin-left: 3px;
     color: var(--grey);
     cursor: pointer;
     text-decoration: underline;
 }
 
-#clients a{
+#clients a {
     color: var(--darker-blue);
 }
 
-#clients a:hover{
+#clients a:hover {
     color: var(--blue);
 }
 
-#musicContent{
+#musicContent {
     text-align: center;
     margin-bottom: 12px;
 }
 
-#links a{
+#links a {
     font-size: 20px;
 }
 
-#links li{
+#links li {
     list-style-type: none;
     font-family: var(--font-type);
     font-size: 22px;
@@ -138,15 +138,15 @@ video{
     color: #000; /*#00002A;*/
 }
 
-#links{
+#links {
     padding-left: 0;
 }
 
-#email{
+#email {
     font-family: monospace;
 }
 
-.footer{
+.footer {
     height: 60px;
 }
 
@@ -182,48 +182,48 @@ video{
 }
 
 /* FOR SMALLER MEDIA */
-@media screen and (max-width: 900px){
-    body{
+@media screen and (max-width: 900px) {
+    body {
         color: #000; /*#fff;*/
         background-color: #fff;/*#36414f;*/ 
         height: auto;
     }
     
-    #aboutContent{
+    #aboutContent {
         margin-top: 0;
         width: 100%;
     }
     
-    #footerTag{
+    #footerTag {
         display: none;
     }
     
-    #footerTag2{
+    #footerTag2 {
         margin-top: 15px;
         text-align: center;
         display: block;
     }
     
-    #links a{
+    #links a {
         font-size: 16px;
     }
     
-    #links li{
+    #links li {
         display: inline;
         padding-right: 8px;
     }
     
-    #index{
+    #index {
         text-align: center;
         padding: 0;
     }
     
-    #index li{
+    #index li {
         padding-right: 2%;
         display: inline;
     }
     
-    a{
+    a {
         color: var(--charcoal);
     }
     

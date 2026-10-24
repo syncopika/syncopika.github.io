@@ -82,7 +82,7 @@ blog_entries/images/okinawa + taiwan trip 2026/20261004_063536.webp
 blog_entries/images/okinawa + taiwan trip 2026/20261004_135743.webp
 
 --p
-I tried goya chanpuru (ゴーヤーチャンプルー), jimami tofu (ジーマミー豆腐) and umibudou (海ぶどう) on my first night. I especially liked the jimami tofu - sweet, very peanut-y and stretchy :).
+I tried goya chanpuru (ゴーヤーチャンプルー), jimami tofu (ジーマミー豆腐) and umibudou (海ぶどう) on my first night. I especially liked the jimami tofu - sweet, very peanut-y and stretchy :). Apparently it's not actually tofu at all (i.e. made from soybeans) - it's peanut starch! :O
 --image
 blog_entries/images/okinawa + taiwan trip 2026/20261002_192307.webp
 blog_entries/images/okinawa + taiwan trip 2026/20261002_192238.webp
@@ -137,7 +137,7 @@ Tainan, Taiwan (台南)
 I stayed near the Tainan TRA station, which is a great location and fairly close to a lot of historic sights to see in downtown Tainan.
 
 --h3
-Military aircraft! :O
+Military aircraft! :D
 --p
 Was pleasantly surprised at the constant jet noise in Tainan :). Everyday there were C-130s and AIDC F-CK-1s flying around so jet noise is a common occurrence. The fighters were frequently flying in pairs :O.
 --video
